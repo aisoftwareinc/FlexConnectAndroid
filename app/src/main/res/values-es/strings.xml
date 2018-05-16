@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">FlexConnect</string>
+    <string name="launcher_title">FlexConnect</string>
+    <string name="button_title">Enviar</string>
+    <string name="phone_hint_mask">(___) ___ - ____</string>
+    <string name="auth_code_hint">Código de Autenticación</string>
+    <string name="submit_dialog_title">Enviar Error</string>
+    <string name="submit_dialog_error_message">Por favor ingrese un número de teléfono válido.</string>
+
+    <string name="delivery_status_label">Estado:</string>
+    <string name="delivery_time_label">Hora:</string>
+    <string name="delivery_eta_label">ETA:</string>
+    <string name="delivery_distance_label">Distancia:</string>
+
+    <string name="delivery_detail_distance_label">Distancia al Destino:</string>
+    <string name="delivery_detail_eta_label">Hora Estimada de Llegada:</string>
+    <string name="delivery_detail_comments_label">Ccomentarios:</string>
+    <string name="delivery_detail_enroute_status_label">En Route</string>
+    <string name="delivery_detail_delivered_status_label">Entregado</string>
+    <string name="delivery_detail_directions_button_label">Indicaciones de Viaje</string>
+    <string name="delivery_detail_error_title">Error de datos</string>
+    <string name="delivery_detail_error_message">No podemos recuperar la información de entrega. Inténtalo de nuevo.</string>
+</resources>

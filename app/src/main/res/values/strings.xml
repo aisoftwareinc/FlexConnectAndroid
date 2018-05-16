@@ -1,0 +1,27 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="app_name">FlexConnect</string>
+    <string name="launcher_title">FlexConnect</string>
+    <string name="button_title">Submit</string>
+    <string name="phone_hint_mask">(___) ___ - ____</string>
+    <string name="auth_code_hint">Authentication Code</string>
+    <string name="submit_dialog_title">Submit Error</string>
+    <string name="submit_dialog_error_message">Please enter a valid phone number</string>
+
+
+    <string name="delivery_status_label">Status:</string>
+    <string name="delivery_time_label">Time:</string>
+    <string name="delivery_eta_label">ETA:</string>
+    <string name="delivery_distance_label">Distance:</string>
+
+    <string name="delivery_detail_distance_label">Distance To Destination:</string>
+    <string name="delivery_detail_eta_label">Estimated Time of Arrival:</string>
+    <string name="delivery_detail_comments_label">Comments:</string>
+    <string name="delivery_detail_enroute_status_label">En Route</string>
+    <string name="delivery_detail_delivered_status_label">Delivered</string>
+    <string name="delivery_detail_directions_button_label">Driving Directions</string>
+    <string name="delivery_detail_error_title">Data Error</string>
+    <string name="delivery_detail_error_message">We are unable to retrieve delivery information.  Please try again.</string>
+
+    <string name="phone_shared_pref_key">phone_shared_pref_key</string>
+</resources>
