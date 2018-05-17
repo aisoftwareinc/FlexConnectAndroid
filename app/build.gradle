@@ -7,7 +7,7 @@ apply plugin: 'kotlin-android-extensions'
 
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
     defaultConfig {
         multiDexEnabled true
         applicationId "com.aisoftware.flexconnect"
@@ -57,16 +57,21 @@ android {
 }
 
 dependencies {
+    def support_version = "27.1.0"
     def lifecycle_version = "1.1.1"
     def room_version = "1.1.0"
     def nav_version = "1.0.0-alpha01"
     def work_version = "1.0.0-alpha01"
+
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     /* Support */
-    implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation 'com.android.support:recyclerview-v7:27.1.0'
+    implementation "com.android.support:appcompat-v7:$support_version"
+    implementation "com.android.support:support-v13:$support_version"
+    implementation "com.android.support:design:$support_version"
+    implementation "com.android.support:recyclerview-v7:$support_version"
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
 
     /* Masked Edit Text View */
