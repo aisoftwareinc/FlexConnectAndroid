@@ -2,6 +2,7 @@ package com.aisoftware.flexconnect.ui
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -9,6 +10,8 @@ import android.util.Log
 import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.db.entity.DeliveryEntity
 import com.aisoftware.flexconnect.util.Constants
+import com.aisoftware.flexconnect.util.ConverterUtil
+import kotlinx.android.synthetic.main.activity_delivery_detail.*
 
 class DeliveryDetailActivity : AppCompatActivity() {
 
@@ -28,6 +31,18 @@ class DeliveryDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_delivery_detail)
 
+        detailEnRouteCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+
+        }
+
+        detailDeliveredCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+
+        }
+
+        detailDrivingDirectionsButton.setOnClickListener {
+            navigateToMapView()
+        }
+
         if (intent.hasExtra(Constants.DELIVERY_DETAIL)) {
             deliveryEntity = intent.getSerializableExtra(Constants.DELIVERY_DETAIL) as DeliveryEntity
             initializeView(deliveryEntity)
@@ -38,6 +53,31 @@ class DeliveryDetailActivity : AppCompatActivity() {
 
     private fun initializeView(deliveryEntity: DeliveryEntity) {
         Log.d(TAG, "Initializing view with delivery: $deliveryEntity")
+
+        detailDeliverylNameTextView.text = deliveryEntity.name
+        detailDeliveryPhoneEditText.text = deliveryEntity.phone1
+        detailAddress1TextView.text = deliveryEntity.address1
+        detailAddress2TextView.text = deliveryEntity.address2
+        detailAddress3TextView.text = ConverterUtil.formatExtendedAddress(deliveryEntity)
+        detailDistanceTextView.text = deliveryEntity.distance
+        detailEtaTextView.text = deliveryEntity.eta
+        detailCommentsTextView.text = deliveryEntity.comments
+    }
+
+    private fun navigateToMapView() {
+        val rawAddress = StringBuilder()
+        rawAddress.append(deliveryEntity.address1)
+                .append(" ")
+                .append(deliveryEntity.city)
+                .append(", ")
+                .append(deliveryEntity.state)
+                .append(" ")
+                .append(deliveryEntity.zip)
+        val uriEncodedAddress = Uri.encode(rawAddress.toString())
+        val intentUri = Uri.parse("google.navigation:q=$uriEncodedAddress")
+        val mapIntent = Intent(Intent.ACTION_VIEW, intentUri)
+        mapIntent.`package` = "com.google.android.apps.maps"
+        startActivity(mapIntent)
     }
 
     private fun showErrorDialog(title: String, message: String, isFinish: Boolean) {
