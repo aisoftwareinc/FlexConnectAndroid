@@ -4,21 +4,32 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import com.aisoftware.flexconnect.R
+import com.aisoftware.flexconnect.model.AuthenticatePhone
+import com.aisoftware.flexconnect.network.NetworkServiceDefault
+import com.aisoftware.flexconnect.network.request.AuthenticatePhoneRequest
+import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
 import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.SharedPrefUtil
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.android.synthetic.main.activity_main.*
+
+
 
 /**
  * https://developer.android.com/training/scheduling/wakelock
  */
 class MainActivity : AppCompatActivity() {
 
+    private val TAG = MainActivity::class.java.simpleName
+    private val AUTH_REQUEST_CODE = "authPhoneRequest"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         if (SharedPrefUtil.userPrefExists(this.applicationContext)) {
             initializeViewLoading()
@@ -29,18 +40,52 @@ class MainActivity : AppCompatActivity() {
         }
 
         submitButton.setOnClickListener {
-            val phoneNumber = phoneEditText.text.toString()
-            if( isPhoneValid(phoneNumber) ) {
-                SharedPrefUtil.setUserProp(this.applicationContext, phoneNumber)
-                // send network request
+            if( SharedPrefUtil.userPrefExists(this)) {
                 navigateToDashboard()
             }
-            else{
-                showErrorDialog(getString(R.string.submit_dialog_title), getString(R.string.submit_dialog_error_message))
-            }
+            else {
 
+                val phoneNumber = phoneEditText.text.toString()
+                if (isPhoneValid(phoneNumber)) {
+                    fetchAuthCode(phoneNumber)
+                } else {
+                    showErrorDialog(getString(R.string.submit_dialog_title), getString(R.string.submit_dialog_error_message))
+                }
+            }
         }
     }
+
+    private fun fetchAuthCode(phoneNumber: String) {
+        val phoneNumber = formatPhoneNumber(phoneNumber)
+        val request = AuthenticatePhoneRequest(phoneNumber)
+        val networkService = NetworkServiceDefault.Builder().build()
+        networkService.startRequest(request, object: NetworkRequestCallback{
+            override fun onSuccess(data: String?, headers: Map<String, List<String>>, requestCode: String?) {
+                if( data != null ) {
+                    val moshi = Moshi.Builder()
+                            .add(KotlinJsonAdapterFactory())
+                            .build()
+                    val adapter =  moshi.adapter(AuthenticatePhone::class.java)
+                    val authPhoneResponse = adapter.fromJson(data)
+                    if( authPhoneResponse!= null && !authPhoneResponse.authCode.isNullOrBlank() ) {
+                        SharedPrefUtil.setUserProp(applicationContext, phoneNumber)
+                        authCodeEditText.visibility = View.VISIBLE
+                    }
+                }
+                else {
+                    onFailure(data, requestCode)
+                }
+            }
+
+            override fun onFailure(data: String?, requestCode: String?) {
+                Log.d(TAG, "Received onFailure data: $data")
+                showErrorDialog(getString(R.string.delivery_auth_error_title), getString(R.string.delivery_auth_error_message))
+            }
+
+            override fun onComplete(requestCode: String?) { }
+        }, AUTH_REQUEST_CODE)
+    }
+
 
     private fun navigateToDashboard() {
         val intent = Intent(this, DashboardActivity::class.java)
@@ -49,6 +94,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeViewLoading() {
         progressBar1.visibility = View.VISIBLE
+
         titleImageView.visibility = View.INVISIBLE
         phoneEditText.visibility = View.INVISIBLE
         submitButton.visibility = View.INVISIBLE
@@ -57,38 +103,50 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeViewDefault() {
         progressBar1.visibility = View.INVISIBLE
+        authCodeEditText.visibility = View.INVISIBLE
+
         titleImageView.visibility = View.VISIBLE
         phoneEditText.visibility = View.VISIBLE
         submitButton.visibility = View.VISIBLE
-        authCodeEditText.visibility = View.VISIBLE
     }
 
-    fun showErrorDialog(title: String, message: String) {
+    private fun showErrorDialog(title: String, message: String) {
         if( !isFinishing) {
             AlertDialog.Builder(this, R.style.alertDialogStyle)
                     .setTitle(title)
                     .setMessage(message)
-                    .setPositiveButton(Constants.VALIDATION_POS_BUTTON, { dialog, id ->
+                    .setPositiveButton(Constants.POS_BUTTON, { dialog, id ->
                         dialog.dismiss()
                     }).create().show()
         }
     }
 
     private fun isPhoneValid(phoneNumber: String): Boolean {
-        if( phoneNumber.isBlank() ) {
+        val formatted = formatPhoneNumber(phoneNumber)
+        if( formatted.isNullOrBlank() ) {
             return false
         }
 
-        val trimmed = phoneNumber
+        if( formatted.length < 10 ) {
+            return false
+        }
+        return true
+    }
+
+    private fun formatPhoneNumber(phoneNumber: String): String {
+        var formatted = ""
+
+        if( phoneNumber.isBlank() ) {
+            return formatted
+        }
+
+        formatted = phoneNumber
                 .replace("(", "")
                 .replace(")", "")
                 .replace("-", "")
                 .replace(" ", "")
                 .trim()
 
-        if( trimmed.length < 10 ) {
-            return false
-        }
-        return true
+        return formatted
     }
 }

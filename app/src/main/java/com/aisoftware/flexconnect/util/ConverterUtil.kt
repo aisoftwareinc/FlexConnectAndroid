@@ -7,6 +7,7 @@ class ConverterUtil {
 
     companion object {
         private val TAG = ConverterUtil::class.java.simpleName
+
         @JvmStatic
         fun formatExtendedAddress(deliveryEntity: DeliveryEntity): String {
             with(deliveryEntity) {

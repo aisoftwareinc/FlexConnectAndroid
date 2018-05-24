@@ -43,6 +43,15 @@
             android:name=".ui.DeliveryDetailActivity"
             android:parentActivityName=".ui.DashboardActivity">
         </activity>
+
+        <receiver
+            android:name=".location.LocationUpdatesBroadcastReceiver"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="com.aisoftware.flexconnect.location.locationupdatespendingintent.action.PROCESS_UPDATES"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

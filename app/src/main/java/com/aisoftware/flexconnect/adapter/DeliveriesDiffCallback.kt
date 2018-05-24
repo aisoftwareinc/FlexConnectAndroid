@@ -9,11 +9,9 @@ class DeliveriesDiffCallback(val oldList: List<DeliveryEntity>, val newList: Lis
 
     override fun getNewListSize(): Int = newList.size
 
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList.get(oldItemPosition).id == newList.get(newItemPosition).id
-    }
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+        oldList.get(oldItemPosition).id == newList.get(newItemPosition).id
 
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList.get(oldItemPosition).equals(newList.get(newItemPosition))
-    }
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+        oldList.get(oldItemPosition).equals(newList.get(newItemPosition))
 }

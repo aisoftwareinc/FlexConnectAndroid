@@ -43,7 +43,7 @@ class DeliveryAdapter(val context: Context, val callback: DeliveryAdapterItemCal
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val deliveryItem = items.get(position)
+        val deliveryItem = items[position]
         Log.d(TAG, "Attempting to bind view holder with item: $deliveryItem")
         with(holder as DeliveriesViewHolder) {
             deliveryNameTextView.text = deliveryItem.name
@@ -53,6 +53,7 @@ class DeliveryAdapter(val context: Context, val callback: DeliveryAdapterItemCal
                 deliveryAddress2TextView.visibility = View.VISIBLE
                 deliveryAddress2TextView.text = deliveryItem.address2
             }
+
             deliveryAddress3TextView.text = ConverterUtil.formatExtendedAddress(deliveryItem)
             statusValueTextView.text = deliveryItem.status
             etaValueTextView.text = deliveryItem.eta
@@ -67,14 +68,6 @@ class DeliveryAdapter(val context: Context, val callback: DeliveryAdapterItemCal
             }
         }
 
-    }
-
-    override fun registerAdapterDataObserver(observer: RecyclerView.AdapterDataObserver) {
-        super.registerAdapterDataObserver(observer)
-    }
-
-    override fun unregisterAdapterDataObserver(observer: RecyclerView.AdapterDataObserver) {
-        super.unregisterAdapterDataObserver(observer)
     }
 }
 
