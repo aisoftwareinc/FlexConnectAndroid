@@ -2,6 +2,8 @@ package com.aisoftware.flexconnect.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -22,6 +24,14 @@ class DashboardActivity : AppCompatActivity(), DeliveryAdapterItemCallback {
     private val GOOGLE_SERVICES_REQUEST_CODE = 9
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: DeliveryAdapter
+
+    companion object {
+        @JvmStatic
+        fun getIntent(context: Context): Intent {
+            val intent = Intent(context, DashboardActivity::class.java)
+            return intent
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

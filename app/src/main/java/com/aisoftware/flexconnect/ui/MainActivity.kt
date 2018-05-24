@@ -1,6 +1,5 @@
 package com.aisoftware.flexconnect.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -56,8 +55,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchAuthCode(phoneNumber: String) {
-        val phoneNumber = formatPhoneNumber(phoneNumber)
-        val request = AuthenticatePhoneRequest(phoneNumber)
+        val formattedNumber = formatPhoneNumber(phoneNumber)
+        val request = AuthenticatePhoneRequest(formattedNumber)
         val networkService = NetworkServiceDefault.Builder().build()
         networkService.startRequest(request, object: NetworkRequestCallback{
             override fun onSuccess(data: String?, headers: Map<String, List<String>>, requestCode: String?) {
@@ -67,8 +66,8 @@ class MainActivity : AppCompatActivity() {
                             .build()
                     val adapter =  moshi.adapter(AuthenticatePhone::class.java)
                     val authPhoneResponse = adapter.fromJson(data)
-                    if( authPhoneResponse!= null && !authPhoneResponse.authCode.isNullOrBlank() ) {
-                        SharedPrefUtil.setUserProp(applicationContext, phoneNumber)
+                    if( authPhoneResponse!= null && !authPhoneResponse.authCode.isBlank() ) {
+                        SharedPrefUtil.setUserProp(applicationContext, formattedNumber)
                         authCodeEditText.visibility = View.VISIBLE
                     }
                 }
@@ -88,7 +87,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun navigateToDashboard() {
-        val intent = Intent(this, DashboardActivity::class.java)
+        val intent = DashboardActivity.getIntent(this)
         startActivity(intent)
     }
 
@@ -103,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeViewDefault() {
         progressBar1.visibility = View.INVISIBLE
-        authCodeEditText.visibility = View.INVISIBLE
+        authCodeEditText.visibility = View.GONE
 
         titleImageView.visibility = View.VISIBLE
         phoneEditText.visibility = View.VISIBLE
@@ -123,7 +122,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun isPhoneValid(phoneNumber: String): Boolean {
         val formatted = formatPhoneNumber(phoneNumber)
-        if( formatted.isNullOrBlank() ) {
+        if( formatted.isBlank() ) {
             return false
         }
 
