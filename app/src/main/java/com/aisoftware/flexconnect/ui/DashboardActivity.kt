@@ -13,9 +13,11 @@ import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.adapter.DeliveryAdapter
 import com.aisoftware.flexconnect.adapter.DeliveryAdapterItemCallback
 import com.aisoftware.flexconnect.db.entity.DeliveryEntity
+import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.viewmodel.DeliveryViewModel
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import kotlinx.android.synthetic.main.activity_dashboard.*
 
 
 class DashboardActivity : AppCompatActivity(), DeliveryAdapterItemCallback {
@@ -27,8 +29,9 @@ class DashboardActivity : AppCompatActivity(), DeliveryAdapterItemCallback {
 
     companion object {
         @JvmStatic
-        fun getIntent(context: Context): Intent {
+        fun getIntent(context: Context, phoneNumber: String): Intent {
             val intent = Intent(context, DashboardActivity::class.java)
+            intent.putExtra(Constants.PHONE_NUMBER_KEY, phoneNumber)
             return intent
         }
     }
@@ -38,13 +41,20 @@ class DashboardActivity : AppCompatActivity(), DeliveryAdapterItemCallback {
         setContentView(R.layout.activity_dashboard)
         initializeRecyclerView()
 
+        val phoneNumber = intent.getStringExtra(Constants.PHONE_NUMBER_KEY)
+
         val model = ViewModelProviders.of(this).get(DeliveryViewModel::class.java)
-        model.getDeliveries().observe(this, Observer<List<DeliveryEntity>> { deliveries ->
+        model.getDeliveries(phoneNumber).observe(this, Observer<List<DeliveryEntity>> { deliveries ->
             deliveries?.let {
                 Log.d(TAG, "Updating deliveries list with items: $deliveries")
                 adapter.updateList(deliveries)
+                dashboardSwipeLayout.isRefreshing = false
             }
         })
+
+        dashboardSwipeLayout.setOnRefreshListener {
+            model.getDeliveries(phoneNumber)
+        }
     }
 
     override fun onResume() {

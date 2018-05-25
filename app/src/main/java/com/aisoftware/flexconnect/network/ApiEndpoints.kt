@@ -23,4 +23,7 @@ interface ApiEndpoints {
 
     @POST("/ws/tracking-json.asmx/AuthenticatePhone")
     fun postAuthenticatePhone(@HeaderMap headerMap: Map<String, String>, @Body body: RequestBody): Call<ResponseBody>
+
+    @POST("/ws/tracking-json.asmx/GetDeliveries")
+    fun postGetDeliveries(@HeaderMap headerMap: Map<String, String>, @Body body: RequestBody): Call<ResponseBody>
 }

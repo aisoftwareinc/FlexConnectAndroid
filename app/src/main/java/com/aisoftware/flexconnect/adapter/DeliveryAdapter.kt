@@ -46,19 +46,13 @@ class DeliveryAdapter(val context: Context, val callback: DeliveryAdapterItemCal
         val deliveryItem = items[position]
         Log.d(TAG, "Attempting to bind view holder with item: $deliveryItem")
         with(holder as DeliveriesViewHolder) {
-            deliveryNameTextView.text = deliveryItem.name
-            deliveryAddress1TextView.text = deliveryItem.address1
-
-            if( !deliveryItem.address2.isNullOrBlank() ) {
-                deliveryAddress2TextView.visibility = View.VISIBLE
-                deliveryAddress2TextView.text = deliveryItem.address2
-            }
-
-            deliveryAddress3TextView.text = ConverterUtil.formatExtendedAddress(deliveryItem)
+            deliveryNameTextView.text = deliveryItem.customername
+            deliveryAddress1TextView.text = deliveryItem.address
+            deliveryAddress2TextView.text = ConverterUtil.formatExtendedAddress(deliveryItem)
             statusValueTextView.text = deliveryItem.status
-            etaValueTextView.text = deliveryItem.eta
+            etaValueTextView.text = deliveryItem.distance
             timeValueTextView.text = deliveryItem.time
-            distanceValueTextView.text = deliveryItem.distance
+            distanceValueTextView.text = deliveryItem.miles
 
             if( position%2 == 0 ) {
                 containerLayout.setBackgroundColor(context.getColor(R.color.colorAlternateRow))
@@ -76,7 +70,6 @@ class DeliveriesViewHolder(view: View): RecyclerView.ViewHolder(view) {
     var deliveryNameTextView = view.deliveryNameTextView
     var deliveryAddress1TextView = view.deliveryAddress1TextView
     var deliveryAddress2TextView = view.deliveryAddress2TextView
-    var deliveryAddress3TextView = view.deliveryAddress3TextView
     var statusValueTextView = view.statusValueTextView
     var etaValueTextView = view.etaValueTextView
     var timeValueTextView = view.timeValueTextView

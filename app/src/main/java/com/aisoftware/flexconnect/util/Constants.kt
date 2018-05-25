@@ -12,6 +12,7 @@ object Constants {
 
     // Delivery
     const val DELIVERY_DETAIL = "deliveryDetail"
+    const val PHONE_NUMBER_KEY = "phoneNumberKey"
 
     // Service Events
     const val BROADCAST_EVENT = "com.uslfreight.carriers.BROADCAST_EVENT"

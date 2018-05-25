@@ -30,8 +30,8 @@ class MainActivity : AppCompatActivity(), MainView {
         }
     }
 
-    override fun navigateToDashboard() {
-        val intent = DashboardActivity.getIntent(this)
+    override fun navigateToDashboard(phoneNumber: String) {
+        val intent = DashboardActivity.getIntent(this, phoneNumber)
         startActivity(intent)
     }
 

@@ -100,16 +100,15 @@ class DeliveryDetailActivity : AppCompatActivity(), ActivityCompat.OnRequestPerm
     private fun initializeView(deliveryEntity: DeliveryEntity) {
         Log.d(TAG, "Initializing view with delivery: $deliveryEntity")
 
-        val formattedPhone = formatPhone(deliveryEntity.phone1)
+        val formattedPhone = formatPhone(deliveryEntity.customerphone)
         formattedPhone?.let {
             detailDeliveryPhoneEditText.text = formattedPhone
         }
-        detailDeliverylNameTextView.text = deliveryEntity.name
-        detailAddress1TextView.text = deliveryEntity.address1
-        detailAddress2TextView.text = deliveryEntity.address2
-        detailAddress3TextView.text = ConverterUtil.formatExtendedAddress(deliveryEntity)
-        detailDistanceTextView.text = deliveryEntity.distance
-        detailEtaTextView.text = deliveryEntity.eta
+        detailDeliverylNameTextView.text = deliveryEntity.customername
+        detailAddress1TextView.text = deliveryEntity.address
+        detailAddress2TextView.text = ConverterUtil.formatExtendedAddress(deliveryEntity)
+        detailDistanceTextView.text = deliveryEntity.miles
+        detailEtaTextView.text = deliveryEntity.distance
         detailCommentsTextView.text = deliveryEntity.comments
     }
 
@@ -166,7 +165,7 @@ class DeliveryDetailActivity : AppCompatActivity(), ActivityCompat.OnRequestPerm
 
     private fun navigateToMapView() {
         val rawAddress = StringBuilder()
-        rawAddress.append(deliveryEntity.address1)
+        rawAddress.append(deliveryEntity.address)
                 .append(" ")
                 .append(deliveryEntity.city)
                 .append(", ")
