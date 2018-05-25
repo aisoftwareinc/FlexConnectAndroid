@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
 import com.aisoftware.flexconnect.BuildConfig
@@ -64,8 +65,12 @@ class DeliveryDetailActivity : AppCompatActivity(), ActivityCompat.OnRequestPerm
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_delivery_detail)
-        fusedLocationProviderClient = FusedLocationProviderClient(this)
 
+        val toolbar = findViewById<Toolbar>(R.id.detailToolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
+        fusedLocationProviderClient = FusedLocationProviderClient(this)
 
         detailEnRouteCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
             requestingLocationUpdates = isChecked
@@ -100,11 +105,11 @@ class DeliveryDetailActivity : AppCompatActivity(), ActivityCompat.OnRequestPerm
     private fun initializeView(deliveryEntity: DeliveryEntity) {
         Log.d(TAG, "Initializing view with delivery: $deliveryEntity")
 
-        val formattedPhone = formatPhone(deliveryEntity.customerphone)
+        val formattedPhone = formatPhone(deliveryEntity.customerPhone)
         formattedPhone?.let {
             detailDeliveryPhoneEditText.text = formattedPhone
         }
-        detailDeliverylNameTextView.text = deliveryEntity.customername
+        detailDeliverylNameTextView.text = deliveryEntity.customerName
         detailAddress1TextView.text = deliveryEntity.address
         detailAddress2TextView.text = ConverterUtil.formatExtendedAddress(deliveryEntity)
         detailDistanceTextView.text = deliveryEntity.miles

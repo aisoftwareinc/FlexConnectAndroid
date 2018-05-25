@@ -20,14 +20,13 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
 
     private val TAG = DeliveryViewModel::class.java.simpleName
     private val dataRepository: DataRepository = (app as FlexConnectApplication).getRepository()
-    private var deliveries: LiveData<List<DeliveryEntity>>? = null
+    private val deliveries: LiveData<List<DeliveryEntity>> = MutableLiveData<List<DeliveryEntity>>()
     private val networkService: NetworkService = (app as FlexConnectApplication).getNetworkService()
 
     fun getDeliveries(phoneNumber: String): LiveData<List<DeliveryEntity>> {
         Log.d(TAG, "Attempting to get deliveries")
-        deliveries = MutableLiveData<List<DeliveryEntity>>()
         loadDeliveries(phoneNumber)
-        return deliveries!!
+        return deliveries
     }
 
     private fun loadDeliveries(phoneNumber: String) {
@@ -44,6 +43,7 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
                             val adapter = moshi.adapter(Deliveries::class.java)
                             val deliveriesResponse = adapter.fromJson(data)
                             if (deliveriesResponse != null ) {
+                                (deliveries as MutableLiveData).postValue(deliveriesResponse.deliveries)
                             }
                         }
                         catch(e: Exception) {
@@ -57,18 +57,16 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
                 }
 
                 override fun onFailure(data: String?, requestCode: String?) {
-
+                    (deliveries as MutableLiveData).postValue(null)
                 }
 
-                override fun onComplete(requestCode: String?) {
-
-                }
+                override fun onComplete(requestCode: String?) { }
             }, "deliveriesRequestCode" )
 
-            // update database
+            // update database in fire forget thread
         }
         else {
-            deliveries = dataRepository.loadAllDeliveries()
+//            deliveries = dataRepository.loadAllDeliveries()
             Log.d(TAG, "Loaded deliveries from repo: $deliveries")
         }
     }

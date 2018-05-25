@@ -4,7 +4,7 @@ import com.aisoftware.flexconnect.util.SharedPrefUtil
 
 interface MainView {
     fun initializeViewLoading()
-    fun navigateToDashboard(phoneNumber: String)
+    fun navigateToDashboard()
     fun initializeViewDefault()
     fun showErrorDialog()
     fun showAuthCodeInput(showField: Boolean)
@@ -27,7 +27,7 @@ class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val 
     override fun initialize() {
         if (sharedPrefUtil.userPrefExists()) {
             view.initializeViewLoading()
-            view.navigateToDashboard(sharedPrefUtil.getUserPref(false))
+            view.navigateToDashboard()
         }
         else {
             view.initializeViewDefault()
@@ -37,7 +37,7 @@ class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val 
     override fun submitClicked(authCodeEditText: String, phoneEditText: String) {
         if( sharedPrefUtil.userPrefExists()) {
             if ( validAuthCode(authCodeEditText) ) {
-                view.navigateToDashboard(sharedPrefUtil.getUserPref(false))
+                view.navigateToDashboard()
             }
             else {
                 view.showErrorDialog()

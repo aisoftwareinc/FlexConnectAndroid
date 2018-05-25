@@ -7,13 +7,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:paddingStart="8dp"
-    android:paddingEnd="8dp"
     tools:context=".ui.DeliveryDetailActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/detailAppbarlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/detailToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
+    </android.support.design.widget.AppBarLayout>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/detailAppbarlayout">
 
         <LinearLayout
             android:id="@+id/detailContainer"
@@ -59,27 +79,13 @@
                 android:id="@+id/detailAddress2TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
-                android:singleLine="false"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailAddress1TextView"
-                tools:text="Ste 1"/>
-
-            <TextView
-                android:id="@+id/detailAddress3TextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:paddingTop="8dp"
-                android:singleLine="false"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/detailAddress1TextView"
-                tools:text="Phoenix, AZ 85004"/>
+                tools:text="Phoenix, AZ 85089"/>
 
             <TextView
                 android:id="@+id/detailDistanceLabelTextView"
@@ -90,7 +96,7 @@
                 android:text="@string/delivery_detail_distance_label"
                 android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailAddress3TextView"/>
+                app:layout_constraintTop_toBottomOf="@+id/detailAddress2TextView"/>
 
             <TextView
                 android:id="@+id/detailDistanceTextView"

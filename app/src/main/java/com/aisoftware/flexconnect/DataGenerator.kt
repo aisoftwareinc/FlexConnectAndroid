@@ -17,7 +17,7 @@ class DataGenerator {
             status = "En Route"
             time = "ASAP"
             distance = "15 miles"
-            customerphone = "6026391168"
+            customerPhone = "6026391168"
             comments = "Here is a sample delivery to Chase Field downtown."
         }
         deliveryList.add(d1)
@@ -31,7 +31,7 @@ class DataGenerator {
             status = "En Route"
             time = "Anytime Before 5 PM"
             distance = "15 miles"
-            customerphone = "6026391168"
+            customerPhone = "6026391168"
             comments = "These guys are drunks."
         }
         deliveryList.add(d2)

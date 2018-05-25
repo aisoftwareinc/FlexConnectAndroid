@@ -1,5 +1,7 @@
 package com.aisoftware.flexconnect.ui.main
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -16,6 +18,11 @@ class MainActivity : AppCompatActivity(), MainView {
     private lateinit var mainPresenter: MainPresenter
     private lateinit var mainInteractor: MainInteractor
 
+    companion object {
+        @JvmStatic
+        fun getIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,8 +37,8 @@ class MainActivity : AppCompatActivity(), MainView {
         }
     }
 
-    override fun navigateToDashboard(phoneNumber: String) {
-        val intent = DashboardActivity.getIntent(this, phoneNumber)
+    override fun navigateToDashboard() {
+        val intent = DashboardActivity.getIntent(this)
         startActivity(intent)
     }
 

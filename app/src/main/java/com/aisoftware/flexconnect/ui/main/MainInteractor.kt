@@ -40,6 +40,7 @@ class MainInteractorImpl: MainInteractor {
                                 .build()
                         val adapter = moshi.adapter(AuthenticatePhone::class.java)
                         val authPhoneResponse = adapter.fromJson(data)
+
                         if (authPhoneResponse != null && !authPhoneResponse.authCode.isBlank()) {
                             val authCode = authPhoneResponse.authCode
                             callback.onFetchSuccess(authCode, phoneNumber)

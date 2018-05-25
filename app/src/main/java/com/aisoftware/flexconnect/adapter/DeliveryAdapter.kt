@@ -46,7 +46,7 @@ class DeliveryAdapter(val context: Context, val callback: DeliveryAdapterItemCal
         val deliveryItem = items[position]
         Log.d(TAG, "Attempting to bind view holder with item: $deliveryItem")
         with(holder as DeliveriesViewHolder) {
-            deliveryNameTextView.text = deliveryItem.customername
+            deliveryNameTextView.text = deliveryItem.customerName
             deliveryAddress1TextView.text = deliveryItem.address
             deliveryAddress2TextView.text = ConverterUtil.formatExtendedAddress(deliveryItem)
             statusValueTextView.text = deliveryItem.status
