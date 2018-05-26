@@ -118,6 +118,7 @@ class DashboardActivity : AppCompatActivity(), DeliveryAdapterItemCallback {
     private fun logout() {
         val sharedPrefUtil = SharedPrefUtil(this)
         sharedPrefUtil.getUserPref(true)
+        sharedPrefUtil.getIntervalPref(true)
         navigateToMain()
         finish()
     }

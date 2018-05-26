@@ -309,7 +309,7 @@ class DeliveryDetailActivity : AppCompatActivity(), ActivityCompat.OnRequestPerm
     }
 
     private fun startLocationUpdate() {
-        Log.i(TAG, "CAMERA permission has already been granted. Displaying camera preview.")
+        Log.i(TAG, "Location permission has been granted. ")
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationProviderClient.requestLocationUpdates(getLocationRequest(), getLocationPendingIntent())
         }
