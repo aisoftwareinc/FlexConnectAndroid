@@ -24,9 +24,23 @@ class LocationUpdatesBroadcastReceiver: BroadcastReceiver() {
                     val latitude = location.latitude
                     val longitude = location.longitude
 
-                    // Update API side
                     Log.d(TAG, " Location update latitude: $latitude longitude: $longitude")
+                    try
+                    {
+                        val locationUpdatesInteractor = LocationUpdatesInteractorImpl(context!!, object: LocationUpdatesCallback {
+                            override fun onSuccess(data: String?) {
+                                Log.d(TAG, "Received report location success response: $data")
+                            }
 
+                            override fun onFailure(data: String?) {
+                                Log.d(TAG, "Received report location failure response: $data")
+                            }
+                        })
+                        locationUpdatesInteractor.reportLocation(latitude, longitude)
+                    }
+                    catch(e: Exception) {
+                        Log.e(TAG, "Unable to complete report location operation", e)
+                    }
                 }
             }
         }

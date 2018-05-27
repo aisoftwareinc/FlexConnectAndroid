@@ -29,4 +29,7 @@ interface ApiEndpoints {
 
     @POST("/ws/tracking-json.asmx/TimerInterval")
     fun postTimerInterval(@HeaderMap headerMap: Map<String, String>, @Body body: RequestBody): Call<ResponseBody>
+
+    @POST("/ws/tracking-json.asmx/ReportLocation")
+    fun postReportLocation(@HeaderMap headerMap: Map<String, String>, @Body body: RequestBody): Call<ResponseBody>
 }

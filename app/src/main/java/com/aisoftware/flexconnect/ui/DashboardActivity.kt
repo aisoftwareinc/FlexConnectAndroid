@@ -17,6 +17,7 @@ import com.aisoftware.flexconnect.adapter.DeliveryAdapter
 import com.aisoftware.flexconnect.adapter.DeliveryAdapterItemCallback
 import com.aisoftware.flexconnect.db.entity.DeliveryEntity
 import com.aisoftware.flexconnect.ui.main.MainActivity
+import com.aisoftware.flexconnect.ui.main.detail.DeliveryDetailActivity
 import com.aisoftware.flexconnect.util.SharedPrefUtil
 import com.aisoftware.flexconnect.viewmodel.DeliveryViewModel
 import com.google.android.gms.common.ConnectionResult

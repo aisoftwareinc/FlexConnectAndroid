@@ -1,4 +1,4 @@
-package com.aisoftware.flexconnect.ui
+package com.aisoftware.flexconnect.ui.main.detail
 
 import android.Manifest
 import android.app.Activity
@@ -34,7 +34,7 @@ import com.google.android.gms.location.LocationRequest
 import kotlinx.android.synthetic.main.activity_delivery_detail.*
 
 
-class DeliveryDetailActivity : AppCompatActivity(), ActivityCompat.OnRequestPermissionsResultCallback {
+class DeliveryDetailActivity : AppCompatActivity(), DeliveryDetailView, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private val TAG = DeliveryDetailActivity::class.java.simpleName
     private val MAP_REQUEST_CODE = 99
@@ -69,6 +69,7 @@ class DeliveryDetailActivity : AppCompatActivity(), ActivityCompat.OnRequestPerm
         val toolbar = findViewById<Toolbar>(R.id.detailToolbar)
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        updateValuesFromBundle(savedInstanceState)
 
         fusedLocationProviderClient = FusedLocationProviderClient(this)
 
@@ -99,7 +100,6 @@ class DeliveryDetailActivity : AppCompatActivity(), ActivityCompat.OnRequestPerm
             showErrorDialog(getString(R.string.delivery_detail_error_title), getString(R.string.delivery_detail_error_message), true)
         }
 
-        updateValuesFromBundle(savedInstanceState)
     }
 
     private fun initializeView(deliveryEntity: DeliveryEntity) {

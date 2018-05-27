@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context=".ui.DeliveryDetailActivity">
+    tools:context=".ui.main.detail.DeliveryDetailActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/detailAppbarlayout"
