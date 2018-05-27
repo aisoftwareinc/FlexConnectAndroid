@@ -2,21 +2,19 @@ package com.aisoftware.flexconnect.util
 
 object Constants {
 
-    const val LOCATION_BASE_URL = "https://carriers.uslfreight.com"
-
-    const val API_USERNAME = "p.gosling@icloud.com"
-    const val API_PASSWORD = "hJ4R=LsYvqSV4sUb"
-    const val PHONE_NUMBER = "phoneNumber"
+    const val HOST = "portal.flexconnect.us"
+    const val BASE_URL = "http://$HOST"
+    const val API_KEY = "Z1kS@ni@uEG*Sjm7HKTd6cH01#CH%6LQGSnDnc&5jpi!Hcldr5"
+    const val USER_AGENT = "Android"
 
     const val DEFAULT_CONNECTION_TIMEOUT_SEC = 60
     const val DEFAULT_READ_TIMEOUT_SEC = 60
     const val MEDIA_TYPE_FORM = "application/x-www-form-urlencoded"
-    const val DEFAULT_BUTTON_STATE_TITLE = "Start Tracking"
-    const val BUTTON_STATE_TITLE_TRACKING = "Stop Tracking"
-    const val DEFAULT_REPORTING_INTERVAL = 10L * 60L * 1000L
 
     // Delivery
     const val DELIVERY_DETAIL = "deliveryDetail"
+    const val PHONE_NUMBER_KEY = "phoneNumberKey"
+    const val DEFAULT_INTERVAL_MIN = "5"
 
     // Service Events
     const val BROADCAST_EVENT = "com.uslfreight.carriers.BROADCAST_EVENT"
@@ -28,7 +26,8 @@ object Constants {
     // Error Messages
     const val VALIDATION_DIALOG_TITLE = "Phone Number Validation"
     const val VALIDATION_DIALOG_MESSAGE = "Please enter a valid 10 digit phone number, including area code and number."
-    const val VALIDATION_POS_BUTTON = "OK"
+    const val POS_BUTTON = "OK"
+    const val NEG_BUTTON = "CANCEL"
 
     const val NETWORK_ERROR_TITLE = "Network Connection Error"
     const val NETWORK_ERROR_MESSAGE = "The application was unable to complete location update.  Please check the device's network connection."

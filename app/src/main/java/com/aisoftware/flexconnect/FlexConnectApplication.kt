@@ -6,6 +6,8 @@ import android.net.ConnectivityManager
 import android.util.Log
 import com.aisoftware.flexconnect.db.AppDatabase
 import com.aisoftware.flexconnect.db.DataRepository
+import com.aisoftware.flexconnect.network.NetworkService
+import com.aisoftware.flexconnect.network.NetworkServiceDefault
 import java.util.concurrent.Executors
 
 
@@ -17,6 +19,7 @@ class FlexConnectApplication: Application() {
     private lateinit var appExecutors: AppExecutors
     private lateinit var appDatabase: AppDatabase
     private lateinit var dataRepository: DataRepository
+    private lateinit var networkService: NetworkService
 
     override fun onCreate() {
         super.onCreate()
@@ -39,6 +42,10 @@ class FlexConnectApplication: Application() {
             Log.d(TAG, "Attempting to create data repository...")
             dataRepository = DataRepository.getInstance(appDatabase)
             Log.d(TAG, "Successfully created data repository: $dataRepository")
+
+            Log.d(TAG, "Attempting to create network service...")
+            networkService = NetworkServiceDefault.Builder().build()
+            Log.d(TAG, "Successfully created network service: $networkService")
         }
         catch(e: Exception) {
             Log.e(TAG, "Unable to create persistence layer: ", e)
@@ -51,6 +58,10 @@ class FlexConnectApplication: Application() {
 
     fun getRepository(): DataRepository {
         return dataRepository
+    }
+
+    fun getNetworkService(): NetworkService {
+        return networkService
     }
 
     fun isNetworkAvailable(): Boolean {

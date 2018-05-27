@@ -11,7 +11,7 @@ android {
     defaultConfig {
         multiDexEnabled true
         applicationId "com.aisoftware.flexconnect"
-        minSdkVersion 26
+        minSdkVersion 23
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -58,10 +58,12 @@ android {
 
 dependencies {
     def support_version = "27.1.0"
+    def google_play_services = "15.0.1"
     def lifecycle_version = "1.1.1"
     def room_version = "1.1.0"
     def nav_version = "1.0.0-alpha01"
     def work_version = "1.0.0-alpha01"
+    def ktx_version = "0.3"
 
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -73,6 +75,10 @@ dependencies {
     implementation "com.android.support:design:$support_version"
     implementation "com.android.support:recyclerview-v7:$support_version"
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation "com.google.android.gms:play-services-location:$google_play_services"
+
+    // Android KTX for framework API
+    implementation "androidx.core:core-ktx:$ktx_version"
 
     /* Masked Edit Text View */
     implementation 'com.github.reinaldoarrosi:maskededittext:1.1.0'
@@ -111,7 +117,9 @@ dependencies {
     })
 
     /* Moshi: https://github.com/square/moshi */
-    implementation 'com.squareup.moshi:moshi:1.5.0'
+    implementation 'com.squareup.moshi:moshi-kotlin:1.6.0'
+
+    /* Test */
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

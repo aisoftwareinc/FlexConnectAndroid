@@ -38,16 +38,6 @@
             android:paddingTop="8dp"
             android:singleLine="false"
             android:textSize="18sp"
-            android:visibility="gone"
-            tools:text="Ste 1"/>
-
-        <TextView
-            android:id="@+id/deliveryAddress3TextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:singleLine="false"
-            android:textSize="18sp"
             tools:text="Phoenix, AZ 85004"/>
 
         <GridLayout
