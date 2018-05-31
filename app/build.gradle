@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 //apply plugin: 'androidx.navigation.safeargs'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 //apply plugin: 'io.fabric'
 
 
@@ -22,6 +22,14 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             testCoverageEnabled = false
+            buildConfigField "boolean", "SEND_DELIVERED_UPDATE", "true"
+        }
+
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            testCoverageEnabled = true
+            buildConfigField "boolean", "SEND_DELIVERED_UPDATE", "false"
         }
     }
 
@@ -56,6 +64,16 @@ android {
     }
 }
 
+androidExtensions {
+    experimental = true
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}
+
 dependencies {
     def support_version = "27.1.0"
     def google_play_services = "15.0.1"
@@ -64,10 +82,13 @@ dependencies {
     def nav_version = "1.0.0-alpha01"
     def work_version = "1.0.0-alpha01"
     def ktx_version = "0.3"
+    def picasso_version = "2.71828"
+    def mockito_version = "2.18.3"
 
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5'
 
     /* Support */
     implementation "com.android.support:appcompat-v7:$support_version"
@@ -85,7 +106,6 @@ dependencies {
 
     /* Architecture Components */
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
-    implementation 'android.arch.lifecycle:extensions:1.1.1'
     kapt "android.arch.lifecycle:compiler:$lifecycle_version"
     implementation "android.arch.lifecycle:reactivestreams:$lifecycle_version"
 
@@ -119,8 +139,26 @@ dependencies {
     /* Moshi: https://github.com/square/moshi */
     implementation 'com.squareup.moshi:moshi-kotlin:1.6.0'
 
+    /* Picasso */
+    implementation "com.squareup.picasso:picasso:$picasso_version"
+
     /* Test */
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    testImplementation "org.mockito:mockito-core:$mockito_version"
+    testImplementation ('com.android.support.test:runner:1.0.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+
+    androidTestImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    androidTestImplementation ('com.android.support.test:runner:1.0.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    androidTestImplementation ('com.android.support.test.espresso:espresso-core:3.0.2') {
+        exclude group: 'com.google.code.findbugs'
+        exclude group: 'com.android.support', module: 'support-annotations'
+    }
+    androidTestImplementation ('com.android.support.test:rules:1.0.1', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
 }

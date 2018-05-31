@@ -10,12 +10,11 @@ import android.content.Context
 import android.support.annotation.VisibleForTesting
 import android.util.Log
 import com.aisoftware.flexconnect.AppExecutors
-import com.aisoftware.flexconnect.DataGenerator
 import com.aisoftware.flexconnect.db.dao.DeliveryDao
-import com.aisoftware.flexconnect.db.entity.DeliveryEntity
+import com.aisoftware.flexconnect.model.Delivery
 
 
-@Database(entities = arrayOf(DeliveryEntity::class), version = 1)
+@Database(entities = arrayOf(Delivery::class), version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     private val TAG = AppDatabase::class.java.simpleName
@@ -64,10 +63,9 @@ abstract class AppDatabase : RoomDatabase() {
                             executors.diskIO().execute {
                                 // Generate the data for pre-population
                                 val database = AppDatabase.getInstance(appContext, executors)
-                                val dataGenerator = DataGenerator()
-                                val deliveries = dataGenerator.getDeliveries()
-
-                                insertData(database, deliveries)
+//                                val dataGenerator = DataGenerator()
+//                                val deliveries = dataGenerator.getDeliveries()
+//                                insertData(database, deliveries)
                                 // notify that the database was created and it's ready to be used
                                 database.setDatabaseCreated()
                             }
@@ -75,7 +73,7 @@ abstract class AppDatabase : RoomDatabase() {
                     }).build()
         }
 
-        fun insertData(database: AppDatabase, deliveries: List<DeliveryEntity>) {
+        fun insertData(database: AppDatabase, deliveries: List<Delivery>) {
             database.runInTransaction {
                 Log.d(TAG, "Attempting to insert deliveries: ${deliveries.size}")
                 database.deliveryDao().insertAll(deliveries)

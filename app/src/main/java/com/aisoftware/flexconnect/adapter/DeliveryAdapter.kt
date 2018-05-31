@@ -8,22 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.aisoftware.flexconnect.R
-import com.aisoftware.flexconnect.db.entity.DeliveryEntity
+import com.aisoftware.flexconnect.model.Delivery
 import com.aisoftware.flexconnect.util.ConverterUtil
 import kotlinx.android.synthetic.main.delivery_list_item.view.*
 
 interface DeliveryAdapterItemCallback {
-    fun onItemClicked(deliveryEntity: DeliveryEntity)
+    fun onItemClicked(delivery: Delivery)
 }
 
 class DeliveryAdapter(val context: Context, val callback: DeliveryAdapterItemCallback): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
     private val TAG = DeliveryAdapter::class.java.simpleName
-    private var items = ArrayList<DeliveryEntity>()
+    private var items = ArrayList<Delivery>()
 
     override fun getItemCount(): Int = items.size
 
-    fun updateList(updateItems: List<DeliveryEntity>) {
+    fun updateList(updateItems: List<Delivery>) {
         Log.d(TAG, "Attempting to update adapter list with items: $updateItems")
         val diffResult = DiffUtil.calculateDiff(DeliveriesDiffCallback(items, updateItems))
         Log.d(TAG, "Dispatching updated list with items: $diffResult")

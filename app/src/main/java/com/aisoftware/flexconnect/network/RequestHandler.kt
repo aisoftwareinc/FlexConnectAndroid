@@ -122,7 +122,7 @@ class RequestHandler( private val okHttpClient: OkHttpClient): NetworkHandler {
 
                 Buffer().let {
                     call.request().body()?.writeTo(it)
-                    formattedCall += "\n     Request Body: ${it.readUtf8()}"
+                    formattedCall += "\n   Request Body: ${it.readUtf8()}"
                 }
 
                 formattedCall += "\n< --------------------------------------------------------------------------------- >\n\n."

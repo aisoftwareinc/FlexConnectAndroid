@@ -1,9 +1,9 @@
 package com.aisoftware.flexconnect.adapter
 
 import android.support.v7.util.DiffUtil
-import com.aisoftware.flexconnect.db.entity.DeliveryEntity
+import com.aisoftware.flexconnect.model.Delivery
 
-class DeliveriesDiffCallback(val oldList: List<DeliveryEntity>, val newList: List<DeliveryEntity>): DiffUtil.Callback() {
+class DeliveriesDiffCallback(val oldList: List<Delivery>, val newList: List<Delivery>): DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = oldList.size
 

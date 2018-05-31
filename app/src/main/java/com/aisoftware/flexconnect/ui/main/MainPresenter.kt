@@ -1,8 +1,9 @@
 package com.aisoftware.flexconnect.ui.main
 
+import com.aisoftware.flexconnect.ui.ActivityBaseView
 import com.aisoftware.flexconnect.util.SharedPrefUtil
 
-interface MainView {
+interface MainView: ActivityBaseView {
     fun initializeViewLoading()
     fun navigateToDashboard()
     fun initializeViewDefault()
@@ -35,6 +36,7 @@ class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val 
     }
 
     override fun submitClicked(authCodeEditText: String, phoneEditText: String) {
+        // User has authenticated, forward to dashboard
         if( sharedPrefUtil.userPrefExists()) {
             if ( validAuthCode(authCodeEditText) ) {
                 view.navigateToDashboard()
@@ -44,12 +46,18 @@ class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val 
             }
         }
         else {
-            if (isPhoneValid(phoneEditText)) {
-                val phoneNumber = formatPhoneNumber(phoneEditText)
-                interactor.fetchAuthCode(phoneNumber)
-                interactor.fetchTimerInterval()
-            } else {
-                view.showErrorDialog()
+            // Authenticate user flow
+            if( view.isNetworkAvailable() ) {
+                if (isPhoneValid(phoneEditText)) {
+                    val phoneNumber = formatPhoneNumber(phoneEditText)
+                    interactor.fetchAuthCode(phoneNumber)
+                    interactor.fetchTimerInterval()
+                } else {
+                    view.showErrorDialog()
+                }
+            }
+            else {
+                view.showNetworkAvailabilityError()
             }
         }
     }

@@ -1,14 +1,14 @@
 package com.aisoftware.flexconnect
 
-import com.aisoftware.flexconnect.db.entity.DeliveryEntity
+import com.aisoftware.flexconnect.model.Delivery
 
 class DataGenerator {
 
-    fun getDeliveries(): List<DeliveryEntity> {
+    fun getDeliveries(): List<Delivery> {
 
-        val deliveryList = mutableListOf<DeliveryEntity>()
+        val deliveryList = mutableListOf<Delivery>()
 
-        val d1 = DeliveryEntity(1L, "Chase Field")
+        val d1 = Delivery(1L, "Chase Field")
         with (d1) {
             address = "401 E Jefferson St"
             city = "Phoenix"
@@ -22,7 +22,7 @@ class DataGenerator {
         }
         deliveryList.add(d1)
 
-        val d2 = DeliveryEntity(2L, "FlexConnect Office")
+        val d2 = Delivery(2L, "FlexConnect Office")
         with (d2) {
             address = "17470 N Pacesetter Way"
             city = "Scottsdate"

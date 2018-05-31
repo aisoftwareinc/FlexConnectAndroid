@@ -2,13 +2,15 @@ package com.aisoftware.flexconnect.db
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
-import com.aisoftware.flexconnect.db.entity.DeliveryEntity
+import android.util.Log
+import com.aisoftware.flexconnect.model.Delivery
 
 class DataRepository private constructor(private val appDatabase: AppDatabase) {
 
-    private val observableDeliveries: MediatorLiveData<List<DeliveryEntity>> = MediatorLiveData()
+    private val TAG = DataRepository::class.java.simpleName
+    private val observableDeliveries: MediatorLiveData<List<Delivery>> = MediatorLiveData()
 
-    val deliveries: LiveData<List<DeliveryEntity>>
+    val deliveries: LiveData<List<Delivery>>
         get() = observableDeliveries
 
     init {
@@ -20,12 +22,37 @@ class DataRepository private constructor(private val appDatabase: AppDatabase) {
         }
     }
 
-    fun loadDelivery(id: Int): LiveData<DeliveryEntity> {
+    fun fetchDelivery(id: Int): LiveData<Delivery> {
         return appDatabase.deliveryDao().loadDelivery(id)
     }
 
-    fun loadAllDeliveries(): LiveData<List<DeliveryEntity>> {
+    fun fetchAllDeliveries(): LiveData<List<Delivery>> {
         return appDatabase.deliveryDao().loadAllDeliveries()
+    }
+
+    fun fetchDeliveriesCount(): Int {
+        return appDatabase.deliveryDao().deliveriesCount()
+    }
+
+    fun loadDeliveries(deliveries: List<Delivery>) {
+        val deliveryList = deliveries
+        deliveryList?.let {
+            Log.d(TAG, "Attempting to insert deliveries list into database: ${deliveries}")
+            appDatabase.deliveryDao().deleteAll()
+            appDatabase.deliveryDao().insertAll(deliveryList)
+            observableDeliveries.postValue(deliveryList)
+            Log.d(TAG, "Loaded update deliveries count: ${appDatabase.deliveryDao().deliveriesCount()}")
+        }
+    }
+
+    fun loadDeliveriesToSync(deliveries: List<Delivery>) {
+        val deliveryList = deliveries
+        deliveryList?.let {
+            Log.d(TAG, "Attempting to insert deliveries list into database: ${deliveries}")
+            appDatabase.deliveryDao().deleteAll()
+            appDatabase.deliveryDao().insertAll(deliveryList)
+            Log.d(TAG, "Loaded update deliveries count: ${appDatabase.deliveryDao().deliveriesCount()}")
+        }
     }
 
     companion object {

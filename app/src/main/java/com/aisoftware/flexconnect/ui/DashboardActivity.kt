@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -15,17 +14,16 @@ import android.view.MenuItem
 import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.adapter.DeliveryAdapter
 import com.aisoftware.flexconnect.adapter.DeliveryAdapterItemCallback
-import com.aisoftware.flexconnect.db.entity.DeliveryEntity
+import com.aisoftware.flexconnect.model.Delivery
+import com.aisoftware.flexconnect.ui.detail.DeliveryDetailActivity
 import com.aisoftware.flexconnect.ui.main.MainActivity
-import com.aisoftware.flexconnect.ui.main.detail.DeliveryDetailActivity
-import com.aisoftware.flexconnect.util.SharedPrefUtil
 import com.aisoftware.flexconnect.viewmodel.DeliveryViewModel
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import kotlinx.android.synthetic.main.activity_dashboard.*
 
 
-class DashboardActivity : AppCompatActivity(), DeliveryAdapterItemCallback {
+class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback {
 
     private val TAG = DashboardActivity::class.java.simpleName
     private val GOOGLE_SERVICES_REQUEST_CODE = 9
@@ -47,10 +45,10 @@ class DashboardActivity : AppCompatActivity(), DeliveryAdapterItemCallback {
 
         initializeRecyclerView()
 
-        val sharedPrefUtil = SharedPrefUtil(this)
+        val sharedPrefUtil = getSharedPrefUtil()
         val phoneNumber = sharedPrefUtil.getUserPref(false)
         val model = ViewModelProviders.of(this).get(DeliveryViewModel::class.java)
-        model.getDeliveries(phoneNumber).observe(this, Observer<List<DeliveryEntity>> { deliveries ->
+        model.getDeliveries(phoneNumber).observe(this, Observer<List<Delivery>> { deliveries ->
 
             if( dashboardSwipeLayout.isRefreshing ) {
                 dashboardSwipeLayout.isRefreshing = false
@@ -110,14 +108,14 @@ class DashboardActivity : AppCompatActivity(), DeliveryAdapterItemCallback {
         Log.d(TAG, "Completed initializing recyclerview")
     }
 
-    override fun onItemClicked(deliveryEntity: DeliveryEntity) {
-        Log.d(TAG, "Item clicked: $deliveryEntity")
-        val intent = DeliveryDetailActivity.getInstance(this, deliveryEntity)
+    override fun onItemClicked(delivery: Delivery) {
+        Log.d(TAG, "Item clicked: $delivery")
+        val intent = DeliveryDetailActivity.getInstance(this, delivery)
         startActivity(intent)
     }
 
     private fun logout() {
-        val sharedPrefUtil = SharedPrefUtil(this)
+        val sharedPrefUtil = getSharedPrefUtil()
         sharedPrefUtil.getUserPref(true)
         sharedPrefUtil.getIntervalPref(true)
         navigateToMain()
@@ -136,7 +134,7 @@ class DashboardActivity : AppCompatActivity(), DeliveryAdapterItemCallback {
 
     private fun showErrorDialog() {
         showDialog(getString(R.string.delivery_detail_no_deliveries_title),
-                getString(R.string.delivery_detail_no_deliveries_message))
+                getString(R.string.delivery_detail_no_deliveries_error_message))
     }
 
     private fun showDialog(title: String, message: String) {

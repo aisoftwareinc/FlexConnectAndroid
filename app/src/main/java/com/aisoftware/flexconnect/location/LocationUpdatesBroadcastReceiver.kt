@@ -24,7 +24,7 @@ class LocationUpdatesBroadcastReceiver: BroadcastReceiver() {
                     val latitude = location.latitude
                     val longitude = location.longitude
 
-                    Log.d(TAG, " Location update latitude: $latitude longitude: $longitude")
+                    Log.d(TAG, "Location Broadcast Receiver, latitude: $latitude longitude: $longitude")
                     try
                     {
                         val locationUpdatesInteractor = LocationUpdatesInteractorImpl(context!!, object: LocationUpdatesCallback {
