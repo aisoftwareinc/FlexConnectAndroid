@@ -1,11 +1,11 @@
 package com.aisoftware.flexconnect.ui.detail
 
-import android.util.Log
 import com.aisoftware.flexconnect.model.Delivered
 import com.aisoftware.flexconnect.network.NetworkServiceDefault
 import com.aisoftware.flexconnect.network.request.DeliveredRequest
 import com.aisoftware.flexconnect.network.request.EnRouteRequest
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
+import com.aisoftware.flexconnect.util.Logger
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
@@ -31,7 +31,7 @@ class DeliveryDetailInteractorImpl(): DeliveryDetailInteractor {
     private val ENROUTE_REQUEST_CODE = "enrouteRequestCode"
 
     override fun sendDeliveredUpdate(deliveredRequest: DeliveredRequest, callback: DeliveryDetailRequestCallback) {
-        Log.d(TAG, "Attempting to send delivered request: $deliveredRequest")
+        Logger.d(TAG, "Attempting to send delivered request: $deliveredRequest")
         try {
             val networkService = NetworkServiceDefault.Builder().build()
             networkService.startRequest(deliveredRequest, object: NetworkRequestCallback {
@@ -47,7 +47,7 @@ class DeliveryDetailInteractorImpl(): DeliveryDetailInteractor {
                             callback.onDeliveredSuccess(result)
                         }
                         catch(e: Exception) {
-                            Log.e(TAG, "Unable to parse delivered response", e)
+                            Logger.e(TAG, "Unable to parse delivered response", e)
                         }
                     }
                     else {
@@ -63,12 +63,12 @@ class DeliveryDetailInteractorImpl(): DeliveryDetailInteractor {
             }, DELIVERED_REQUEST_CODE)
         }
         catch (e: Exception) {
-            Log.d(TAG, "Unable to create delivered request", e)
+            Logger.e(TAG, "Unable to create delivered request", e)
         }
     }
 
     override fun sendEnRouteUpdate(request: EnRouteRequest, callback: EnRouteRequestCallback) {
-        Log.d(TAG, "Attempting to send enroute request: $request")
+        Logger.d(TAG, "Attempting to send enroute request: $request")
         try {
             val networkService = NetworkServiceDefault.Builder().build()
             networkService.startRequest(request, object: NetworkRequestCallback {
@@ -84,7 +84,7 @@ class DeliveryDetailInteractorImpl(): DeliveryDetailInteractor {
             }, ENROUTE_REQUEST_CODE)
         }
         catch (e: Exception) {
-            Log.e(TAG, "Unable to create enroute request", e)
+            Logger.e(TAG, "Unable to create enroute request", e)
         }
     }
 }

@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.util.Log
 import com.aisoftware.flexconnect.model.Delivery
+import com.aisoftware.flexconnect.util.Logger
 
 class DataRepository private constructor(private val appDatabase: AppDatabase) {
 
@@ -37,21 +38,21 @@ class DataRepository private constructor(private val appDatabase: AppDatabase) {
     fun loadDeliveries(deliveries: List<Delivery>) {
         val deliveryList = deliveries
         deliveryList?.let {
-            Log.d(TAG, "Attempting to insert deliveries list into database: ${deliveries}")
+            Logger.d(TAG, "Attempting to insert deliveries list into database: ${deliveries}")
             appDatabase.deliveryDao().deleteAll()
             appDatabase.deliveryDao().insertAll(deliveryList)
             observableDeliveries.postValue(deliveryList)
-            Log.d(TAG, "Loaded update deliveries count: ${appDatabase.deliveryDao().deliveriesCount()}")
+            Logger.d(TAG, "Loaded update deliveries count: ${appDatabase.deliveryDao().deliveriesCount()}")
         }
     }
 
     fun loadDeliveriesToSync(deliveries: List<Delivery>) {
         val deliveryList = deliveries
         deliveryList?.let {
-            Log.d(TAG, "Attempting to insert deliveries list into database: ${deliveries}")
+            Logger.d(TAG, "Attempting to insert deliveries list into database: ${deliveries}")
             appDatabase.deliveryDao().deleteAll()
             appDatabase.deliveryDao().insertAll(deliveryList)
-            Log.d(TAG, "Loaded update deliveries count: ${appDatabase.deliveryDao().deliveriesCount()}")
+            Logger.d(TAG, "Loaded update deliveries count: ${appDatabase.deliveryDao().deliveriesCount()}")
         }
     }
 

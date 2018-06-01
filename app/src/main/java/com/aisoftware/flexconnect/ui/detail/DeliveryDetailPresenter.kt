@@ -2,7 +2,6 @@ package com.aisoftware.flexconnect.ui.detail
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.util.Log
 import com.aisoftware.flexconnect.BuildConfig
 import com.aisoftware.flexconnect.model.Delivered
 import com.aisoftware.flexconnect.model.Delivery
@@ -10,6 +9,7 @@ import com.aisoftware.flexconnect.network.request.DeliveredRequest
 import com.aisoftware.flexconnect.network.request.EnRouteRequest
 import com.aisoftware.flexconnect.ui.ActivityBaseView
 import com.aisoftware.flexconnect.util.ConverterUtil
+import com.aisoftware.flexconnect.util.Logger
 import com.google.android.gms.location.LocationRequest
 
 interface DeliveryDetailView : ActivityBaseView {
@@ -67,7 +67,7 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
     }
 
     override fun checkLocationUpdate() {
-        Log.d(TAG, "Requesting location update permission check")
+        Logger.d(TAG, "Requesting location update permission check")
         view.checkLocationUpdate()
     }
 
@@ -90,7 +90,7 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
     }
 
     override fun locationPermissionPassed() {
-        Log.d(TAG, "Location permission passed.")
+        Logger.d(TAG, "Location permission passed.")
         view.startLocationUpdate(getLocationRequest())
 
         if( view.isNetworkAvailable() ) {
@@ -99,11 +99,11 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
             val request = EnRouteRequest(phoneNumber, guid)
             interactor.sendEnRouteUpdate(request, object : EnRouteRequestCallback {
                 override fun onEnRouteSuccess(data: String?) {
-                    Log.d(TAG, "Received success enroute response: $data")
+                    Logger.d(TAG, "Received success enroute response: $data")
                 }
 
                 override fun onEnRouteFailure(data: String?) {
-                    Log.d(TAG, "Received failure enroute response: $data")
+                    Logger.d(TAG, "Received failure enroute response: $data")
                 }
             })
         }
@@ -128,7 +128,7 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
     }
 
     override fun imageDataReceived(data: Intent?) {
-        Log.d(TAG, "Attempting to upload image in intent: $data")
+        Logger.d(TAG, "Attempting to upload image in intent: $data")
         data?.let {
             val extras = data.extras
             bitmap = extras?.get("data") as Bitmap
@@ -150,7 +150,7 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
         if (BuildConfig.SEND_DELIVERED_UPDATE) {
             interactor.sendDeliveredUpdate(request, object : DeliveryDetailRequestCallback {
                 override fun onDeliveredSuccess(delivered: Delivered?) {
-                    Log.d(TAG, "Delivered request success: $delivered")
+                    Logger.d(TAG, "Delivered request success: $delivered")
                     if (delivered != null) {
                         if (delivered.result != "Success") {
                             onDeliveredFailure(delivered.result)
@@ -161,7 +161,7 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
                 }
 
                 override fun onDeliveredFailure(data: String?) {
-                    Log.d(TAG, "Delivered request failure: $data")
+                    Logger.d(TAG, "Delivered request failure: $data")
                     view.toggleDeliveredCheckbox (false)
                     view.showDeliveredRequestFailure()
                 }
@@ -202,7 +202,7 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Unable to format phone number", e)
+            Logger.e(TAG, "Unable to format phone number", e)
         }
         return formatted
     }
@@ -215,7 +215,7 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
             intervalProp.toLong() * 60000
         }
 
-        Log.d(TAG, "Computed location update interval: $interval")
+        Logger.d(TAG, "Computed location update interval: $interval")
         val locationRequest = LocationRequest()
         locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
         locationRequest.interval = interval

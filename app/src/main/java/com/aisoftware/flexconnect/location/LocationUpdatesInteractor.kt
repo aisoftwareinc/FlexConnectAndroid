@@ -1,10 +1,10 @@
 package com.aisoftware.flexconnect.location
 
 import android.content.Context
-import android.util.Log
 import com.aisoftware.flexconnect.network.NetworkServiceDefault
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
 import com.aisoftware.flexconnect.network.request.ReportLocationRequest
+import com.aisoftware.flexconnect.util.Logger
 import com.aisoftware.flexconnect.util.SharedPrefUtil
 
 interface LocationUpdatesCallback {
@@ -44,7 +44,7 @@ class LocationUpdatesInteractorImpl(val context: Context, val callback: Location
             }, REPORT_LOCATION_REQUEST_CODE)
         }
         catch(e: Exception) {
-            Log.e(TAG, "Unable to complete report location request", e)
+            Logger.e(TAG, "Unable to complete report location request", e)
             callback.onFailure("Unable to complete report location request: ${e.localizedMessage}")
         }
     }

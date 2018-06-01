@@ -42,6 +42,8 @@ class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val 
                 view.navigateToDashboard()
             }
             else {
+                sharedPrefUtil.getUserPref(true)
+                view.initializeViewDefault()
                 view.showErrorDialog()
             }
         }

@@ -3,13 +3,13 @@ package com.aisoftware.flexconnect.adapter
 import android.content.Context
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.model.Delivery
 import com.aisoftware.flexconnect.util.ConverterUtil
+import com.aisoftware.flexconnect.util.Logger
 import kotlinx.android.synthetic.main.delivery_list_item.view.*
 
 interface DeliveryAdapterItemCallback {
@@ -24,9 +24,9 @@ class DeliveryAdapter(val context: Context, val callback: DeliveryAdapterItemCal
     override fun getItemCount(): Int = items.size
 
     fun updateList(updateItems: List<Delivery>) {
-        Log.d(TAG, "Attempting to update adapter list with items: $updateItems")
+        Logger.d(TAG, "Attempting to update adapter list with items: $updateItems")
         val diffResult = DiffUtil.calculateDiff(DeliveriesDiffCallback(items, updateItems))
-        Log.d(TAG, "Dispatching updated list with items: $diffResult")
+        Logger.d(TAG, "Dispatching updated list with items: $diffResult")
 
         items.clear()
         items.addAll(updateItems)
@@ -44,7 +44,7 @@ class DeliveryAdapter(val context: Context, val callback: DeliveryAdapterItemCal
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val deliveryItem = items[position]
-        Log.d(TAG, "Attempting to bind view holder with item: $deliveryItem")
+        Logger.d(TAG, "Attempting to bind view holder with item: $deliveryItem")
         with(holder as DeliveriesViewHolder) {
             deliveryNameTextView.text = deliveryItem.customerName
             deliveryAddress1TextView.text = deliveryItem.address

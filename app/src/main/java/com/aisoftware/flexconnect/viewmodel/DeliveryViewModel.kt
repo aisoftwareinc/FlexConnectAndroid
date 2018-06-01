@@ -4,7 +4,6 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.util.Log
 import com.aisoftware.flexconnect.FlexConnectApplication
 import com.aisoftware.flexconnect.db.DataRepository
 import com.aisoftware.flexconnect.model.Deliveries
@@ -12,6 +11,7 @@ import com.aisoftware.flexconnect.model.Delivery
 import com.aisoftware.flexconnect.network.NetworkService
 import com.aisoftware.flexconnect.network.request.DeliveriesRequest
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
+import com.aisoftware.flexconnect.util.Logger
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.experimental.launch
@@ -26,7 +26,7 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
     private val networkService: NetworkService = (app as FlexConnectApplication).getNetworkService()
 
     fun getDeliveries(phoneNumber: String): LiveData<List<Delivery>> {
-        Log.d(TAG, "Attempting to get deliveries")
+        Logger.d(TAG, "Attempting to get deliveries")
         loadDeliveries(phoneNumber)
         return deliveries
     }
@@ -49,17 +49,17 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
 
                                 launch {
                                     try {
-                                        Log.d(TAG, "Retrieved new dataset, updating database")
+                                        Logger.d(TAG, "Retrieved new dataset, updating database")
                                         dataRepository.loadDeliveriesToSync(deliveriesResponse.deliveries)
                                     }
                                     catch(e: Exception) {
-                                        Log.e(TAG, "Unable to update data repository", e)
+                                        Logger.e(TAG, "Unable to update data repository", e)
                                     }
                                 }
                             }
                         }
                         catch(e: Exception) {
-                            Log.e(TAG, "Unable to process data response: $data", e)
+                            Logger.e(TAG, "Unable to process data response: $data", e)
                             onFailure(data, requestCode)
                         }
                     }
@@ -78,7 +78,7 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
         else {
             val delList = dataRepository.fetchAllDeliveries()
             (deliveries as MutableLiveData).postValue(delList.value)
-            Log.d(TAG, "Loaded deliveries from repo: ${delList.value}")
+            Logger.d(TAG, "Loaded deliveries from repo: ${delList.value}")
         }
     }
 }

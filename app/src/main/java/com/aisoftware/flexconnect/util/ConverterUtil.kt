@@ -2,7 +2,6 @@ package com.aisoftware.flexconnect.util
 
 import android.graphics.Bitmap
 import android.util.Base64
-import android.util.Log
 import com.aisoftware.flexconnect.model.Delivery
 import java.io.ByteArrayOutputStream
 import java.net.URLEncoder
@@ -36,7 +35,7 @@ class ConverterUtil {
                 encodedStr = URLEncoder.encode(Base64.encodeToString(byteArrayImage, Base64.DEFAULT), "UTF-8")
             }
             catch (e: Exception) {
-                Log.e(TAG, "Unable to encode bitmap", e)
+                Logger.e(TAG, "Unable to encode bitmap", e)
             }
             finally {
                 baos?.close()

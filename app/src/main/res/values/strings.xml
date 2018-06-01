@@ -45,6 +45,7 @@
     <string name="delivery_detail_permission_required_message">This permission is required for this application to function. Please enable the permission.</string>
     <string name="delivery_detail_permission_pos_button">GO TO SETTINGS</string>
     <string name="delivery_detail_permission_neg_button">CANCEL</string>
+    <string name="delivery_detail_no_picture_message">NO PICTURE</string>
 
     <string name="permision_available_camera">Camera Permission has been granted. Preview can now be opened.</string>
     <string name="permision_available_location">Location Permission has been granted.</string>

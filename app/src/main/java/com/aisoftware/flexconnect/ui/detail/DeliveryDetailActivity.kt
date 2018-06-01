@@ -17,7 +17,6 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -29,6 +28,7 @@ import com.aisoftware.flexconnect.model.Delivery
 import com.aisoftware.flexconnect.ui.FlexConnectActivityBase
 import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.ConverterUtil
+import com.aisoftware.flexconnect.util.Logger
 import com.aisoftware.flexconnect.util.containsOnly
 import com.aisoftware.flexconnect.util.isPermissionGranted
 import com.aisoftware.flexconnect.util.requestPermission
@@ -103,7 +103,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     }
 
     override fun initializeView(delivery: Delivery, formattedPhone: String) {
-        Log.d(TAG, "Initializing view with delivery: $delivery")
+        Logger.d(TAG, "Initializing view with delivery: $delivery")
 
         formattedPhone?.let {
             detailDeliveryPhoneEditText.text = formattedPhone
@@ -180,57 +180,42 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     }
 
     override fun checkShowCamera() {
-        Log.i(TAG, "Show camera button pressed. Checking permission.")
+        Logger.i(TAG, "Show camera button pressed. Checking permission.")
         // Check if the Camera permission is already available.
         if (!isPermissionGranted(Manifest.permission.CAMERA)) {
             // Camera permission has not been granted.
-            requestPermission(Manifest.permission.CAMERA, getString(R.string.permission_camera_rationale), REQUEST_CAMERA_PERMISSION_CODE)
+            requestPermission(Manifest.permission.CAMERA, REQUEST_CAMERA_PERMISSION_CODE)
         } else {
             // Camera permissions is already available, show the camera preview.
-            Log.i(TAG, "CAMERA permission has already been granted. Displaying camera preview.")
+            Logger.i(TAG, "CAMERA permission has already been granted. Displaying camera preview.")
             presenter.cameraPermissionPassed()
         }
-    }
-
-    private fun requestPermission(permission: String, message: String, requestCode: Int) {
-        Log.i(TAG, "$permission permission has NOT been granted. Requesting permission.")
-//        if (shouldShowPermissionRationale(permission)) {
-//            Log.i(TAG, "Displaying permission rationale to provide additional context.")
-//            Snackbar.make(detailLayout, message,
-//                    Snackbar.LENGTH_INDEFINITE)
-//                    .setAction(R.string.dialog_ok, {
-//                        requestPermission(permission, requestCode)
-//                    })
-//                    .show()
-//        } else {
-            requestPermission(permission, requestCode)
-//        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when(requestCode) {
             REQUEST_CAMERA_PERMISSION_CODE -> {
-                Log.i(TAG, "Received response for Camera permission request.")
+                Logger.i(TAG, "Received response for Camera permission request.")
                 if (grantResults.containsOnly(PackageManager.PERMISSION_GRANTED)) {
-                    Log.i(TAG, "CAMERA permission has now been granted. Showing preview.")
+                    Logger.i(TAG, "CAMERA permission has now been granted. Showing preview.")
                     Snackbar.make(detailLayout, R.string.permision_available_camera, Snackbar.LENGTH_SHORT).show()
                     presenter.cameraPermissionPassed()
                 }
                 else {
-                    Log.i(TAG, "CAMERA permission was NOT granted.")
+                    Logger.i(TAG, "CAMERA permission was NOT granted.")
                     presenter.permissionFailed()
                 }
             }
 
             REQUEST_LOCATION_PERMISSION_CODE -> {
-                Log.i(TAG, "Received response for Location permission request.")
+                Logger.i(TAG, "Received response for Location permission request.")
                 if (grantResults.containsOnly(PackageManager.PERMISSION_GRANTED)) {
-                    Log.i(TAG, "Location permission has now been granted.")
+                    Logger.i(TAG, "Location permission has now been granted.")
                     Snackbar.make(detailLayout, R.string.permision_available_location, Snackbar.LENGTH_SHORT).show()
                     presenter.locationPermissionPassed()
                 }
                 else {
-                    Log.i(TAG, "Location permission was NOT granted.")
+                    Logger.i(TAG, "Location permission was NOT granted.")
                     presenter.permissionFailed()
                 }
             }
@@ -260,35 +245,21 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
                     } )
                     .create().show()
         }
-
-//        Snackbar.make(
-//                detailLayout,
-//                R.string.permissions_not_granted,
-//                Snackbar.LENGTH_INDEFINITE)
-//                .setAction(R.string.settings, View.OnClickListener {
-//                    val intent = Intent()
-//                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-//                    val uri = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
-//                    intent.data = uri
-//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//                    startActivity(intent)
-//                })
-//                .show()
     }
 
     override fun checkLocationUpdate() {
         if (!isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            Log.d(TAG, "Location permission not granted.  Starting grant process.")
-            requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, getString(R.string.permission_location_rationale), REQUEST_LOCATION_PERMISSION_CODE)
+            Logger.d(TAG, "Location permission not granted.  Starting grant process.")
+            requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, REQUEST_LOCATION_PERMISSION_CODE)
         }
         else {
-            Log.d(TAG, "Found location permission has been granted")
+            Logger.d(TAG, "Found location permission has been granted")
             presenter.locationPermissionPassed()
         }
     }
 
     override fun startLocationUpdate(locationUpdateRequest: LocationRequest) {
-        Log.i(TAG, "Starting location updates with request: $locationUpdateRequest")
+        Logger.i(TAG, "Starting location updates with request: $locationUpdateRequest")
         if( isNetworkAvailable() ) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 fusedLocationProviderClient.requestLocationUpdates(locationUpdateRequest, getLocationPendingIntent())
@@ -300,7 +271,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     }
 
     override fun stopLocationUpdate() {
-        Log.d(TAG, "Stopping location update")
+        Logger.d(TAG, "Stopping location update")
         fusedLocationProviderClient.removeLocationUpdates(getLocationPendingIntent())
     }
 
@@ -316,22 +287,22 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
             Activity.RESULT_OK ->
                 when (requestCode) {
                     MAP_REQUEST_CODE -> {
-                        Log.d(TAG, "Received MAP activity result with resultCode: $resultCode and data: $data")
+                        Logger.d(TAG, "Received MAP activity result with resultCode: $resultCode and data: $data")
                     }
                     CAMERA_REQUEST_CODE -> {
-                        Log.d(TAG, "Received CAMERA activity result with resultCode: $resultCode and data: $data")
+                        Logger.d(TAG, "Received CAMERA activity result with resultCode: $resultCode and data: $data")
                         presenter.imageDataReceived(data)
                     }
                     else -> {
-                        Log.d(TAG, "Received onActivity requestCode: $requestCode, resultCode: $resultCode, data: $data")
+                        Logger.d(TAG, "Received onActivity requestCode: $requestCode, resultCode: $resultCode, data: $data")
                     }
                 }
             Activity.RESULT_CANCELED -> {
-                Log.d(TAG, "Action cancelled")
+                Logger.d(TAG, "Action cancelled")
                 presenter.onResultCancelled(data)
             }
             else ->
-                Log.d(TAG, "Unrecognized action")
+                Logger.d(TAG, "Unrecognized action")
         }
     }
 
@@ -344,7 +315,11 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
                         dialog.dismiss()
                         presenter.deliveryCaptureImageClicked(true)
                     })
-                    .setNegativeButton(getString(R.string.dialog_cancel), { dialog, id ->
+                    .setNeutralButton(getString(R.string.dialog_cancel), { dialog, id ->
+                        presenter.imageCancelClicked()
+                        dialog.dismiss()
+                    })
+                    .setNegativeButton(getString(R.string.delivery_detail_no_picture_message), { dialog, id ->
                         presenter.deliveryCaptureImageClicked(false)
                         dialog.dismiss()
                     })
@@ -375,7 +350,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
 
     override fun showImageUploadConfirmDialog(bitmap: Bitmap) {
         if( !isFinishing ) {
-            Log.d(TAG, "Attempting to set bitmap: $bitmap")
+            Logger.d(TAG, "Attempting to set bitmap: $bitmap")
             val dialog = Dialog(this, R.style.alertDialogStyle)
             dialog.setContentView(R.layout.dialog_image_upload_confirm)
             dialog.setCancelable(true)
