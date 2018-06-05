@@ -52,23 +52,19 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
         val phoneNumber = sharedPrefUtil.getUserPref(false)
         val model = ViewModelProviders.of(this).get(DeliveryViewModel::class.java)
 
-        model.getDeliveries(phoneNumber, refreshList).observe(this, Observer<List<Delivery>> { deliveries ->
+        model.getDeliveries(phoneNumber, refreshList)
+                .observe(this, Observer<List<Delivery>> { deliveries ->
+
             if (dashboardSwipeLayout.isRefreshing) {
                 dashboardSwipeLayout.isRefreshing = false
             }
 
-            if (deliveries != null) {
-                Logger.d(TAG, "Updating deliveries list with items: $deliveries")
-//                if (deliveries.isEmpty()) {
-//                    showNoDeliveriesDialog()
-//                }
-//                else {
+            if (deliveries != null && deliveries.isNotEmpty() ) {
+                    Logger.d(TAG, "Updating deliveries list with items: $deliveries, and refresh flag: $refreshList")
                     adapter.updateList(deliveries)
-//                }
             }
             else {
-                    showNoDeliveriesDialog()
-//                showErrorDialog()
+                showNoDeliveriesDialog()
             }
         })
 
@@ -136,10 +132,8 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
         startActivity(intent)
     }
 
-    private fun logout() {
-        val sharedPrefUtil = getSharedPrefUtil()
-        sharedPrefUtil.getUserPref(true)
-        sharedPrefUtil.getIntervalPref(true)
+    override fun logout() {
+        super.logout()
         navigateToMain()
         finish()
     }

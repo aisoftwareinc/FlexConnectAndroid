@@ -42,7 +42,6 @@ class DeliveryAdapter(val context: Context, val callback: DeliveryAdapterItemCal
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val deliveryItem = items[position]
-        Logger.d(TAG, "Attempting to bind view holder with item: $deliveryItem")
         with(holder as DeliveriesViewHolder) {
             deliveryNameTextView.text = deliveryItem.customerName
             deliveryAddress1TextView.text = deliveryItem.address

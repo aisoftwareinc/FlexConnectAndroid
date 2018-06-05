@@ -13,6 +13,7 @@ interface ActivityBaseView {
     fun isNetworkAvailable(): Boolean
     fun getSharedPrefUtil(): SharedPrefUtil
     fun showNetworkAvailabilityError()
+    fun logout()
 }
 
 open class FlexConnectActivityBase: AppCompatActivity(), ActivityBaseView {
@@ -38,5 +39,12 @@ open class FlexConnectActivityBase: AppCompatActivity(), ActivityBaseView {
                         dialog.dismiss()
                     }).create().show()
         }
+    }
+
+    override fun logout() {
+        val sharedPrefUtil = getSharedPrefUtil()
+        sharedPrefUtil.getUserPref(true)
+        sharedPrefUtil.getIntervalPref(true)
+        (application as FlexConnectApplication).getAppDatabase()?.clearAllTables()
     }
 }
