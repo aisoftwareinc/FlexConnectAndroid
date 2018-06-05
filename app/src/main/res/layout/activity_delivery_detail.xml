@@ -46,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:textSize="24sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="Chase Field"/>
 
@@ -57,7 +57,7 @@
                 android:layout_marginStart="8dp"
                 android:autoLink="phone"
                 android:paddingTop="8dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 tools:text="(602) 639-1168"/>
 
             <TextView
@@ -66,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:paddingTop="8dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="401 E Jefferson St"/>
 
@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:paddingTop="8dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="Phoenix, AZ 85089"/>
 
@@ -87,7 +87,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="24dp"
                 android:text="@string/delivery_detail_distance_label"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 />
 
             <TextView
@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:paddingTop="8dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="19 miles"/>
 
@@ -107,7 +107,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/delivery_detail_eta_label"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 />
 
             <TextView
@@ -116,7 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:paddingTop="8dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="27 mins"/>
 
@@ -127,7 +127,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="24dp"
                 android:text="@string/delivery_detail_comments_label"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 />
 
@@ -137,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:paddingTop="8dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 tools:text="Here is a sample delivery to Chase Field downtown."
                 />
 
@@ -149,7 +149,7 @@
                 android:layout_marginTop="24dp"
                 android:background="?android:selectableItemBackground"
                 android:text="@string/delivery_detail_enroute_status_label"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 />
 
             <CheckBox
@@ -160,7 +160,7 @@
                 android:layout_marginTop="8dp"
                 android:background="?android:selectableItemBackground"
                 android:text="@string/delivery_detail_delivered_status_label"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 />
         </LinearLayout>
     </ScrollView>
