@@ -50,6 +50,7 @@ class MainActivity : FlexConnectActivityBase(), MainView {
 
     override fun initializeViewDefault() {
         progressBar1.visibility = View.INVISIBLE
+        authCodeEditText.text = null
         authCodeEditText.visibility = View.GONE
 
         titleImageView.visibility = View.VISIBLE

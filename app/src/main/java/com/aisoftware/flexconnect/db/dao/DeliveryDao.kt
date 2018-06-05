@@ -6,7 +6,6 @@ import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.OnConflictStrategy.REPLACE
 import android.arch.persistence.room.Query
-import android.arch.persistence.room.Transaction
 import com.aisoftware.flexconnect.model.Delivery
 
 
@@ -20,13 +19,11 @@ interface DeliveryDao {
     @Query("select * from deliveries where id = :deliveryId")
     fun loadDelivery(deliveryId: Int): LiveData<Delivery>
 
-    @Transaction
     @Insert(onConflict = REPLACE)
     fun insert(delivery: Delivery)
 
-    @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertAll(products: List<Delivery>)
+    fun insertAll(deliveryList: List<Delivery>)
 
     @Query("DELETE from deliveries")
     fun deleteAll()

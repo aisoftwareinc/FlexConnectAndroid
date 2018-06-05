@@ -4,6 +4,7 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.util.Log
 import com.aisoftware.flexconnect.FlexConnectApplication
 import com.aisoftware.flexconnect.db.DataRepository
 import com.aisoftware.flexconnect.model.Deliveries
@@ -21,17 +22,29 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
 
     private val TAG = DeliveryViewModel::class.java.simpleName
     private val DELIVERIES_REQUEST_CODE = "deliveriesRequestCode"
-    private val dataRepository: DataRepository = (app as FlexConnectApplication).getRepository()
-    private var deliveries: LiveData<List<Delivery>> = MutableLiveData<List<Delivery>>()
     private val networkService: NetworkService = (app as FlexConnectApplication).getNetworkService()
+    private val dataRepository: DataRepository = (app as FlexConnectApplication).getRepository()
 
-    fun getDeliveries(phoneNumber: String): LiveData<List<Delivery>> {
-        Logger.d(TAG, "Attempting to get deliveries")
-        loadDeliveries(phoneNumber)
+    private var deliveries: LiveData<List<Delivery>>
+
+    init {
+        deliveries = dataRepository.deliveries
+    }
+
+    fun getDeliveries(phoneNumber: String, refreshList: Boolean): LiveData<List<Delivery>> {
+        Logger.d(TAG, "Attempting to get deliveries with dataRepository: $dataRepository")
+
+        if( refreshList ) {
+            loadNetowrkDeliveries(phoneNumber)
+        }
+        else {
+            loadPersistedDeliveries()
+        }
+
         return deliveries
     }
 
-    private fun loadDeliveries(phoneNumber: String) {
+    private fun loadNetowrkDeliveries(phoneNumber: String) {
         if ((getApplication() as FlexConnectApplication).isNetworkAvailable()) {
             // make api request if network available
             val request = DeliveriesRequest(phoneNumber)
@@ -76,10 +89,15 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
             }, DELIVERIES_REQUEST_CODE)
         }
         else {
-            val delList = dataRepository.fetchAllDeliveries()
-            (deliveries as MutableLiveData).postValue(delList.value)
-            Logger.d(TAG, "Loaded deliveries from repo: ${delList.value}")
+            Log.d(TAG,"Network not available, loading from repo")
+            loadPersistedDeliveries()
         }
+    }
+
+    private fun loadPersistedDeliveries() {
+        val delList = dataRepository.fetchAllDeliveries()
+        Logger.d(TAG, "Loaded deliveries from repo: ${delList.value}")
+        (deliveries as MutableLiveData).postValue(delList.value)
     }
 }
 

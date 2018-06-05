@@ -9,7 +9,6 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.MenuItem
 import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.adapter.DeliveryAdapter
@@ -17,6 +16,8 @@ import com.aisoftware.flexconnect.adapter.DeliveryAdapterItemCallback
 import com.aisoftware.flexconnect.model.Delivery
 import com.aisoftware.flexconnect.ui.detail.DeliveryDetailActivity
 import com.aisoftware.flexconnect.ui.main.MainActivity
+import com.aisoftware.flexconnect.util.Constants
+import com.aisoftware.flexconnect.util.Logger
 import com.aisoftware.flexconnect.viewmodel.DeliveryViewModel
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -29,45 +30,51 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
     private val GOOGLE_SERVICES_REQUEST_CODE = 9
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: DeliveryAdapter
+    private var refreshList = true
 
     companion object {
         @JvmStatic
-        fun getIntent(context: Context): Intent = Intent(context, DashboardActivity::class.java)
+        fun getIntent(context: Context, refreshList: Boolean = true): Intent {
+            val intent = Intent(context, DashboardActivity::class.java)
+            intent.putExtra(Constants.REFRESH_LIST_KEY, refreshList)
+            return intent
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
-
-        val toolbar = findViewById<Toolbar>(R.id.dashboardToolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
+        initializeToolbar()
         initializeRecyclerView()
 
+        refreshList = intent.getBooleanExtra(Constants.REFRESH_LIST_KEY, true)
         val sharedPrefUtil = getSharedPrefUtil()
         val phoneNumber = sharedPrefUtil.getUserPref(false)
         val model = ViewModelProviders.of(this).get(DeliveryViewModel::class.java)
-        model.getDeliveries(phoneNumber).observe(this, Observer<List<Delivery>> { deliveries ->
 
-            if( dashboardSwipeLayout.isRefreshing ) {
+        model.getDeliveries(phoneNumber, refreshList).observe(this, Observer<List<Delivery>> { deliveries ->
+            if (dashboardSwipeLayout.isRefreshing) {
                 dashboardSwipeLayout.isRefreshing = false
             }
 
             if (deliveries != null) {
-                Log.d(TAG, "Updating deliveries list with items: $deliveries")
-                if (deliveries.isEmpty()) {
-                    showNoDeliveriesDialog()
-                } else {
+                Logger.d(TAG, "Updating deliveries list with items: $deliveries")
+//                if (deliveries.isEmpty()) {
+//                    showNoDeliveriesDialog()
+//                }
+//                else {
                     adapter.updateList(deliveries)
-                }
-            } else {
-                showErrorDialog()
+//                }
+            }
+            else {
+                    showNoDeliveriesDialog()
+//                showErrorDialog()
             }
         })
 
+        // Pull down to refresh
         dashboardSwipeLayout.setOnRefreshListener {
-            model.getDeliveries(phoneNumber)
+            model.getDeliveries(phoneNumber, true)
         }
     }
 
@@ -98,18 +105,33 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
         }
     }
 
+    private fun initializeToolbar() {
+        val toolbar = findViewById<Toolbar>(R.id.dashboardToolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    }
+
     private fun initializeRecyclerView() {
-        Log.d(TAG, "Initializing recyclerview")
+//        val drawable = ContextCompat.getDrawable(this, R.drawable.recyclerview_divider)
+
         recyclerView = findViewById(R.id.dashboardRecyclerView)
+//        val decoration = DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL)
+
         adapter = DeliveryAdapter(this, this)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+//        drawable?.let {
+//            decoration.setDrawable(drawable)
+//        }
+//        recyclerView.addItemDecoration(decoration)
+
         recyclerView.adapter = adapter
-        Log.d(TAG, "Completed initializing recyclerview")
+
     }
 
     override fun onItemClicked(delivery: Delivery) {
-        Log.d(TAG, "Item clicked: $delivery")
+        Logger.d(TAG, "Item clicked: $delivery")
         val intent = DeliveryDetailActivity.getInstance(this, delivery)
         startActivity(intent)
     }

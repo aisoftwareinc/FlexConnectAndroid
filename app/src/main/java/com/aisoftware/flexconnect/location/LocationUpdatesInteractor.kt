@@ -5,7 +5,7 @@ import com.aisoftware.flexconnect.network.NetworkServiceDefault
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
 import com.aisoftware.flexconnect.network.request.ReportLocationRequest
 import com.aisoftware.flexconnect.util.Logger
-import com.aisoftware.flexconnect.util.SharedPrefUtil
+import com.aisoftware.flexconnect.util.SharedPrefUtilImpl
 
 interface LocationUpdatesCallback {
     fun onSuccess(data: String?)
@@ -22,7 +22,7 @@ class LocationUpdatesInteractorImpl(val context: Context, val callback: Location
     val REPORT_LOCATION_REQUEST_CODE = "reportLocationRequestCode"
 
     override fun reportLocation(latitude: Double, longitude: Double) {
-        val sharedPreferences = SharedPrefUtil(context)
+        val sharedPreferences = SharedPrefUtilImpl(context)
         val phoneNumber = sharedPreferences.getUserPref(false)
         if( phoneNumber.isNullOrBlank() ) {
             callback.onFailure("Unable to determine phone number from preferences")

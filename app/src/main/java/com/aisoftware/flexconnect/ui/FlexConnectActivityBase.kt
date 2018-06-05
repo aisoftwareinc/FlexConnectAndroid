@@ -7,6 +7,7 @@ import com.aisoftware.flexconnect.FlexConnectApplication
 import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.SharedPrefUtil
+import com.aisoftware.flexconnect.util.SharedPrefUtilImpl
 
 interface ActivityBaseView {
     fun isNetworkAvailable(): Boolean
@@ -20,7 +21,7 @@ open class FlexConnectActivityBase: AppCompatActivity(), ActivityBaseView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedPrefsUtil = SharedPrefUtil(this)
+        sharedPrefsUtil = SharedPrefUtilImpl(this)
     }
 
     override fun getSharedPrefUtil(): SharedPrefUtil = sharedPrefsUtil

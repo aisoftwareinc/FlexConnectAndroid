@@ -65,7 +65,13 @@ abstract class AppDatabase : RoomDatabase() {
                                 database.setDatabaseCreated()
                             }
                         }
-                    }).build()
+                    })
+                    .allowMainThreadQueries()
+                    .build()
+        }
+
+        fun destroyInstance() {
+            INSTANCE = null
         }
 
         fun insertData(database: AppDatabase, deliveries: List<Delivery>) {

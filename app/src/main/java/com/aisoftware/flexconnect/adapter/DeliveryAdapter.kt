@@ -26,8 +26,6 @@ class DeliveryAdapter(val context: Context, val callback: DeliveryAdapterItemCal
     fun updateList(updateItems: List<Delivery>) {
         Logger.d(TAG, "Attempting to update adapter list with items: $updateItems")
         val diffResult = DiffUtil.calculateDiff(DeliveriesDiffCallback(items, updateItems))
-        Logger.d(TAG, "Dispatching updated list with items: $diffResult")
-
         items.clear()
         items.addAll(updateItems)
         diffResult.dispatchUpdatesTo(this)

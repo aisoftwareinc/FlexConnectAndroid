@@ -172,3 +172,4 @@ crashlytics-build.properties
 fabric.properties
 /.idea/misc.xml
 /keystore.properties
+/.idea/caches/build_file_checksums.ser

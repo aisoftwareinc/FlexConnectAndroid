@@ -17,6 +17,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.Toolbar
+import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -25,6 +26,7 @@ import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.location.ACTION_PROCESS_UPDATES
 import com.aisoftware.flexconnect.location.LocationUpdatesBroadcastReceiver
 import com.aisoftware.flexconnect.model.Delivery
+import com.aisoftware.flexconnect.ui.DashboardActivity
 import com.aisoftware.flexconnect.ui.FlexConnectActivityBase
 import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.ConverterUtil
@@ -114,6 +116,15 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         detailDistanceTextView.text = delivery.miles
         detailEtaTextView.text = delivery.distance
         detailCommentsTextView.text = delivery.comments
+    }
+
+    override fun onBackPressed() {
+        presenter.onBackPressed()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        onBackPressed()
+        return true
     }
 
     override fun toggleEnRouteCheckbox(clicked: Boolean) {
@@ -245,6 +256,11 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
                     } )
                     .create().show()
         }
+    }
+
+    override fun navigateToDashboard() {
+        val intent = DashboardActivity.getIntent(this, false)
+        startActivity(intent)
     }
 
     override fun checkLocationUpdate() {

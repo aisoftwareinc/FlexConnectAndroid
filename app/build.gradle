@@ -84,6 +84,7 @@ dependencies {
     def ktx_version = "0.3"
     def picasso_version = "2.71828"
     def mockito_version = "2.18.3"
+    def okhttp_version = "3.10.0"
 
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -142,13 +143,12 @@ dependencies {
     /* Picasso */
     implementation "com.squareup.picasso:picasso:$picasso_version"
 
-    /* Test */
+    /* Testing */
     testImplementation 'junit:junit:4.12'
     testImplementation "org.mockito:mockito-core:$mockito_version"
     testImplementation ('com.android.support.test:runner:1.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
 
     androidTestImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     androidTestImplementation ('com.android.support.test:runner:1.0.2', {
@@ -161,4 +161,6 @@ dependencies {
     androidTestImplementation ('com.android.support.test:rules:1.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+
+    androidTestImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
 }

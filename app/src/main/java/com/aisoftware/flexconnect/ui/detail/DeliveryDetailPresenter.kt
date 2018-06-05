@@ -28,6 +28,7 @@ interface DeliveryDetailView : ActivityBaseView {
     fun showImageUploadConfirmDialog(bitmap: Bitmap)
     fun toggleEnRouteCheckbox(clicked: Boolean)
     fun toggleDeliveredCheckbox(clicked: Boolean)
+    fun navigateToDashboard()
 }
 
 interface DeliveryDetailPresenter {
@@ -45,6 +46,7 @@ interface DeliveryDetailPresenter {
     fun imageCancelClicked()
     fun deliveryCaptureImageClicked(captureImage: Boolean)
     fun onResultCancelled(data: Intent?)
+    fun onBackPressed()
 }
 
 class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: DeliveryDetailInteractor) : DeliveryDetailPresenter {
@@ -59,7 +61,8 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
     override fun initialize(delivery: Delivery?) {
         if (delivery == null) {
             view.showInitializationErrorDialog()
-        } else {
+        }
+        else {
             this.delivery = delivery
             val displayPhoneNumber = formatPhoneForDisplay(this.delivery.customerPhone) ?: ""
             view.initializeView(delivery, displayPhoneNumber)
@@ -67,7 +70,6 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
     }
 
     override fun checkLocationUpdate() {
-        Logger.d(TAG, "Requesting location update permission check")
         view.checkLocationUpdate()
     }
 
@@ -90,7 +92,6 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
     }
 
     override fun locationPermissionPassed() {
-        Logger.d(TAG, "Location permission passed.")
         view.startLocationUpdate(getLocationRequest())
 
         if( view.isNetworkAvailable() ) {
@@ -187,6 +188,10 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
         if( data != null ) {
             view.toggleDeliveredCheckbox(false)
         }
+    }
+
+    override fun onBackPressed() {
+        view.navigateToDashboard()
     }
 
     private fun formatPhoneForDisplay(rawPhone: String): String? {

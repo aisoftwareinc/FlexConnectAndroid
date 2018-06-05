@@ -20,6 +20,7 @@ class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val 
 
     private val TAG = MainPresenterImpl::class.java.simpleName
     private lateinit var authCode: String
+    private lateinit var phoneNumber: String
 
     init {
         interactor.setCallback(this)
@@ -37,7 +38,7 @@ class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val 
 
     override fun submitClicked(authCodeEditText: String, phoneEditText: String) {
         // User has authenticated, forward to dashboard
-        if( sharedPrefUtil.userPrefExists()) {
+        if( !authCodeEditText.isNullOrBlank()) {
             if ( validAuthCode(authCodeEditText) ) {
                 view.navigateToDashboard()
             }
@@ -51,7 +52,7 @@ class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val 
             // Authenticate user flow
             if( view.isNetworkAvailable() ) {
                 if (isPhoneValid(phoneEditText)) {
-                    val phoneNumber = formatPhoneNumber(phoneEditText)
+                    phoneNumber = formatPhoneNumber(phoneEditText)
                     interactor.fetchAuthCode(phoneNumber)
                     interactor.fetchTimerInterval()
                 } else {
@@ -66,7 +67,6 @@ class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val 
 
     override fun onAuthFetchSuccess(authCode: String, phoneNumber: String) {
         this.authCode = authCode
-        sharedPrefUtil.setUserProp(phoneNumber)
         view.showAuthCodeInput(true)
     }
 
@@ -75,12 +75,15 @@ class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val 
     }
 
     private fun validAuthCode(authCodeEditText: String): Boolean {
-        if ( authCode.isNullOrBlank() ||
+        return if ( authCode.isNullOrBlank() ||
                 authCodeEditText.isNullOrBlank() ||
                 (authCode != authCodeEditText)) {
-            return false
+            false
         }
-        return true
+        else {
+            sharedPrefUtil.setUserProp(phoneNumber)
+            true
+        }
     }
 
     override fun onTimerFetchSuccess(interval: String) {
