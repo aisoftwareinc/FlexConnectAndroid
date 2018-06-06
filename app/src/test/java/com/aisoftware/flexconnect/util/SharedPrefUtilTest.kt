@@ -10,28 +10,29 @@ import junit.framework.Assert.assertNotNull
 import junit.framework.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
+import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.MockitoAnnotations
 
 @SmallTest
 class SharedPrefUtilTest {
 
     private val SHARED_PREF_FILE = "com.aisoftware.flexconnect.PREFERENCE_FILE"
+    @Mock
     private lateinit var sharedPrefUtil: SharedPrefUtil
+
+    @Mock
     private lateinit var sharedPreferences: SharedPreferences
+
+    @Mock
     private lateinit var context: Context
 
     @Before
     fun setUp() {
-        context = Mockito.mock(Context::class.java)
-        assertNotNull(context)
-
-        sharedPreferences = Mockito.mock(SharedPreferences::class.java)
-        assertNotNull(sharedPreferences)
+        MockitoAnnotations.initMocks(this)
 
         sharedPrefUtil = SharedPrefUtilImpl(context)
         assertNotNull(sharedPrefUtil)
-
 
         `when`(context.getSharedPreferences(SHARED_PREF_FILE, Context.MODE_PRIVATE)).thenReturn(sharedPreferences)
         `when`(context.getString(R.string.phone_shared_pref_key)).thenReturn("")

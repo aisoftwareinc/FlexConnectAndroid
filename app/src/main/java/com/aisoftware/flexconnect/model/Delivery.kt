@@ -5,29 +5,6 @@ import android.arch.persistence.room.PrimaryKey
 import com.squareup.moshi.Json
 import java.io.Serializable
 
-/*
-deliveries": [
-        {
-            "GUID": "bf0ff286-be02-46c5-bb69-afc8462a7ec2",
-            "Status": "En Route",
-            "Date": "5/10/2018",
-            "Time": "ASAP",
-            "CustomerName": "Chase Field",
-            "CustomerEmail": "ed@aisoftware.us",
-            "CustomerPhone": "6026391168",
-            "Address": "401 E Jefferson St",
-            "AddressCont": "",
-            "City": "Phoenix",
-            "State": "AZ",
-            "Zip": "85004",
-            "Latitude": "33.4453626",
-            "Longitude": "-112.0674961",
-            "Distance": "22 mins",
-            "Miles": "15 miles",
-            "Comments": "Here is a sample delivery to Chase Field downtown."
-        },
- */
-
 data class Deliveries(val deliveries: List<Delivery>)
 
 @Entity(tableName = "deliveries")

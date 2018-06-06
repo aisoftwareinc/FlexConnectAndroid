@@ -49,7 +49,7 @@ interface DeliveryDetailPresenter {
     fun onBackPressed()
 }
 
-class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: DeliveryDetailInteractor) : DeliveryDetailPresenter {
+class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val interactor: DeliveryDetailInteractor) : DeliveryDetailPresenter {
 
     private val TAG = DeliveryDetailPresenterImpl::class.java.simpleName
     private val DEFAULT_UPDATE_INTERVAL: Long = 60000 // every 60 seconds
@@ -138,38 +138,42 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
     }
 
     override fun imageSendClicked() {
-        var imageString = ""
-        if (bitmap != null) {
-            imageString = ConverterUtil.convertImage(bitmap!!)
-        }
+        if( view.isNetworkAvailable() ) {
+            var imageString = ""
+            if (bitmap != null) {
+                imageString = ConverterUtil.convertImage(bitmap!!)
+            }
 
-        val request = DeliveredRequest(view.getSharedPrefUtil().getUserPref(false),
-                delivery.guid,
-                delivery.comments,
-                imageString)
+            val request = DeliveredRequest(view.getSharedPrefUtil().getUserPref(false),
+                    delivery.guid,
+                    delivery.comments,
+                    imageString)
 
-        if (BuildConfig.SEND_DELIVERED_UPDATE) {
-            interactor.sendDeliveredUpdate(request, object : DeliveryDetailRequestCallback {
-                override fun onDeliveredSuccess(delivered: Delivered?) {
-                    Logger.d(TAG, "Delivered request success: $delivered")
-                    if (delivered != null) {
-                        if (delivered.result != "Success") {
-                            onDeliveredFailure(delivered.result)
-                        } else {
-                            view.showDeliveredRequestSuccess()
+            if (BuildConfig.SEND_DELIVERED_UPDATE) {
+                interactor.sendDeliveredUpdate(request, object : DeliveryDetailRequestCallback {
+                    override fun onDeliveredSuccess(delivered: Delivered?) {
+                        Logger.d(TAG, "Delivered request success: $delivered")
+                        if (delivered != null) {
+                            if (delivered.result != "Success") {
+                                onDeliveredFailure(delivered.result)
+                            } else {
+                                view.showDeliveredRequestSuccess()
+                            }
                         }
                     }
-                }
 
-                override fun onDeliveredFailure(data: String?) {
-                    Logger.d(TAG, "Delivered request failure: $data")
-                    view.toggleDeliveredCheckbox (false)
-                    view.showDeliveredRequestFailure()
-                }
-            })
+                    override fun onDeliveredFailure(data: String?) {
+                        Logger.d(TAG, "Delivered request failure: $data")
+                        view.toggleDeliveredCheckbox(false)
+                        view.showDeliveredRequestFailure()
+                    }
+                })
+            } else {
+                view.showDeliveredRequestSuccess()
+            }
         }
         else {
-            view.showDeliveredRequestSuccess()
+            view.showNetworkAvailabilityError()
         }
     }
 
@@ -198,11 +202,11 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
         var formatted: String? = null
 
         try {
-            if (!rawPhone.isNullOrBlank() && rawPhone.length == 10) {
+            if (!rawPhone.isBlank() && rawPhone.length == 10) {
                 if (rawPhone.toLongOrNull() != null) {
-                    var areaCode = rawPhone.substring(0..2)
-                    var pref = rawPhone.subSequence(3..5)
-                    var post = rawPhone.subSequence(6..9)
+                    val areaCode = rawPhone.substring(0..2)
+                    val pref = rawPhone.subSequence(3..5)
+                    val post = rawPhone.subSequence(6..9)
                     formatted = "( $areaCode ) $pref-$post"
                 }
             }
@@ -214,7 +218,7 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, val interactor: 
 
     private fun getLocationRequest(): LocationRequest {
         val intervalProp = view.getSharedPrefUtil().getIntervalPref(false)
-        var interval = if (intervalProp.isNullOrBlank()) {
+        val interval = if (intervalProp.isBlank()) {
             DEFAULT_UPDATE_INTERVAL
         } else {
             intervalProp.toLong() * 60000

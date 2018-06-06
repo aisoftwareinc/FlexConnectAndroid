@@ -48,20 +48,17 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
         initializeRecyclerView()
 
         refreshList = intent.getBooleanExtra(Constants.REFRESH_LIST_KEY, true)
-        val sharedPrefUtil = getSharedPrefUtil()
-        val phoneNumber = sharedPrefUtil.getUserPref(false)
+        val phoneNumber = getSharedPrefUtil().getUserPref(false)
+
         val model = ViewModelProviders.of(this).get(DeliveryViewModel::class.java)
-
-        model.getDeliveries(phoneNumber, refreshList)
-                .observe(this, Observer<List<Delivery>> { deliveries ->
-
+        model.getDeliveries(phoneNumber, refreshList).observe(this, Observer<List<Delivery>> { deliveries ->
             if (dashboardSwipeLayout.isRefreshing) {
                 dashboardSwipeLayout.isRefreshing = false
             }
 
-            if (deliveries != null && deliveries.isNotEmpty() ) {
-                    Logger.d(TAG, "Updating deliveries list with items: $deliveries, and refresh flag: $refreshList")
-                    adapter.updateList(deliveries)
+            if (deliveries != null && deliveries.isNotEmpty()) {
+                Logger.d(TAG, "Updating deliveries list with items: $deliveries, and refresh flag: $refreshList")
+                adapter.updateList(deliveries)
             }
             else {
                 showNoDeliveriesDialog()

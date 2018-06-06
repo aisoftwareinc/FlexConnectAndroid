@@ -25,11 +25,7 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
     private val networkService: NetworkService = (app as FlexConnectApplication).getNetworkService()
     private val dataRepository: DataRepository = (app as FlexConnectApplication).getRepository()
 
-    private var deliveries: LiveData<List<Delivery>>
-
-    init {
-        deliveries = dataRepository.deliveries
-    }
+    private var deliveries: LiveData<List<Delivery>> = dataRepository.deliveries
 
     fun getDeliveries(phoneNumber: String, refreshList: Boolean): LiveData<List<Delivery>> {
         Logger.d(TAG, "Attempting to get deliveries with dataRepository: $dataRepository")
@@ -58,12 +54,12 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
                             val adapter = moshi.adapter(Deliveries::class.java)
                             val deliveriesResponse = adapter.fromJson(data)
                             if (deliveriesResponse != null ) {
-                                (deliveries as MutableLiveData).postValue(deliveriesResponse.deliveries)
+//                                (deliveries as MutableLiveData).postValue(deliveriesResponse.deliveries)
 
                                 launch {
                                     try {
                                         Logger.d(TAG, "Retrieved new dataset, updating database")
-                                        dataRepository.loadDeliveriesToSync(deliveriesResponse.deliveries)
+                                        dataRepository.loadDeliveries(deliveriesResponse.deliveries)
                                     }
                                     catch(e: Exception) {
                                         Logger.e(TAG, "Unable to update data repository", e)
@@ -77,6 +73,7 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
                         }
                     }
                     else {
+                        Logger.d(TAG, "Received a failure data response: $data")
                         onFailure(data, requestCode)
                     }
                 }

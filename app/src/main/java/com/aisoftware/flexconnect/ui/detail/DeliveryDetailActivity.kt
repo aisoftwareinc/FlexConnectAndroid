@@ -72,7 +72,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         setSupportActionBar(toolbar)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        presenter = DeliveryDetailPresenterImpl(this, DeliveryDetailInteractorImpl())
+        presenter = DeliveryDetailPresenterImpl(this, DeliveryDetailInteractorImpl(getNetworkService()))
         fusedLocationProviderClient = FusedLocationProviderClient(this)
 
         detailEnRouteCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -107,7 +107,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     override fun initializeView(delivery: Delivery, formattedPhone: String) {
         Logger.d(TAG, "Initializing view with delivery: $delivery")
 
-        formattedPhone?.let {
+        formattedPhone.let {
             detailDeliveryPhoneEditText.text = formattedPhone
         }
         detailDeliverylNameTextView.text = delivery.customerName
@@ -259,7 +259,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     }
 
     override fun navigateToDashboard() {
-        val intent = DashboardActivity.getIntent(this, false)
+        val intent = DashboardActivity.getIntent(this, deliveredState)
         startActivity(intent)
     }
 
@@ -294,8 +294,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     private fun getLocationPendingIntent(): PendingIntent {
         val intent = Intent(this, LocationUpdatesBroadcastReceiver::class.java)
         intent.action = ACTION_PROCESS_UPDATES
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-        return pendingIntent
+        return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -370,7 +369,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
             val dialog = Dialog(this, R.style.alertDialogStyle)
             dialog.setContentView(R.layout.dialog_image_upload_confirm)
             dialog.setCancelable(true)
-            dialog.getWindow().setLayout(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT)
+            dialog.window.setLayout(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT)
 
             val imageView = dialog.findViewById<ImageView>(R.id.detailsConfirmImageView)
             imageView.scaleType = ImageView.ScaleType.CENTER_CROP

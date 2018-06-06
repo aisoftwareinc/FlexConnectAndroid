@@ -14,7 +14,7 @@ class ConverterUtil {
         @JvmStatic
         fun formatExtendedAddress(delivery: Delivery): String {
             with(delivery) {
-                var buf = StringBuilder()
+                val buf = StringBuilder()
                 buf.append(city)
                         .append(", ")
                         .append(delivery.state)

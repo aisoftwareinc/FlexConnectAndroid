@@ -6,7 +6,6 @@ import com.aisoftware.flexconnect.network.request.NetworkRequestRawResponseCallb
 
 
 interface NetworkHandler {
-
     @Throws(NetworkRequestException::class)
     fun startRequest(networkRequest: NetworkRequest, callback: NetworkRequestCallback, requestCode: String?)
 

@@ -52,17 +52,11 @@ class FlexConnectApplication: Application() {
         }
     }
 
-    fun getAppDatabase(): AppDatabase? {
-        return appDatabase
-    }
+    fun getAppDatabase(): AppDatabase? = appDatabase
 
-    fun getRepository(): DataRepository {
-        return dataRepository
-    }
+    fun getRepository(): DataRepository = dataRepository
 
-    fun getNetworkService(): NetworkService {
-        return networkService
-    }
+    fun getNetworkService(): NetworkService = networkService
 
     fun isNetworkAvailable(): Boolean {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

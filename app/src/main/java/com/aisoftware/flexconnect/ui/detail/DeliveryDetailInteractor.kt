@@ -1,7 +1,7 @@
 package com.aisoftware.flexconnect.ui.detail
 
 import com.aisoftware.flexconnect.model.Delivered
-import com.aisoftware.flexconnect.network.NetworkServiceDefault
+import com.aisoftware.flexconnect.network.NetworkService
 import com.aisoftware.flexconnect.network.request.DeliveredRequest
 import com.aisoftware.flexconnect.network.request.EnRouteRequest
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
@@ -24,7 +24,7 @@ interface DeliveryDetailInteractor {
     fun sendEnRouteUpdate(request: EnRouteRequest, callback: EnRouteRequestCallback)
 }
 
-class DeliveryDetailInteractorImpl(): DeliveryDetailInteractor {
+class DeliveryDetailInteractorImpl(private val networkService: NetworkService): DeliveryDetailInteractor {
 
     private val TAG = DeliveryDetailInteractorImpl::class.java.simpleName
     private val DELIVERED_REQUEST_CODE = "deliveredRequestCode"
@@ -33,7 +33,6 @@ class DeliveryDetailInteractorImpl(): DeliveryDetailInteractor {
     override fun sendDeliveredUpdate(deliveredRequest: DeliveredRequest, callback: DeliveryDetailRequestCallback) {
         Logger.d(TAG, "Attempting to send delivered request: $deliveredRequest")
         try {
-            val networkService = NetworkServiceDefault.Builder().build()
             networkService.startRequest(deliveredRequest, object: NetworkRequestCallback {
                 override fun onSuccess(data: String?, headers: Map<String, List<String>>, requestCode: String?) {
 
@@ -48,6 +47,7 @@ class DeliveryDetailInteractorImpl(): DeliveryDetailInteractor {
                         }
                         catch(e: Exception) {
                             Logger.e(TAG, "Unable to parse delivered response", e)
+                            onFailure(data, requestCode)
                         }
                     }
                     else {
@@ -70,7 +70,6 @@ class DeliveryDetailInteractorImpl(): DeliveryDetailInteractor {
     override fun sendEnRouteUpdate(request: EnRouteRequest, callback: EnRouteRequestCallback) {
         Logger.d(TAG, "Attempting to send enroute request: $request")
         try {
-            val networkService = NetworkServiceDefault.Builder().build()
             networkService.startRequest(request, object: NetworkRequestCallback {
                 override fun onSuccess(data: String?, headers: Map<String, List<String>>, requestCode: String?) {
                     callback.onEnRouteSuccess(data)

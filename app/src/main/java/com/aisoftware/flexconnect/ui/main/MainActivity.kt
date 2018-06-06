@@ -24,7 +24,7 @@ class MainActivity : FlexConnectActivityBase(), MainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mainPresenter = MainPresenterImpl(this, MainInteractorImpl(), getSharedPrefUtil())
+        mainPresenter = MainPresenterImpl(this, MainInteractorImpl(getNetworkService()), getSharedPrefUtil())
         mainPresenter.initialize()
 
         submitButton.setOnClickListener {

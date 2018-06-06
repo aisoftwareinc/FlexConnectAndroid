@@ -2,10 +2,10 @@ package com.aisoftware.flexconnect.ui.main
 
 import com.aisoftware.flexconnect.model.AuthenticatePhone
 import com.aisoftware.flexconnect.model.TimerInterval
-import com.aisoftware.flexconnect.network.NetworkServiceDefault
+import com.aisoftware.flexconnect.network.NetworkService
 import com.aisoftware.flexconnect.network.request.AuthenticatePhoneRequest
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
-import com.aisoftware.flexconnect.network.request.TImerIntervalRequest
+import com.aisoftware.flexconnect.network.request.TimerIntervalRequest
 import com.aisoftware.flexconnect.util.Logger
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -24,7 +24,7 @@ interface MainInteractor {
     fun fetchTimerInterval()
 }
 
-class MainInteractorImpl: MainInteractor {
+class MainInteractorImpl(private val networkService: NetworkService): MainInteractor {
 
     private val TAG = MainInteractorImpl::class.java.simpleName
     private lateinit var callback: OnFetchAuthCallback
@@ -38,7 +38,6 @@ class MainInteractorImpl: MainInteractor {
     override fun fetchAuthCode(phoneNumber: String) {
         Logger.d(TAG, "Attempting to fetch auth code with phone number: $phoneNumber")
         val request = AuthenticatePhoneRequest(phoneNumber)
-        val networkService = NetworkServiceDefault.Builder().build()
         networkService.startRequest(request, object: NetworkRequestCallback {
             override fun onSuccess(data: String?, headers: Map<String, List<String>>, requestCode: String?) {
                 if( data != null ) {
@@ -76,8 +75,7 @@ class MainInteractorImpl: MainInteractor {
 
     override fun fetchTimerInterval() {
         Logger.d(TAG, "Attempting to fetch timer interval")
-        val request = TImerIntervalRequest()
-        val networkService = NetworkServiceDefault.Builder().build()
+        val request = TimerIntervalRequest()
         networkService.startRequest(request, object: NetworkRequestCallback {
             override fun onSuccess(data: String?, headers: Map<String, List<String>>, requestCode: String?) {
                 if( data != null ) {

@@ -12,7 +12,6 @@ import com.aisoftware.flexconnect.model.Delivery
 
 @Dao
 interface DeliveryDao {
-
     @Query("SELECT * FROM deliveries")
     fun loadAllDeliveries(): LiveData<List<Delivery>>
 

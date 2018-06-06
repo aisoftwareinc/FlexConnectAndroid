@@ -5,29 +5,27 @@ import com.aisoftware.flexconnect.util.SharedPrefUtil
 import junit.framework.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
+import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
+import org.mockito.MockitoAnnotations
 
 @SmallTest
 class MainPresenterTest {
 
     private lateinit var presenter: MainPresenterImpl
+    @Mock
     private lateinit var view: MainView
+
+    @Mock
     private lateinit var interactor: MainInteractor
+
+    @Mock
     private lateinit var sharedPrefUtil: SharedPrefUtil
 
     @Before
     fun setUp() {
-        sharedPrefUtil = Mockito.mock(SharedPrefUtil::class.java)
-        assertNotNull(sharedPrefUtil)
-
-        view = Mockito.mock(MainView::class.java)
-        assertNotNull(view)
-
-        interactor = Mockito.mock(MainInteractor::class.java)
-        assertNotNull(interactor)
-
+        MockitoAnnotations.initMocks(this)
         presenter = MainPresenterImpl(view, interactor, sharedPrefUtil)
         assertNotNull(presenter)
     }

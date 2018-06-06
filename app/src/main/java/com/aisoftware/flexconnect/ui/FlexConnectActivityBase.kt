@@ -5,12 +5,15 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import com.aisoftware.flexconnect.FlexConnectApplication
 import com.aisoftware.flexconnect.R
+import com.aisoftware.flexconnect.network.NetworkService
+import com.aisoftware.flexconnect.network.NetworkServiceDefault
 import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.SharedPrefUtil
 import com.aisoftware.flexconnect.util.SharedPrefUtilImpl
 
 interface ActivityBaseView {
     fun isNetworkAvailable(): Boolean
+    fun getNetworkService(): NetworkService
     fun getSharedPrefUtil(): SharedPrefUtil
     fun showNetworkAvailabilityError()
     fun logout()
@@ -24,6 +27,8 @@ open class FlexConnectActivityBase: AppCompatActivity(), ActivityBaseView {
         super.onCreate(savedInstanceState)
         sharedPrefsUtil = SharedPrefUtilImpl(this)
     }
+
+    override fun getNetworkService(): NetworkService = NetworkServiceDefault.Builder().build()
 
     override fun getSharedPrefUtil(): SharedPrefUtil = sharedPrefsUtil
 

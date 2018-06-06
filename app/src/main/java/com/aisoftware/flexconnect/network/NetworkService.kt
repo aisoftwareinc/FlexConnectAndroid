@@ -118,7 +118,7 @@ open class NetworkServiceDefault private constructor(builder: Builder) : Network
 //                Log.d(networkRequest.requestTag, "Cache Exception:" + exception.message)
 //            } finally {
 //                if (cacheResult != null) {
-//                    callback!!.onSuccess(cacheResult as String?, HashMap(), requestCode)//TODO Is it safe to always cast this to a string ? Look into cache improvements
+//                    callback!!.onSuccess(cacheResult as String?, HashMap(), requestCode)
 //                }else
 //                    makeRequest()
 //            }

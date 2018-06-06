@@ -16,7 +16,7 @@ interface MainPresenter {
     fun submitClicked(authCodeEditText: String, phoneEditText: String)
 }
 
-class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val sharedPrefUtil: SharedPrefUtil): MainPresenter, OnFetchAuthCallback {
+class MainPresenterImpl(val view: MainView, private val interactor: MainInteractor, private val sharedPrefUtil: SharedPrefUtil): MainPresenter, OnFetchAuthCallback {
 
     private val TAG = MainPresenterImpl::class.java.simpleName
     private lateinit var authCode: String
@@ -38,7 +38,7 @@ class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val 
 
     override fun submitClicked(authCodeEditText: String, phoneEditText: String) {
         // User has authenticated, forward to dashboard
-        if( !authCodeEditText.isNullOrBlank()) {
+        if( !authCodeEditText.isBlank()) {
             if ( validAuthCode(authCodeEditText) ) {
                 view.navigateToDashboard()
             }
@@ -75,8 +75,8 @@ class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val 
     }
 
     private fun validAuthCode(authCodeEditText: String): Boolean {
-        return if ( authCode.isNullOrBlank() ||
-                authCodeEditText.isNullOrBlank() ||
+        return if ( authCode.isBlank() ||
+                authCodeEditText.isBlank() ||
                 (authCode != authCodeEditText)) {
             false
         }

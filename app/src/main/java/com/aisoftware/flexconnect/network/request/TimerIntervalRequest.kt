@@ -7,7 +7,7 @@ import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 
-class TImerIntervalRequest: NetworkRequestString() {
+class TimerIntervalRequest: NetworkRequestString() {
 
     override fun getRequestTag(): String = this.javaClass.simpleName
 

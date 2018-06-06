@@ -8,29 +8,29 @@ import junit.framework.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
+import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
+import org.mockito.MockitoAnnotations
 
 @SmallTest
 class DeliveryDetailPresenterTest {
 
     private lateinit var presenter: DeliveryDetailPresenterImpl
+
+    @Mock
     private lateinit var view: DeliveryDetailView
+
+    @Mock
     private lateinit var interactor: DeliveryDetailInteractor
+
+    @Mock
     private lateinit var sharedPrefUtil: SharedPrefUtil
 
     @Before
     fun setUp() {
-        sharedPrefUtil = Mockito.mock(SharedPrefUtil::class.java)
-        assertNotNull(sharedPrefUtil)
-
-        view = Mockito.mock(DeliveryDetailView::class.java)
-        assertNotNull(view)
-
-        interactor = Mockito.mock(DeliveryDetailInteractor::class.java)
-        assertNotNull(interactor)
-
+        MockitoAnnotations.initMocks(this)
         presenter = DeliveryDetailPresenterImpl(view, interactor)
         assertNotNull(presenter)
     }
