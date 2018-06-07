@@ -1,11 +1,11 @@
 package com.aisoftware.flexconnect.location
 
 import android.content.Context
-import android.util.Log
 import com.aisoftware.flexconnect.network.NetworkServiceDefault
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
 import com.aisoftware.flexconnect.network.request.ReportLocationRequest
-import com.aisoftware.flexconnect.util.SharedPrefUtil
+import com.aisoftware.flexconnect.util.Logger
+import com.aisoftware.flexconnect.util.SharedPrefUtilImpl
 
 interface LocationUpdatesCallback {
     fun onSuccess(data: String?)
@@ -22,7 +22,7 @@ class LocationUpdatesInteractorImpl(val context: Context, val callback: Location
     val REPORT_LOCATION_REQUEST_CODE = "reportLocationRequestCode"
 
     override fun reportLocation(latitude: Double, longitude: Double) {
-        val sharedPreferences = SharedPrefUtil(context)
+        val sharedPreferences = SharedPrefUtilImpl(context)
         val phoneNumber = sharedPreferences.getUserPref(false)
         if( phoneNumber.isNullOrBlank() ) {
             callback.onFailure("Unable to determine phone number from preferences")
@@ -44,7 +44,7 @@ class LocationUpdatesInteractorImpl(val context: Context, val callback: Location
             }, REPORT_LOCATION_REQUEST_CODE)
         }
         catch(e: Exception) {
-            Log.e(TAG, "Unable to complete report location request", e)
+            Logger.e(TAG, "Unable to complete report location request", e)
             callback.onFailure("Unable to complete report location request: ${e.localizedMessage}")
         }
     }

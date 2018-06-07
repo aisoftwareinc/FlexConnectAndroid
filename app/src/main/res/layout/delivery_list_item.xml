@@ -13,13 +13,14 @@
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:clickable="true"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp">
+        android:paddingEnd="16dp"
+        android:focusable="true">
 
         <TextView
             android:id="@+id/deliveryNameTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             tools:text="Chase Field"/>
 
@@ -28,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
-            android:textSize="18sp"
+            android:textSize="16sp"
             tools:text="401 E Jefferson St"/>
 
         <TextView
@@ -37,7 +38,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
             android:singleLine="false"
-            android:textSize="18sp"
+            android:textSize="16sp"
             tools:text="Phoenix, AZ 85004"/>
 
         <GridLayout

@@ -1,10 +1,10 @@
 package com.aisoftware.flexconnect.network
 
-import android.util.Log
 import com.aisoftware.flexconnect.network.request.NetworkRequest
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
 import com.aisoftware.flexconnect.network.request.NetworkRequestFactory
 import com.aisoftware.flexconnect.network.request.NetworkRequestRawResponseCallback
+import com.aisoftware.flexconnect.util.Logger
 import com.google.common.io.ByteStreams
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -33,8 +33,8 @@ class RequestHandler( private val okHttpClient: OkHttpClient): NetworkHandler {
         val call = networkRequest.getRequestEndpoint(getRetrofit(okHttpClient, networkRequest.getBaseUrl()).create(ApiEndpoints::class.java))
 
         if(call == null){
-            Log.d(TAG, "Request " + networkRequest.getRequestTag())
-            Log.e(TAG, " Failed: Retrofit call creation error")
+            Logger.d(TAG, "Request " + networkRequest.getRequestTag())
+            Logger.d(TAG, " Failed: Retrofit call creation error")
 
             callback?.onFailure("Unable to build request", requestCode)
             callbackRaw?.onFailure("Unable to build request", requestCode)
@@ -43,20 +43,20 @@ class RequestHandler( private val okHttpClient: OkHttpClient): NetworkHandler {
             return
         }
 
-        Log.d(TAG, "Executing Request: " + networkRequest.getRequestTag())
+        Logger.d(TAG, "Executing Request: " + networkRequest.getRequestTag())
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>?) {
                 printCall(call)
                 try {
                     if (response != null) {
-                        Log.d(TAG, " Response Http Code : " + response.code())
-                        Log.d(TAG, " Response Http Status Message: " + response.message())
+                        Logger.d(TAG, " Response Http Code : " + response.code())
+                        Logger.d(TAG, " Response Http Status Message: " + response.message())
 
                         if (response.isSuccessful) {
                             val headers = response.headers().toMultimap()
                             callbackRaw?.onSuccess(response.body(), headers, requestCode)
                             val body = response.body()?.string()//body.string() will clear response buffer
-                            Log.d(TAG, " Response Body: $body")
+                            Logger.d(TAG, " Response Body: $body")
                             callback?.onSuccess(body, headers, requestCode)
                         }
                         else {
@@ -69,24 +69,23 @@ class RequestHandler( private val okHttpClient: OkHttpClient): NetworkHandler {
                                     }
                                 }
                                 catch (e: Exception) {
-                                    Log.e(TAG, "Unable to create data string", e)
+                                    Logger.e(TAG, "Unable to create data string", e)
                                 }
-
                             }
 
-                            Log.d(TAG, " Response Body: $errorBody")
+                            Logger.d(TAG, " Response Body: $errorBody")
                             callback?.onFailure(errorBody, requestCode)
                             callbackRaw?.onFailure(errorBody, requestCode)
                         }
                     }
                     else {
-                        Log.d(TAG, " Response object was null")
+                        Logger.d(TAG, " Response object was null")
                         callback?.onFailure(DEFAULT_ERROR_BODY, requestCode)
                         callbackRaw?.onFailure(DEFAULT_ERROR_BODY, requestCode)
                     }
                 }
                 catch (e: Exception) {
-                    Log.d(TAG, " Response exception: " + e.message)
+                    Logger.d(TAG, " Response exception: " + e.message)
                     callback?.onFailure("Unable to process response: " + e.message, requestCode)
                     callbackRaw?.onFailure("Unable to process response: " + e.message, requestCode)
                 }
@@ -98,7 +97,7 @@ class RequestHandler( private val okHttpClient: OkHttpClient): NetworkHandler {
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable?) {
                 printCall(call)
-                Log.d(TAG, " Execution failure: " + t?.message)
+                Logger.d(TAG, " Execution failure: " + t?.message)
                 callback?.onFailure(t?.toString(), requestCode)
                 callbackRaw?.onFailure(t?.toString(), requestCode)
                 callback?.onComplete(requestCode)
@@ -122,12 +121,12 @@ class RequestHandler( private val okHttpClient: OkHttpClient): NetworkHandler {
 
                 Buffer().let {
                     call.request().body()?.writeTo(it)
-                    formattedCall += "\n     Request Body: ${it.readUtf8()}"
+                    formattedCall += "\n   Request Body: ${it.readUtf8()}"
                 }
 
                 formattedCall += "\n< --------------------------------------------------------------------------------- >\n\n."
 
-                Log.d(TAG, "Call details: \n\n $formattedCall")
+                Logger.d(TAG, "Call details: \n\n $formattedCall")
             }
         })
     }

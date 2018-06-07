@@ -3,11 +3,15 @@ package com.aisoftware.flexconnect
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
-import android.util.Log
 import com.aisoftware.flexconnect.db.AppDatabase
 import com.aisoftware.flexconnect.db.DataRepository
+import com.aisoftware.flexconnect.db.DataRepositoryImpl
 import com.aisoftware.flexconnect.network.NetworkService
 import com.aisoftware.flexconnect.network.NetworkServiceDefault
+import com.aisoftware.flexconnect.util.Logger
+import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.answers.Answers
+import io.fabric.sdk.android.Fabric
 import java.util.concurrent.Executors
 
 
@@ -24,45 +28,40 @@ class FlexConnectApplication: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        //        if (! Fabric.isInitialized() ) {
-//            Fabric.with(this, Crashlytics())
-//        }
+        if (! Fabric.isInitialized() ) {
+            Fabric.with(this, Crashlytics())
+            Fabric.with(this, Answers())
+        }
 
         try {
-            Log.d(TAG, "Attempting to create app executors...")
+            Logger.d(TAG, "Attempting to create app executors...")
             appExecutors = AppExecutors(Executors.newSingleThreadExecutor(),
                     Executors.newFixedThreadPool(THREAD_COUNT),
                     MainThreadExecutor())
-            Log.d(TAG, "Successfully created app executors:  $appExecutors")
+            Logger.d(TAG, "Successfully created app executors:  $appExecutors")
 
-            Log.d(TAG, "Attempting to create app database instance...")
+            Logger.d(TAG, "Attempting to create app database instance...")
             appDatabase = AppDatabase.getInstance(this, appExecutors)
-            Log.d(TAG, "Successfully created app database instance: $appDatabase")
+            Logger.d(TAG, "Successfully created app database instance: $appDatabase")
 
-            Log.d(TAG, "Attempting to create data repository...")
-            dataRepository = DataRepository.getInstance(appDatabase)
-            Log.d(TAG, "Successfully created data repository: $dataRepository")
+            Logger.d(TAG, "Attempting to create data repository...")
+            dataRepository = DataRepositoryImpl.getInstance(appDatabase)
+            Logger.d(TAG, "Successfully created data repository: $dataRepository")
 
-            Log.d(TAG, "Attempting to create network service...")
+            Logger.d(TAG, "Attempting to create network service...")
             networkService = NetworkServiceDefault.Builder().build()
-            Log.d(TAG, "Successfully created network service: $networkService")
+            Logger.d(TAG, "Successfully created network service: $networkService")
         }
         catch(e: Exception) {
-            Log.e(TAG, "Unable to create persistence layer: ", e)
+            Logger.e(TAG, "Unable to create persistence layer: ", e)
         }
     }
 
-    fun getAppDatabase(): AppDatabase? {
-        return appDatabase
-    }
+    fun getAppDatabase(): AppDatabase? = appDatabase
 
-    fun getRepository(): DataRepository {
-        return dataRepository
-    }
+    fun getRepository(): DataRepository = dataRepository
 
-    fun getNetworkService(): NetworkService {
-        return networkService
-    }
+    fun getNetworkService(): NetworkService = networkService
 
     fun isNetworkAvailable(): Boolean {
         val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

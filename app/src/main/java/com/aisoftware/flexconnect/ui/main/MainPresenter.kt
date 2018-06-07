@@ -1,8 +1,9 @@
 package com.aisoftware.flexconnect.ui.main
 
+import com.aisoftware.flexconnect.ui.ActivityBaseView
 import com.aisoftware.flexconnect.util.SharedPrefUtil
 
-interface MainView {
+interface MainView: ActivityBaseView {
     fun initializeViewLoading()
     fun navigateToDashboard()
     fun initializeViewDefault()
@@ -15,10 +16,11 @@ interface MainPresenter {
     fun submitClicked(authCodeEditText: String, phoneEditText: String)
 }
 
-class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val sharedPrefUtil: SharedPrefUtil): MainPresenter, OnFetchAuthCallback {
+class MainPresenterImpl(val view: MainView, private val interactor: MainInteractor, private val sharedPrefUtil: SharedPrefUtil): MainPresenter, OnFetchAuthCallback {
 
     private val TAG = MainPresenterImpl::class.java.simpleName
     private lateinit var authCode: String
+    private lateinit var phoneNumber: String
 
     init {
         interactor.setCallback(this)
@@ -35,28 +37,36 @@ class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val 
     }
 
     override fun submitClicked(authCodeEditText: String, phoneEditText: String) {
-        if( sharedPrefUtil.userPrefExists()) {
+        // User has authenticated, forward to dashboard
+        if( !authCodeEditText.isBlank()) {
             if ( validAuthCode(authCodeEditText) ) {
                 view.navigateToDashboard()
             }
             else {
+                sharedPrefUtil.getUserPref(true)
+                view.initializeViewDefault()
                 view.showErrorDialog()
             }
         }
         else {
-            if (isPhoneValid(phoneEditText)) {
-                val phoneNumber = formatPhoneNumber(phoneEditText)
-                interactor.fetchAuthCode(phoneNumber)
-                interactor.fetchTimerInterval()
-            } else {
-                view.showErrorDialog()
+            // Authenticate user flow
+            if( view.isNetworkAvailable() ) {
+                if (isPhoneValid(phoneEditText)) {
+                    phoneNumber = formatPhoneNumber(phoneEditText)
+                    interactor.fetchAuthCode(phoneNumber)
+                    interactor.fetchTimerInterval()
+                } else {
+                    view.showErrorDialog()
+                }
+            }
+            else {
+                view.showNetworkAvailabilityError()
             }
         }
     }
 
     override fun onAuthFetchSuccess(authCode: String, phoneNumber: String) {
         this.authCode = authCode
-        sharedPrefUtil.setUserProp(phoneNumber)
         view.showAuthCodeInput(true)
     }
 
@@ -65,12 +75,15 @@ class MainPresenterImpl(val view: MainView, val interactor: MainInteractor, val 
     }
 
     private fun validAuthCode(authCodeEditText: String): Boolean {
-        if ( authCode.isNullOrBlank() ||
-                authCodeEditText.isNullOrBlank() ||
+        return if ( authCode.isBlank() ||
+                authCodeEditText.isBlank() ||
                 (authCode != authCodeEditText)) {
-            return false
+            false
         }
-        return true
+        else {
+            sharedPrefUtil.setUserProp(phoneNumber)
+            true
+        }
     }
 
     override fun onTimerFetchSuccess(interval: String) {

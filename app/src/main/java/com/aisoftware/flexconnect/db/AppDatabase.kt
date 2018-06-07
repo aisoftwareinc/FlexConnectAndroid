@@ -8,14 +8,13 @@ import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
 import android.content.Context
 import android.support.annotation.VisibleForTesting
-import android.util.Log
 import com.aisoftware.flexconnect.AppExecutors
-import com.aisoftware.flexconnect.DataGenerator
 import com.aisoftware.flexconnect.db.dao.DeliveryDao
-import com.aisoftware.flexconnect.db.entity.DeliveryEntity
+import com.aisoftware.flexconnect.model.Delivery
+import com.aisoftware.flexconnect.util.Logger
 
 
-@Database(entities = arrayOf(DeliveryEntity::class), version = 1)
+@Database(entities = arrayOf(Delivery::class), version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     private val TAG = AppDatabase::class.java.simpleName
@@ -34,7 +33,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     private fun setDatabaseCreated() {
         isDatabaseCreated.postValue(true)
-        Log.d(TAG, "Database set to created")
+        Logger.d(TAG, "Database set to created")
     }
 
     companion object {
@@ -62,24 +61,24 @@ abstract class AppDatabase : RoomDatabase() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
                             executors.diskIO().execute {
-                                // Generate the data for pre-population
                                 val database = AppDatabase.getInstance(appContext, executors)
-                                val dataGenerator = DataGenerator()
-                                val deliveries = dataGenerator.getDeliveries()
-
-                                insertData(database, deliveries)
-                                // notify that the database was created and it's ready to be used
                                 database.setDatabaseCreated()
                             }
                         }
-                    }).build()
+                    })
+                    .allowMainThreadQueries()
+                    .build()
         }
 
-        fun insertData(database: AppDatabase, deliveries: List<DeliveryEntity>) {
+        fun destroyInstance() {
+            INSTANCE = null
+        }
+
+        fun insertData(database: AppDatabase, deliveries: List<Delivery>) {
             database.runInTransaction {
-                Log.d(TAG, "Attempting to insert deliveries: ${deliveries.size}")
+                Logger.d(TAG, "Attempting to insert deliveries: ${deliveries.size}")
                 database.deliveryDao().insertAll(deliveries)
-                Log.d(TAG, "Inserted deliveries: ${deliveries.size}")
+                Logger.d(TAG, "Inserted deliveries: ${deliveries.size}")
             }
         }
     }

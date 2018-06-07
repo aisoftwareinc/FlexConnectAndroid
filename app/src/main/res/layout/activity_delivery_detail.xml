@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/detailLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    tools:context=".ui.main.detail.DeliveryDetailActivity">
+    tools:context=".ui.detail.DeliveryDetailActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/detailAppbarlayout"
@@ -28,12 +27,13 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/detailAppbarlayout"
+        android:layout_above="@+id/detailButtonContainer"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/detailAppbarlayout">
+        >
 
         <LinearLayout
             android:id="@+id/detailContainer"
@@ -46,9 +46,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:textSize="24sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
                 tools:text="Chase Field"/>
 
             <TextView
@@ -58,9 +57,7 @@
                 android:layout_marginStart="8dp"
                 android:autoLink="phone"
                 android:paddingTop="8dp"
-                android:textSize="14dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailDeliverylNameTextView"
+                android:textSize="16sp"
                 tools:text="(602) 639-1168"/>
 
             <TextView
@@ -69,10 +66,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:paddingTop="8dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailDeliveryPhoneEditText"
                 tools:text="401 E Jefferson St"/>
 
             <TextView
@@ -81,10 +76,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:paddingTop="8dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailAddress1TextView"
                 tools:text="Phoenix, AZ 85089"/>
 
             <TextView
@@ -94,9 +87,8 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="24dp"
                 android:text="@string/delivery_detail_distance_label"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailAddress2TextView"/>
+                android:textSize="16sp"
+                />
 
             <TextView
                 android:id="@+id/detailDistanceTextView"
@@ -104,10 +96,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:paddingTop="8dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailDistanceLabelTextView"
                 tools:text="19 miles"/>
 
             <TextView
@@ -117,9 +107,8 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/delivery_detail_eta_label"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailDistanceTextView"/>
+                android:textSize="16sp"
+                />
 
             <TextView
                 android:id="@+id/detailEtaTextView"
@@ -127,10 +116,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:paddingTop="8dp"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailEtaLabelTextView"
                 tools:text="27 mins"/>
 
             <TextView
@@ -140,10 +127,9 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="24dp"
                 android:text="@string/delivery_detail_comments_label"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailEtaTextView"/>
+                />
 
             <TextView
                 android:id="@+id/detailCommentsTextView"
@@ -151,10 +137,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:paddingTop="8dp"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailCommentsLabelTextView"
-                tools:text="Here is a sample delivery to Chase Field downtown."/>
+                android:textSize="16sp"
+                tools:text="Here is a sample delivery to Chase Field downtown."
+                />
 
             <CheckBox
                 android:id="@+id/detailEnRouteCheckBox"
@@ -164,9 +149,8 @@
                 android:layout_marginTop="24dp"
                 android:background="?android:selectableItemBackground"
                 android:text="@string/delivery_detail_enroute_status_label"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailCommentsTextView"/>
+                android:textSize="16sp"
+                />
 
             <CheckBox
                 android:id="@+id/detailDeliveredCheckBox"
@@ -176,25 +160,33 @@
                 android:layout_marginTop="8dp"
                 android:background="?android:selectableItemBackground"
                 android:text="@string/delivery_detail_delivered_status_label"
-                android:textSize="14sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/detailEnRouteCheckBox"/>
+                android:textSize="16sp"
+                />
         </LinearLayout>
     </ScrollView>
 
-    <Button
-        android:id="@+id/detailDrivingDirectionsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="51dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
+    <LinearLayout
+        android:id="@+id/detailButtonContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/buttonripple"
-        android:paddingStart="36dp"
-        android:paddingEnd="36dp"
-        android:text="@string/delivery_detail_directions_button_label"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:elevation="2dp"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-</android.support.constraint.ConstraintLayout>
+        <Button
+            android:id="@+id/detailDrivingDirectionsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="51dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/buttonripple"
+            android:paddingStart="36dp"
+            android:paddingEnd="36dp"
+            android:text="@string/delivery_detail_directions_button_label"
+            />
+    </LinearLayout>
+</RelativeLayout>

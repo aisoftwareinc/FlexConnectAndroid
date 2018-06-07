@@ -4,19 +4,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.ui.DashboardActivity
+import com.aisoftware.flexconnect.ui.FlexConnectActivityBase
 import com.aisoftware.flexconnect.util.Constants
-import com.aisoftware.flexconnect.util.SharedPrefUtil
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), MainView {
+class MainActivity : FlexConnectActivityBase(), MainView {
 
     private val TAG = MainActivity::class.java.simpleName
     private lateinit var mainPresenter: MainPresenter
-    private lateinit var mainInteractor: MainInteractor
 
     companion object {
         @JvmStatic
@@ -26,8 +24,7 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        mainInteractor = MainInteractorImpl()
-        mainPresenter = MainPresenterImpl(this, mainInteractor, SharedPrefUtil(this))
+        mainPresenter = MainPresenterImpl(this, MainInteractorImpl(getNetworkService()), getSharedPrefUtil())
         mainPresenter.initialize()
 
         submitButton.setOnClickListener {
@@ -53,6 +50,7 @@ class MainActivity : AppCompatActivity(), MainView {
 
     override fun initializeViewDefault() {
         progressBar1.visibility = View.INVISIBLE
+        authCodeEditText.text = null
         authCodeEditText.visibility = View.GONE
 
         titleImageView.visibility = View.VISIBLE

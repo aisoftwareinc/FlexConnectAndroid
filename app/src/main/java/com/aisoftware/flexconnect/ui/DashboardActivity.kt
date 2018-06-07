@@ -6,70 +6,71 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.util.Log
 import android.view.MenuItem
 import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.adapter.DeliveryAdapter
 import com.aisoftware.flexconnect.adapter.DeliveryAdapterItemCallback
-import com.aisoftware.flexconnect.db.entity.DeliveryEntity
+import com.aisoftware.flexconnect.model.Delivery
+import com.aisoftware.flexconnect.ui.detail.DeliveryDetailActivity
 import com.aisoftware.flexconnect.ui.main.MainActivity
-import com.aisoftware.flexconnect.ui.main.detail.DeliveryDetailActivity
-import com.aisoftware.flexconnect.util.SharedPrefUtil
+import com.aisoftware.flexconnect.util.Constants
+import com.aisoftware.flexconnect.util.Logger
 import com.aisoftware.flexconnect.viewmodel.DeliveryViewModel
+import com.aisoftware.flexconnect.viewmodel.DeliveryViewModelFactory
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import kotlinx.android.synthetic.main.activity_dashboard.*
 
 
-class DashboardActivity : AppCompatActivity(), DeliveryAdapterItemCallback {
+
+
+class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback {
 
     private val TAG = DashboardActivity::class.java.simpleName
     private val GOOGLE_SERVICES_REQUEST_CODE = 9
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: DeliveryAdapter
+    private var refreshList = true
 
     companion object {
         @JvmStatic
-        fun getIntent(context: Context): Intent = Intent(context, DashboardActivity::class.java)
+        fun getIntent(context: Context, refreshList: Boolean = true): Intent {
+            val intent = Intent(context, DashboardActivity::class.java)
+            intent.putExtra(Constants.REFRESH_LIST_KEY, refreshList)
+            return intent
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
-
-        val toolbar = findViewById<Toolbar>(R.id.dashboardToolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
+        initializeToolbar()
         initializeRecyclerView()
 
-        val sharedPrefUtil = SharedPrefUtil(this)
-        val phoneNumber = sharedPrefUtil.getUserPref(false)
-        val model = ViewModelProviders.of(this).get(DeliveryViewModel::class.java)
-        model.getDeliveries(phoneNumber).observe(this, Observer<List<DeliveryEntity>> { deliveries ->
-
-            if( dashboardSwipeLayout.isRefreshing ) {
+        refreshList = intent.getBooleanExtra(Constants.REFRESH_LIST_KEY, true)
+        val phoneNumber = getSharedPrefUtil().getUserPref(false)
+        val factory = DeliveryViewModelFactory(application, getNetworkService())
+        val model = ViewModelProviders.of(this, factory).get(DeliveryViewModel::class.java)
+        model.getDeliveries(phoneNumber, refreshList).observe(this, Observer<List<Delivery>> { deliveries ->
+            if (dashboardSwipeLayout.isRefreshing) {
                 dashboardSwipeLayout.isRefreshing = false
             }
 
-            if (deliveries != null) {
-                Log.d(TAG, "Updating deliveries list with items: $deliveries")
-                if (deliveries.isEmpty()) {
-                    showNoDeliveriesDialog()
-                } else {
-                    adapter.updateList(deliveries)
-                }
-            } else {
-                showErrorDialog()
+            if (deliveries != null && deliveries.isNotEmpty()) {
+                Logger.d(TAG, "Updating deliveries list with items: $deliveries, and refresh flag: $refreshList")
+                adapter.updateList(deliveries)
+            }
+            else {
+//                showNoDeliveriesDialog()
             }
         })
 
+        // Pull down to refresh
         dashboardSwipeLayout.setOnRefreshListener {
-            model.getDeliveries(phoneNumber)
+            model.getDeliveries(phoneNumber, true)
         }
     }
 
@@ -100,26 +101,39 @@ class DashboardActivity : AppCompatActivity(), DeliveryAdapterItemCallback {
         }
     }
 
+    private fun initializeToolbar() {
+        val toolbar = findViewById<Toolbar>(R.id.dashboardToolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    }
+
     private fun initializeRecyclerView() {
-        Log.d(TAG, "Initializing recyclerview")
+//        val drawable = ContextCompat.getDrawable(this, R.drawable.recyclerview_divider)
+
         recyclerView = findViewById(R.id.dashboardRecyclerView)
+//        val decoration = DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL)
+
         adapter = DeliveryAdapter(this, this)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+//        drawable?.let {
+//            decoration.setDrawable(drawable)
+//        }
+//        recyclerView.addItemDecoration(decoration)
+
         recyclerView.adapter = adapter
-        Log.d(TAG, "Completed initializing recyclerview")
+
     }
 
-    override fun onItemClicked(deliveryEntity: DeliveryEntity) {
-        Log.d(TAG, "Item clicked: $deliveryEntity")
-        val intent = DeliveryDetailActivity.getInstance(this, deliveryEntity)
+    override fun onItemClicked(delivery: Delivery) {
+        Logger.d(TAG, "Item clicked: $delivery")
+        val intent = DeliveryDetailActivity.getInstance(this, delivery)
         startActivity(intent)
     }
 
-    private fun logout() {
-        val sharedPrefUtil = SharedPrefUtil(this)
-        sharedPrefUtil.getUserPref(true)
-        sharedPrefUtil.getIntervalPref(true)
+    override fun logout() {
+        super.logout()
         navigateToMain()
         finish()
     }
@@ -136,7 +150,7 @@ class DashboardActivity : AppCompatActivity(), DeliveryAdapterItemCallback {
 
     private fun showErrorDialog() {
         showDialog(getString(R.string.delivery_detail_no_deliveries_title),
-                getString(R.string.delivery_detail_no_deliveries_message))
+                getString(R.string.delivery_detail_no_deliveries_error_message))
     }
 
     private fun showDialog(title: String, message: String) {

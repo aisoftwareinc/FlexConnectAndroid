@@ -1,11 +1,11 @@
 package com.aisoftware.flexconnect.network
 
-import android.util.Log
 import com.aisoftware.flexconnect.network.request.NetworkRequest
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
 import com.aisoftware.flexconnect.network.request.NetworkRequestRawResponseCallback
 import com.aisoftware.flexconnect.util.Constants.DEFAULT_CONNECTION_TIMEOUT_SEC
 import com.aisoftware.flexconnect.util.Constants.DEFAULT_READ_TIMEOUT_SEC
+import com.aisoftware.flexconnect.util.Logger
 import okhttp3.Interceptor
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
@@ -118,7 +118,7 @@ open class NetworkServiceDefault private constructor(builder: Builder) : Network
 //                Log.d(networkRequest.requestTag, "Cache Exception:" + exception.message)
 //            } finally {
 //                if (cacheResult != null) {
-//                    callback!!.onSuccess(cacheResult as String?, HashMap(), requestCode)//TODO Is it safe to always cast this to a string ? Look into cache improvements
+//                    callback!!.onSuccess(cacheResult as String?, HashMap(), requestCode)
 //                }else
 //                    makeRequest()
 //            }
@@ -245,12 +245,12 @@ open class NetworkServiceDefault private constructor(builder: Builder) : Network
             //            Log.d(TAG, " intercepting multipartBody.type() "+multipartBody.type());
             //            Log.d(TAG, " intercepting multipartBody.boundary() "+multipartBody.boundary());
             //            Log.d(TAG, " intercepting multipartBody.parts() "+multipartBody.parts());
-                Log.d(TAG, String.format("Sending to url: %s with headers: %s", request.url(), request.headers()))
+                Logger.d(TAG, String.format("Sending to url: %s with headers: %s", request.url(), request.headers()))
             val response = chain.proceed(request)
             val t2 = System.nanoTime()
-            Log.d(TAG, String.format("Received response for %s in %.1fms%n%s",
+            Logger.d(TAG, String.format("Received response for %s in %.1fms%n%s",
                     response.request().url(), (t2 - t1) / 1e6, response.headers()))
-            Log.d(TAG, "Response code: " + response.code())
+            Logger.d(TAG, "Response code: " + response.code())
             //            Log.d(TAG, "Response body: " + response.body().string());
             return response
         }

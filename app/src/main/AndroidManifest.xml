@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
     <!--<uses-permission android:name="android.permission.WAKE_LOCK"/>-->
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <uses-feature android:name="android.hardware.camera" android:required="true" />
     <uses-feature android:name="android.hardware.location.gps"/>
@@ -42,7 +43,7 @@
         </activity>
 
         <activity
-            android:name=".ui.main.detail.DeliveryDetailActivity"
+            android:name="com.aisoftware.flexconnect.ui.detail.DeliveryDetailActivity"
             android:label="@string/title_activity_detail"
             android:parentActivityName=".ui.DashboardActivity">
             <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
@@ -56,6 +57,10 @@
                 <action android:name="com.aisoftware.flexconnect.location.locationupdatespendingintent.action.PROCESS_UPDATES"/>
             </intent-filter>
         </receiver>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="79a2320ce93f9ecc0cee6a02b9d5a48d7eb782fa" />
     </application>
 
 </manifest>

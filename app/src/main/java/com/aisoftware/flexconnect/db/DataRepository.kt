@@ -2,14 +2,21 @@ package com.aisoftware.flexconnect.db
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
-import com.aisoftware.flexconnect.db.entity.DeliveryEntity
+import com.aisoftware.flexconnect.model.Delivery
+import com.aisoftware.flexconnect.util.Logger
 
-class DataRepository private constructor(private val appDatabase: AppDatabase) {
+interface DataRepository {
+    fun fetchDelivery(id: Int): LiveData<Delivery>
+    fun fetchAllDeliveries(): LiveData<List<Delivery>>
+    fun fetchDeliveriesCount(): Int
+    fun loadDeliveries(deliveries: List<Delivery>)
+    fun getDeliveries(): LiveData<List<Delivery>>
+}
 
-    private val observableDeliveries: MediatorLiveData<List<DeliveryEntity>> = MediatorLiveData()
+class DataRepositoryImpl private constructor(private val appDatabase: AppDatabase): DataRepository {
 
-    val deliveries: LiveData<List<DeliveryEntity>>
-        get() = observableDeliveries
+    private val TAG = DataRepository::class.java.simpleName
+    private val observableDeliveries: MediatorLiveData<List<Delivery>> = MediatorLiveData()
 
     init {
         observableDeliveries.addSource(appDatabase.deliveryDao().loadAllDeliveries()
@@ -20,12 +27,34 @@ class DataRepository private constructor(private val appDatabase: AppDatabase) {
         }
     }
 
-    fun loadDelivery(id: Int): LiveData<DeliveryEntity> {
+    override fun getDeliveries(): LiveData<List<Delivery>> {
+        return observableDeliveries
+    }
+
+    override fun fetchDelivery(id: Int): LiveData<Delivery> {
         return appDatabase.deliveryDao().loadDelivery(id)
     }
 
-    fun loadAllDeliveries(): LiveData<List<DeliveryEntity>> {
-        return appDatabase.deliveryDao().loadAllDeliveries()
+    override fun fetchAllDeliveries(): LiveData<List<Delivery>> {
+        return observableDeliveries
+    }
+
+    override fun fetchDeliveriesCount(): Int {
+        return appDatabase.deliveryDao().deliveriesCount()
+    }
+
+    override fun loadDeliveries(deliveries: List<Delivery>) {
+        val deliveryList = deliveries
+        deliveryList?.let {
+            Logger.d(TAG, "Attempting to insert deliveries list into database: ${deliveries}")
+            appDatabase.deliveryDao().deleteAll()
+            appDatabase.deliveryDao().insertAll(deliveryList)
+
+            Logger.d(TAG, "Loaded update deliveries count: ${fetchDeliveriesCount()}")
+            if( fetchDeliveriesCount() == 0 ) {
+                observableDeliveries.postValue(ArrayList<Delivery>())
+            }
+        }
     }
 
     companion object {
@@ -35,7 +64,7 @@ class DataRepository private constructor(private val appDatabase: AppDatabase) {
             if (INSTANCE == null) {
                 synchronized(DataRepository::class.java) {
                     if (INSTANCE == null) {
-                        INSTANCE = DataRepository(database)
+                        INSTANCE = DataRepositoryImpl(database)
                     }
                 }
             }

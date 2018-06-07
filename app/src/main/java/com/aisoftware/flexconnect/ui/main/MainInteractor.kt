@@ -1,12 +1,12 @@
 package com.aisoftware.flexconnect.ui.main
 
-import android.util.Log
 import com.aisoftware.flexconnect.model.AuthenticatePhone
 import com.aisoftware.flexconnect.model.TimerInterval
-import com.aisoftware.flexconnect.network.NetworkServiceDefault
+import com.aisoftware.flexconnect.network.NetworkService
 import com.aisoftware.flexconnect.network.request.AuthenticatePhoneRequest
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
-import com.aisoftware.flexconnect.network.request.TImerIntervalRequest
+import com.aisoftware.flexconnect.network.request.TimerIntervalRequest
+import com.aisoftware.flexconnect.util.Logger
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
@@ -24,7 +24,7 @@ interface MainInteractor {
     fun fetchTimerInterval()
 }
 
-class MainInteractorImpl: MainInteractor {
+class MainInteractorImpl(private val networkService: NetworkService): MainInteractor {
 
     private val TAG = MainInteractorImpl::class.java.simpleName
     private lateinit var callback: OnFetchAuthCallback
@@ -36,9 +36,8 @@ class MainInteractorImpl: MainInteractor {
     }
 
     override fun fetchAuthCode(phoneNumber: String) {
-        Log.d(TAG, "Attempting to fetch auth code with phone number: $phoneNumber")
+        Logger.d(TAG, "Attempting to fetch auth code with phone number: $phoneNumber")
         val request = AuthenticatePhoneRequest(phoneNumber)
-        val networkService = NetworkServiceDefault.Builder().build()
         networkService.startRequest(request, object: NetworkRequestCallback {
             override fun onSuccess(data: String?, headers: Map<String, List<String>>, requestCode: String?) {
                 if( data != null ) {
@@ -51,12 +50,12 @@ class MainInteractorImpl: MainInteractor {
 
                         if (authPhoneResponse != null && !authPhoneResponse.authCode.isBlank()) {
                             val authCode = authPhoneResponse.authCode
-                            Log.d(TAG, "Fetched auth code: $authCode")
+                            Logger.d(TAG, "Fetched auth code: $authCode")
                             callback.onAuthFetchSuccess(authCode, phoneNumber)
                         }
                     }
                     catch(e: Exception) {
-                        Log.e(TAG, "Unable to process data response: $data", e)
+                        Logger.e(TAG, "Unable to process data response: $data", e)
                         onFailure(data, requestCode)
                     }
                 }
@@ -66,7 +65,7 @@ class MainInteractorImpl: MainInteractor {
             }
 
             override fun onFailure(data: String?, requestCode: String?) {
-                Log.d(TAG, "Received onFailure data: $data")
+                Logger.d(TAG, "Received onFailure data: $data")
                 callback.onFetchFailure("Unable to fetch auth code, null response")
             }
 
@@ -75,9 +74,8 @@ class MainInteractorImpl: MainInteractor {
     }
 
     override fun fetchTimerInterval() {
-        Log.d(TAG, "Attempting to fetch timer interval")
-        val request = TImerIntervalRequest()
-        val networkService = NetworkServiceDefault.Builder().build()
+        Logger.d(TAG, "Attempting to fetch timer interval")
+        val request = TimerIntervalRequest()
         networkService.startRequest(request, object: NetworkRequestCallback {
             override fun onSuccess(data: String?, headers: Map<String, List<String>>, requestCode: String?) {
                 if( data != null ) {
@@ -89,12 +87,12 @@ class MainInteractorImpl: MainInteractor {
                         val interval = adapter.fromJson(data)
 
                         if (interval != null && !interval.duration.isBlank()) {
-                            Log.d(TAG, "Fetched interval: ${interval.duration}")
+                            Logger.d(TAG, "Fetched interval: ${interval.duration}")
                             callback.onTimerFetchSuccess(interval.duration)
                         }
                     }
                     catch(e: Exception) {
-                        Log.e(TAG, "Unable to process data response: $data", e)
+                        Logger.e(TAG, "Unable to process data response: $data", e)
                         onFailure(data, requestCode)
                     }
                 }
@@ -104,12 +102,12 @@ class MainInteractorImpl: MainInteractor {
             }
 
             override fun onFailure(data: String?, requestCode: String?) {
-                Log.d(TAG, "Received onFailure data: $data")
+                Logger.d(TAG, "Received onFailure data: $data")
                 callback.onFetchFailure("Unable to fetch interval, null response")
             }
 
             override fun onComplete(requestCode: String?) { }
-        }, AUTH_REQUEST_CODE)
+        }, TIMER_REQUEST_CODE)
     }
 
 }
