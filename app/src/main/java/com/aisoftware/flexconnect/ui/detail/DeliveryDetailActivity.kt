@@ -34,6 +34,8 @@ import com.aisoftware.flexconnect.util.Logger
 import com.aisoftware.flexconnect.util.containsOnly
 import com.aisoftware.flexconnect.util.isPermissionGranted
 import com.aisoftware.flexconnect.util.requestPermission
+import com.crashlytics.android.answers.Answers
+import com.crashlytics.android.answers.CustomEvent
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import kotlinx.android.synthetic.main.activity_delivery_detail.*
@@ -165,6 +167,12 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         if (requestingLocationUpdates) {
             presenter.checkLocationUpdate()
         }
+    }
+
+    fun onKeyMetric() {
+        Answers.getInstance().logCustom(CustomEvent("Driving Directions")
+                .putCustomAttribute("Category", "Clicked")
+                .putCustomAttribute("Length", 350))
     }
 
     override fun navigateToMapView(delivery: Delivery) {

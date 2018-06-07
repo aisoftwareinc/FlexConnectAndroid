@@ -26,4 +26,7 @@ interface ApiEndpoints {
 
     @POST("/ws/tracking-json.asmx/EnRoute")
     fun postEnRoute(@HeaderMap headerMap: Map<String, String>, @Body body: RequestBody): Call<ResponseBody>
+
+    @POST("/ws/tracking-json.asmx/UpdateStatus")
+    fun postUpdateStatus(@HeaderMap headerMap: Map<String, String>, @Body body: RequestBody): Call<ResponseBody>
 }

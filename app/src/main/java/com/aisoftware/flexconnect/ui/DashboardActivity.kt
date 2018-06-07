@@ -19,9 +19,12 @@ import com.aisoftware.flexconnect.ui.main.MainActivity
 import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.Logger
 import com.aisoftware.flexconnect.viewmodel.DeliveryViewModel
+import com.aisoftware.flexconnect.viewmodel.DeliveryViewModelFactory
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import kotlinx.android.synthetic.main.activity_dashboard.*
+
+
 
 
 class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback {
@@ -49,8 +52,8 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
 
         refreshList = intent.getBooleanExtra(Constants.REFRESH_LIST_KEY, true)
         val phoneNumber = getSharedPrefUtil().getUserPref(false)
-
-        val model = ViewModelProviders.of(this).get(DeliveryViewModel::class.java)
+        val factory = DeliveryViewModelFactory(application, getNetworkService())
+        val model = ViewModelProviders.of(this, factory).get(DeliveryViewModel::class.java)
         model.getDeliveries(phoneNumber, refreshList).observe(this, Observer<List<Delivery>> { deliveries ->
             if (dashboardSwipeLayout.isRefreshing) {
                 dashboardSwipeLayout.isRefreshing = false
@@ -61,7 +64,7 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
                 adapter.updateList(deliveries)
             }
             else {
-                showNoDeliveriesDialog()
+//                showNoDeliveriesDialog()
             }
         })
 

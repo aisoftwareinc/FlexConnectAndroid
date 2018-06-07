@@ -5,9 +5,13 @@ import android.content.Context
 import android.net.ConnectivityManager
 import com.aisoftware.flexconnect.db.AppDatabase
 import com.aisoftware.flexconnect.db.DataRepository
+import com.aisoftware.flexconnect.db.DataRepositoryImpl
 import com.aisoftware.flexconnect.network.NetworkService
 import com.aisoftware.flexconnect.network.NetworkServiceDefault
 import com.aisoftware.flexconnect.util.Logger
+import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.answers.Answers
+import io.fabric.sdk.android.Fabric
 import java.util.concurrent.Executors
 
 
@@ -24,9 +28,10 @@ class FlexConnectApplication: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        //        if (! Fabric.isInitialized() ) {
-//            Fabric.with(this, Crashlytics())
-//        }
+        if (! Fabric.isInitialized() ) {
+            Fabric.with(this, Crashlytics())
+            Fabric.with(this, Answers())
+        }
 
         try {
             Logger.d(TAG, "Attempting to create app executors...")
@@ -40,7 +45,7 @@ class FlexConnectApplication: Application() {
             Logger.d(TAG, "Successfully created app database instance: $appDatabase")
 
             Logger.d(TAG, "Attempting to create data repository...")
-            dataRepository = DataRepository.getInstance(appDatabase)
+            dataRepository = DataRepositoryImpl.getInstance(appDatabase)
             Logger.d(TAG, "Successfully created data repository: $dataRepository")
 
             Logger.d(TAG, "Attempting to create network service...")

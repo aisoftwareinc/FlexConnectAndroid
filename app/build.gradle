@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-//apply plugin: 'io.fabric'
+apply plugin: 'io.fabric'
 
 
 android {
@@ -14,7 +14,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
+        versionName "0.9"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -85,6 +85,8 @@ dependencies {
     def picasso_version = "2.71828"
     def mockito_version = "2.18.3"
     def okhttp_version = "3.10.0"
+    def crashlytics_version = "2.9.3@aar"
+    def answers_version = "1.4.2@aar"
 
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -143,11 +145,25 @@ dependencies {
     /* Picasso */
     implementation "com.squareup.picasso:picasso:$picasso_version"
 
+    /* Fabric - Crashlytics, Answers */
+    compile("com.crashlytics.sdk.android:crashlytics:$crashlytics_version") {
+        transitive = true
+    }
+
+    compile("com.crashlytics.sdk.android:answers:$answers_version") {
+        transitive = true
+    }
+
     /* Testing */
     testImplementation 'junit:junit:4.12'
     testImplementation "org.mockito:mockito-core:$mockito_version"
     testImplementation ('com.android.support.test:runner:1.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    testImplementation ("android.arch.core:core-testing:$lifecycle_version", {
+        exclude group: 'com.android.support', module: 'support-compat'
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-core-utils'
     })
 
     androidTestImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"

@@ -4,7 +4,9 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.util.Log
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
+import android.support.annotation.NonNull
 import com.aisoftware.flexconnect.FlexConnectApplication
 import com.aisoftware.flexconnect.db.DataRepository
 import com.aisoftware.flexconnect.model.Deliveries
@@ -18,14 +20,11 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.experimental.launch
 
 
-class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
+class DeliveryViewModel(val app: Application, val dataRepository: DataRepository, val networkService: NetworkService) : AndroidViewModel(app) {
 
     private val TAG = DeliveryViewModel::class.java.simpleName
     private val DELIVERIES_REQUEST_CODE = "deliveriesRequestCode"
-    private val networkService: NetworkService = (app as FlexConnectApplication).getNetworkService()
-    private val dataRepository: DataRepository = (app as FlexConnectApplication).getRepository()
-
-    private var deliveries: LiveData<List<Delivery>> = dataRepository.deliveries
+    private var deliveries: LiveData<List<Delivery>> = dataRepository.getDeliveries()
 
     fun getDeliveries(phoneNumber: String, refreshList: Boolean): LiveData<List<Delivery>> {
         Logger.d(TAG, "Attempting to get deliveries with dataRepository: $dataRepository")
@@ -41,8 +40,7 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
     }
 
     private fun loadNetowrkDeliveries(phoneNumber: String) {
-        if ((getApplication() as FlexConnectApplication).isNetworkAvailable()) {
-            // make api request if network available
+        if ( (app as FlexConnectApplication).isNetworkAvailable() ) {
             val request = DeliveriesRequest(phoneNumber)
             networkService.startRequest(request, object: NetworkRequestCallback {
                 override fun onSuccess(data: String?, headers: Map<String, List<String>>, requestCode: String?) {
@@ -54,8 +52,6 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
                             val adapter = moshi.adapter(Deliveries::class.java)
                             val deliveriesResponse = adapter.fromJson(data)
                             if (deliveriesResponse != null ) {
-//                                (deliveries as MutableLiveData).postValue(deliveriesResponse.deliveries)
-
                                 launch {
                                     try {
                                         Logger.d(TAG, "Retrieved new dataset, updating database")
@@ -86,7 +82,7 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
             }, DELIVERIES_REQUEST_CODE)
         }
         else {
-            Log.d(TAG,"Network not available, loading from repo")
+            Logger.d(TAG,"Network not available, loading from repo")
             loadPersistedDeliveries()
         }
     }
@@ -98,19 +94,18 @@ class DeliveryViewModel(val app: Application) : AndroidViewModel(app) {
     }
 }
 
-//class Factory(@param:NonNull
-//              @field:NonNull
-//              private val mApplication: Application,
-//              private val mProductId: Int) : ViewModelProvider.NewInstanceFactory() {
-//
-//    private val mRepository: DataRepository
-//
-//    init {
-//        mRepository = (mApplication as BasicApp).getRepository()
-//    }
-//
-//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//
-//        return ProductViewModel(mApplication, mRepository, mProductId) as T
-//    }
-//}
+class DeliveryViewModelFactory(@param:NonNull
+              @field:NonNull
+              private val app: Application,
+              private val networkService: NetworkService):ViewModelProvider.NewInstanceFactory() {
+
+    private val dataRepo: DataRepository
+
+    init {
+        dataRepo = (app as FlexConnectApplication).getRepository()
+    }
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return DeliveryViewModel(app, dataRepo, networkService) as T
+    }
+}

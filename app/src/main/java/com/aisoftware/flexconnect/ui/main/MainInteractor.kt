@@ -107,7 +107,7 @@ class MainInteractorImpl(private val networkService: NetworkService): MainIntera
             }
 
             override fun onComplete(requestCode: String?) { }
-        }, AUTH_REQUEST_CODE)
+        }, TIMER_REQUEST_CODE)
     }
 
 }
