@@ -14,6 +14,7 @@ import com.aisoftware.flexconnect.model.Delivery
 import com.aisoftware.flexconnect.network.NetworkService
 import com.aisoftware.flexconnect.network.request.DeliveriesRequest
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
+import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.Logger
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -59,6 +60,7 @@ class DeliveryViewModel(val app: Application, val dataRepository: DataRepository
                                     }
                                     catch(e: Exception) {
                                         Logger.e(TAG, "Unable to update data repository", e)
+                                        CrashLogger.logException(1, TAG, "Unable to update data repository", e)
                                     }
                                 }
                             }

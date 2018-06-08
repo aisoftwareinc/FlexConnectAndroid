@@ -5,6 +5,7 @@ import com.aisoftware.flexconnect.network.NetworkService
 import com.aisoftware.flexconnect.network.request.DeliveredRequest
 import com.aisoftware.flexconnect.network.request.EnRouteRequest
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
+import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.Logger
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -47,7 +48,8 @@ class DeliveryDetailInteractorImpl(private val networkService: NetworkService): 
                         }
                         catch(e: Exception) {
                             Logger.e(TAG, "Unable to parse delivered response", e)
-                            onFailure(data, requestCode)
+                            CrashLogger.logException(1, TAG, "Unable to parse delivered response data: $data", e)
+                            callback.onDeliveredFailure(data)
                         }
                     }
                     else {
@@ -56,6 +58,8 @@ class DeliveryDetailInteractorImpl(private val networkService: NetworkService): 
                 }
 
                 override fun onFailure(data: String?, requestCode: String?) {
+                    Logger.d(TAG, "Unable to process delivery update request, data: $data")
+                    CrashLogger.log(1, TAG, "Unable to process update request, data: $data")
                     callback.onDeliveredFailure(data)
                 }
 
@@ -64,6 +68,7 @@ class DeliveryDetailInteractorImpl(private val networkService: NetworkService): 
         }
         catch (e: Exception) {
             Logger.e(TAG, "Unable to create delivered request", e)
+            CrashLogger.logException(1, TAG, "Unable to create delivered request", e)
         }
     }
 
@@ -76,6 +81,7 @@ class DeliveryDetailInteractorImpl(private val networkService: NetworkService): 
                 }
 
                 override fun onFailure(data: String?, requestCode: String?) {
+                    CrashLogger.log(1, TAG, "Unable to process enroute update, data $data")
                     callback.onEnRouteFailure(data)
                 }
 
@@ -84,6 +90,7 @@ class DeliveryDetailInteractorImpl(private val networkService: NetworkService): 
         }
         catch (e: Exception) {
             Logger.e(TAG, "Unable to create enroute request", e)
+            CrashLogger.logException(1, TAG, "Unable to create enroute request", e)
         }
     }
 }

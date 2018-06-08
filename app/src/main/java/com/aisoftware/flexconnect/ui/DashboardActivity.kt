@@ -17,6 +17,7 @@ import com.aisoftware.flexconnect.model.Delivery
 import com.aisoftware.flexconnect.ui.detail.DeliveryDetailActivity
 import com.aisoftware.flexconnect.ui.main.MainActivity
 import com.aisoftware.flexconnect.util.Constants
+import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.Logger
 import com.aisoftware.flexconnect.viewmodel.DeliveryViewModel
 import com.aisoftware.flexconnect.viewmodel.DeliveryViewModelFactory
@@ -149,6 +150,7 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
     }
 
     private fun showErrorDialog() {
+        CrashLogger.log(1, TAG, "Showing error retrieving deliveries dialog")
         showDialog(getString(R.string.delivery_detail_no_deliveries_title),
                 getString(R.string.delivery_detail_no_deliveries_error_message))
     }

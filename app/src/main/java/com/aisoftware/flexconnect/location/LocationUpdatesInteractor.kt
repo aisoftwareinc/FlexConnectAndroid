@@ -4,6 +4,7 @@ import android.content.Context
 import com.aisoftware.flexconnect.network.NetworkServiceDefault
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
 import com.aisoftware.flexconnect.network.request.ReportLocationRequest
+import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.Logger
 import com.aisoftware.flexconnect.util.SharedPrefUtilImpl
 
@@ -37,6 +38,7 @@ class LocationUpdatesInteractorImpl(val context: Context, val callback: Location
                 }
 
                 override fun onFailure(data: String?, requestCode: String?) {
+                    CrashLogger.log(1, TAG, "Unable to process report location response: $data")
                     callback.onFailure(data)
                 }
 
@@ -45,6 +47,12 @@ class LocationUpdatesInteractorImpl(val context: Context, val callback: Location
         }
         catch(e: Exception) {
             Logger.e(TAG, "Unable to complete report location request", e)
+            try {
+                CrashLogger.logException(1, TAG, "Unable to complete report location request", e)
+            }
+            catch(ex: Exception) {
+                Logger.e(TAG, "Unable to complete report location processing" ,e)
+            }
             callback.onFailure("Unable to complete report location request: ${e.localizedMessage}")
         }
     }

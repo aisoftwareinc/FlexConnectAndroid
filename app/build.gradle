@@ -23,6 +23,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             testCoverageEnabled = false
             buildConfigField "boolean", "SEND_DELIVERED_UPDATE", "true"
+            buildConfigField "boolean", "ENABLE_CRASHLYTICS", "true"
         }
 
         debug {
@@ -30,6 +31,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             testCoverageEnabled = true
             buildConfigField "boolean", "SEND_DELIVERED_UPDATE", "false"
+            buildConfigField "boolean", "ENABLE_CRASHLYTICS", "false"
         }
     }
 
