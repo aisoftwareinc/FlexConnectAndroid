@@ -3,6 +3,7 @@ package com.aisoftware.flexconnect.location
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.Logger
 import com.google.android.gms.location.LocationResult
 
@@ -34,12 +35,25 @@ class LocationUpdatesBroadcastReceiver: BroadcastReceiver() {
 
                             override fun onFailure(data: String?) {
                                 Logger.d(TAG, "Received report location failure response: $data")
+
+                                try {
+                                    CrashLogger.logException(1, TAG, "Received report location failure, data: $data", Exception("Unable to report location, with data: $data"))
+                                }
+                                catch(e: Exception) {
+                                    Logger.e(TAG, "Unable to send crashlytics report.  CrashLogger is null", e)
+                                }
                             }
                         })
                         locationUpdatesInteractor.reportLocation(latitude, longitude)
                     }
                     catch(e: Exception) {
                         Logger.e(TAG, "Unable to complete report location operation", e)
+                        try {
+                            CrashLogger.logException(1, TAG, "Unable to complete report location operation", e)
+                        }
+                        catch(e: Exception) {
+                            Logger.e(TAG, "Unable to send crashlytics report.  CrashLogger is null", e)
+                        }
                     }
                 }
             }

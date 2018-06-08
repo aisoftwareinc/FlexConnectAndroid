@@ -30,6 +30,7 @@ import com.aisoftware.flexconnect.ui.DashboardActivity
 import com.aisoftware.flexconnect.ui.FlexConnectActivityBase
 import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.ConverterUtil
+import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.Logger
 import com.aisoftware.flexconnect.util.containsOnly
 import com.aisoftware.flexconnect.util.isPermissionGranted
@@ -246,6 +247,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
 
     override fun navigateToSettings() {
         if (!isFinishing) {
+            CrashLogger.log(1, TAG, "Showing permission required dialog")
             AlertDialog.Builder(this, R.style.alertDialogStyle)
                     .setTitle(getString(R.string.delivery_detail_permission_required_title))
                     .setMessage(getString(R.string.delivery_detail_permission_required_message))

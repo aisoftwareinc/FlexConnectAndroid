@@ -6,6 +6,7 @@ import com.aisoftware.flexconnect.network.NetworkService
 import com.aisoftware.flexconnect.network.request.AuthenticatePhoneRequest
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
 import com.aisoftware.flexconnect.network.request.TimerIntervalRequest
+import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.Logger
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -56,7 +57,8 @@ class MainInteractorImpl(private val networkService: NetworkService): MainIntera
                     }
                     catch(e: Exception) {
                         Logger.e(TAG, "Unable to process data response: $data", e)
-                        onFailure(data, requestCode)
+                        CrashLogger.logException(1, TAG, "Unable to process fetchAuthCode response: $data", e)
+                        callback.onFetchFailure("Unable to fetch auth code, null response")
                     }
                 }
                 else {
@@ -66,6 +68,7 @@ class MainInteractorImpl(private val networkService: NetworkService): MainIntera
 
             override fun onFailure(data: String?, requestCode: String?) {
                 Logger.d(TAG, "Received onFailure data: $data")
+                CrashLogger.log(1, TAG, "Received onFailure data: $data")
                 callback.onFetchFailure("Unable to fetch auth code, null response")
             }
 
@@ -93,7 +96,8 @@ class MainInteractorImpl(private val networkService: NetworkService): MainIntera
                     }
                     catch(e: Exception) {
                         Logger.e(TAG, "Unable to process data response: $data", e)
-                        onFailure(data, requestCode)
+                        CrashLogger.logException(1, TAG, "Unable to process fetchTimerInterval data response: $data", e)
+                        callback.onFetchFailure("Unable to fetch interval, null response")
                     }
                 }
                 else {
@@ -103,6 +107,7 @@ class MainInteractorImpl(private val networkService: NetworkService): MainIntera
 
             override fun onFailure(data: String?, requestCode: String?) {
                 Logger.d(TAG, "Received onFailure data: $data")
+                CrashLogger.log(1, TAG, "Received onFailure data: $data")
                 callback.onFetchFailure("Unable to fetch interval, null response")
             }
 
