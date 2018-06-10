@@ -8,29 +8,44 @@
     android:layout_height="match_parent"
     tools:context=".ui.detail.DeliveryDetailActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/detailAppbarlayout"
+    <ImageView
+        android:id="@+id/logoImageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/splash_logo"/>
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/detailToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
-    </android.support.design.widget.AppBarLayout>
+    <View
+        android:id="@+id/viewDivider1"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/logoImageView"
+        android:background="@color/colorRuleGrey"/>
+
+    <!--<android.support.design.widget.AppBarLayout-->
+    <!--android:id="@+id/detailAppbarlayout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
+
+    <!--<android.support.v7.widget.Toolbar-->
+    <!--android:id="@+id/detailToolbar"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="?attr/actionBarSize"-->
+    <!--android:background="@color/colorPrimary"-->
+    <!--android:elevation="4dp"-->
+    <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
+    <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>-->
+    <!--</android.support.design.widget.AppBarLayout>-->
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/detailAppbarlayout"
         android:layout_above="@+id/detailButtonContainer"
+        android:layout_below="@+id/viewDivider1"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         >
@@ -49,16 +64,6 @@
                 android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="Chase Field"/>
-
-            <TextView
-                android:id="@+id/detailDeliveryPhoneEditText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:autoLink="phone"
-                android:paddingTop="8dp"
-                android:textSize="16sp"
-                tools:text="(602) 639-1168"/>
 
             <TextView
                 android:id="@+id/detailAddress1TextView"
@@ -80,45 +85,102 @@
                 android:textStyle="bold"
                 tools:text="Phoenix, AZ 85089"/>
 
-            <TextView
-                android:id="@+id/detailDistanceLabelTextView"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingTop="8dp"
                 android:layout_marginStart="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="4dp"
+                    android:text="PH:"/>
+
+                <TextView
+                    android:id="@+id/detailDeliveryPhoneEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoLink="phone"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorAccent"
+                    tools:text="(602) 639-1168"/>
+            </LinearLayout>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="@string/delivery_detail_distance_label"
-                android:textSize="16sp"
-                />
-
-            <TextView
-                android:id="@+id/detailDistanceTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:paddingTop="8dp"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="19 miles"/>
+                android:columnCount="2"
+                android:rowCount="3"
+                android:rowOrderPreserved="true"
+                android:useDefaultMargins="true">
 
-            <TextView
-                android:id="@+id/detailEtaLabelTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/delivery_detail_eta_label"
-                android:textSize="16sp"
-                />
+                <!-- Row 0 -->
+                <TextView
+                    android:id="@+id/detailDistanceLabelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:layout_row="0"
+                    android:layout_column="0"
+                    android:text="@string/delivery_detail_distance_label"
+                    tools:text="Distance:"/>
 
-            <TextView
-                android:id="@+id/detailEtaTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:paddingTop="8dp"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="27 mins"/>
+                <TextView
+                    android:id="@+id/detailDistanceTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_row="0"
+                    android:layout_column="1"
+                    tools:text="28"/>
+
+                <!-- Row 1 -->
+                <TextView
+                    android:id="@+id/detailEtaLabelTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:layout_row="1"
+                    android:layout_column="0"
+                    android:text="@string/delivery_detail_eta_label"
+                    tools:text="ETA:"/>
+
+                <TextView
+                    android:id="@+id/detailEtaTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_row="1"
+                    android:layout_column="1"
+                    tools:text="32 mins"/>
+
+                <!-- Row 2-->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:layout_row="2"
+                    android:layout_column="0"
+                    android:text="@string/delivery_detail_eta_label"
+                    tools:text="Last Reported:"/>
+
+                <TextView
+                    android:id="@+id/timeValueTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_row="2"
+                    android:layout_column="1"
+                    tools:text="6/9 - 2:52:08 PM"/>
+
+            </GridLayout>
 
             <TextView
                 android:id="@+id/detailCommentsLabelTextView"
@@ -149,19 +211,7 @@
                 android:layout_marginTop="24dp"
                 android:background="?android:selectableItemBackground"
                 android:text="@string/delivery_detail_enroute_status_label"
-                android:textSize="16sp"
-                />
-
-            <CheckBox
-                android:id="@+id/detailDeliveredCheckBox"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:background="?android:selectableItemBackground"
-                android:text="@string/delivery_detail_delivered_status_label"
-                android:textSize="16sp"
-                />
+                android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>
 
@@ -175,7 +225,7 @@
         android:layout_marginBottom="16dp"
         android:elevation="2dp"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/detailDrivingDirectionsButton"
@@ -183,10 +233,23 @@
             android:layout_height="51dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="4dp"
             android:background="@drawable/buttonripple"
             android:paddingStart="36dp"
             android:paddingEnd="36dp"
             android:text="@string/delivery_detail_directions_button_label"
-            />
+            android:textAllCaps="false"/>
+
+        <Button
+            android:id="@+id/detailDeliveredButton"
+            android:layout_width="wrap_content"
+            android:layout_height="51dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/buttonripple"
+            android:paddingStart="36dp"
+            android:paddingEnd="36dp"
+            android:textAllCaps="false"
+            android:text="@string/delivery_detail_delivered_status_label"/>
     </LinearLayout>
 </RelativeLayout>
