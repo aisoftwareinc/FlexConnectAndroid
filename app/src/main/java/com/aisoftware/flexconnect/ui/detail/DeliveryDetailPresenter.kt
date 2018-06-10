@@ -7,6 +7,7 @@ import com.aisoftware.flexconnect.model.Delivered
 import com.aisoftware.flexconnect.model.Delivery
 import com.aisoftware.flexconnect.network.request.DeliveredRequest
 import com.aisoftware.flexconnect.network.request.EnRouteRequest
+import com.aisoftware.flexconnect.network.request.PendingEnRouteRequest
 import com.aisoftware.flexconnect.ui.ActivityBaseView
 import com.aisoftware.flexconnect.util.ConverterUtil
 import com.aisoftware.flexconnect.util.Logger
@@ -27,7 +28,6 @@ interface DeliveryDetailView : ActivityBaseView {
     fun showDeliveredRequestFailure()
     fun showImageUploadConfirmDialog(bitmap: Bitmap)
     fun toggleEnRouteCheckbox(clicked: Boolean)
-    fun toggleDeliveredCheckbox(clicked: Boolean)
     fun navigateToDashboard()
 }
 
@@ -64,6 +64,7 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
         }
         else {
             this.delivery = delivery
+            view.getSharedPrefUtil().setIntervalProp(delivery.interval)
             val displayPhoneNumber = formatPhoneForDisplay(this.delivery.customerPhone) ?: ""
             view.initializeView(delivery, displayPhoneNumber)
         }
@@ -74,7 +75,25 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
     }
 
     override fun stopLocationUpdate() {
-        view.stopLocationUpdate()
+        if( view.isNetworkAvailable() ) {
+            val phoneNumber = view.getSharedPrefUtil().getUserPref(false)
+            val guid = delivery.guid
+            val request = PendingEnRouteRequest(phoneNumber, guid)
+            interactor.sendPendingEnRouteUpdate(request, object : EnRouteRequestCallback {
+                override fun onEnRouteSuccess(data: String?) {
+                    Logger.d(TAG, "Received success enroute response: $data")
+                    view.stopLocationUpdate()
+                }
+
+                override fun onEnRouteFailure(data: String?) {
+                    Logger.d(TAG, "Received failure enroute response: $data")
+                    view.stopLocationUpdate()
+                }
+            })
+        }
+        else {
+            view.showNetworkAvailabilityError()
+        }
     }
 
     override fun detailDeliveredChecked() {
@@ -114,7 +133,6 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
     }
 
     override fun permissionFailed() {
-        view.toggleDeliveredCheckbox(false)
         view.toggleEnRouteCheckbox(false)
         view.navigateToSettings()
     }
@@ -164,7 +182,6 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
 
                     override fun onDeliveredFailure(data: String?) {
                         Logger.d(TAG, "Delivered request failure: $data")
-                        view.toggleDeliveredCheckbox(false)
                         view.showDeliveredRequestFailure()
                     }
                 })
@@ -184,14 +201,10 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
 
     override fun imageCancelClicked() {
         bitmap = null
-        view.toggleDeliveredCheckbox(false)
     }
 
     override fun onResultCancelled(data: Intent?) {
         // If null, this is cancel from camera, else map
-        if( data != null ) {
-            view.toggleDeliveredCheckbox(false)
-        }
     }
 
     override fun onBackPressed() {

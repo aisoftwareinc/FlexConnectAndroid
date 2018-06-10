@@ -9,10 +9,15 @@ import retrofit2.Call
 
 class EnRouteRequest(val phoneNumber: String, val guid: String): NetworkRequestString() {
 
+    private val STATUS = "2"
+    private val PHOTO = ""
+    private val COMMENTS = ""
+
     override fun getRequestTag(): String = this.javaClass.simpleName
 
     override fun getRequestBody(): RequestBody {
-        val bodyValue = "Phone=$phoneNumber&GUID=$guid&APIKey=${Constants.API_KEY}"
+        //Phone=string&varStatus=string&Photo=string&Comments=string&GUID=string&APIKey=string
+        val bodyValue = "Phone=$phoneNumber&Status=$STATUS&Photo=$PHOTO&Comments=$COMMENTS&GUID=$guid&APIKey=${Constants.API_KEY}"
         val body = RequestBody.create(MediaType.parse(Constants.MEDIA_TYPE_FORM), bodyValue)
         return body
     }

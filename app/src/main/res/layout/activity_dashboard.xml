@@ -7,28 +7,45 @@
     android:layout_height="match_parent"
     tools:context=".ui.DashboardActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/dashboardAppbarlayout"
+    <ImageView
+        android:id="@+id/logoImageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/dashboardToolbar"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/splash_logo"/>
+    <View
+        android:id="@+id/viewDivider1"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
-    </android.support.design.widget.AppBarLayout>
+        android:layout_height="1dp"
+        android:layout_below="@id/logoImageView"
+        android:background="@color/colorRuleGrey"/>
+
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:id="@+id/dashboardAppbarlayout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
+
+    <!--<android.support.v7.widget.Toolbar-->
+        <!--android:id="@+id/dashboardToolbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="?attr/actionBarSize"-->
+        <!--android:background="@drawable/dashboard_header"-->
+        <!--android:elevation="4dp"-->
+        <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
+        <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>-->
+    <!--</android.support.design.widget.AppBarLayout>-->
+    <!--android:background="@color/colorPrimary"-->
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/dashboardSwipeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_below="@id/dashboardAppbarlayout">
+        android:layout_below="@+id/viewDivider1">
+        <!--android:layout_marginTop="8dp">-->
+        <!--android:layout_below="@id/dashboardAppbarlayout">-->
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/dashboardRecyclerView"

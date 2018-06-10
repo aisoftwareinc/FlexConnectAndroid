@@ -16,8 +16,8 @@ import android.provider.Settings
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
-import android.support.v7.widget.Toolbar
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -51,9 +51,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     private val REQUEST_LOCATION_PERMISSION_CODE = 3
 
     private var REQUESTING_LOCATION_UPDATES_KEY = "requestingLocationUpdatesKey"
-    private var DELIVERED_STATE_KEY = "deliveredStateKey"
     private var requestingLocationUpdates = false
-    private var deliveredState = false
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var presenter: DeliveryDetailPresenter
 
@@ -71,9 +69,9 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         setContentView(R.layout.activity_delivery_detail)
         updateValuesFromBundle(savedInstanceState)
 
-        val toolbar = findViewById<Toolbar>(R.id.detailToolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+//        val toolbar = findViewById<Toolbar>(R.id.detailToolbar)
+//        setSupportActionBar(toolbar)
+//        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         presenter = DeliveryDetailPresenterImpl(this, DeliveryDetailInteractorImpl(getNetworkService()))
         fusedLocationProviderClient = FusedLocationProviderClient(this)
@@ -87,11 +85,8 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
             }
         }
 
-        detailDeliveredCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
-            deliveredState = isChecked
-            if (isChecked) {
-                presenter.detailDeliveredChecked()
-            }
+        detailDeliveredButton.setOnClickListener{
+            presenter.detailDeliveredChecked()
         }
 
         detailDrivingDirectionsButton.setOnClickListener {
@@ -119,7 +114,18 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         detailDistanceTextView.text = delivery.miles
         detailEtaTextView.text = delivery.distance
         detailCommentsTextView.text = delivery.comments
+
+        adjustButtonSize(detailDrivingDirectionsButton)
+        adjustButtonSize(detailDeliveredButton)
     }
+
+    private fun adjustButtonSize(button: Button) {
+    val displayMetrics = getResources().getDisplayMetrics();
+    val width = displayMetrics.widthPixels;
+    val params = button.getLayoutParams();
+    params.width = width/2
+    button.width = width
+}
 
     override fun onBackPressed() {
         presenter.onBackPressed()
@@ -134,32 +140,17 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         detailEnRouteCheckBox.isChecked = clicked
     }
 
-    override fun toggleDeliveredCheckbox(clicked: Boolean) {
-       detailDeliveredCheckBox.isChecked = clicked
-    }
-
     private fun updateValuesFromBundle(savedInstanceState: Bundle?) {
         savedInstanceState ?: return
 
         if (savedInstanceState.keySet().contains(REQUESTING_LOCATION_UPDATES_KEY)) {
             requestingLocationUpdates = savedInstanceState.getBoolean(REQUESTING_LOCATION_UPDATES_KEY)
         }
-
-        if (savedInstanceState.keySet().contains(DELIVERED_STATE_KEY)) {
-            deliveredState = savedInstanceState.getBoolean(DELIVERED_STATE_KEY)
-        }
-
-        if (deliveredState) {
-            requestingLocationUpdates = false
-        } else {
-            detailEnRouteCheckBox.isChecked = requestingLocationUpdates
-        }
-        detailDeliveredCheckBox.isChecked = deliveredState
+        detailEnRouteCheckBox.isChecked = requestingLocationUpdates
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         outState?.putBoolean(REQUESTING_LOCATION_UPDATES_KEY, requestingLocationUpdates)
-        outState?.putBoolean(DELIVERED_STATE_KEY, deliveredState)
         super.onSaveInstanceState(outState)
     }
 
@@ -269,7 +260,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     }
 
     override fun navigateToDashboard() {
-        val intent = DashboardActivity.getIntent(this, deliveredState)
+        val intent = DashboardActivity.getIntent(this, true)
         startActivity(intent)
     }
 

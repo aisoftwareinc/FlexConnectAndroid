@@ -29,8 +29,9 @@
     <string name="delivery_auth_error_title">Authentication Error</string>
     <string name="delivery_auth_error_message">The authentication was not successful. Please try again.</string>
 
-    <string name="delivery_detail_distance_label">Distance To Destination:</string>
-    <string name="delivery_detail_eta_label">Estimated Time of Arrival:</string>
+    <string name="delivery_detail_distance_label">Distance:</string>
+    <string name="delivery_detail_eta_label">ETA:</string>
+    <string name="delivery_detail_report_label">Last Reported:</string>
     <string name="delivery_detail_comments_label">Comments:</string>
     <string name="delivery_detail_enroute_status_label">En Route</string>
     <string name="delivery_detail_delivered_status_label">Delivered</string>

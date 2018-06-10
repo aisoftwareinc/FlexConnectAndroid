@@ -13,6 +13,8 @@ data class Delivery(
         var id: Long?,
         @Json(name = "GUID")
         var guid: String = "",
+        @Json(name = "TimerInterval")
+        var interval: String = "",
         @Json(name = "Status")
         var status: String = "",
         @Json(name = "Date")
@@ -48,6 +50,7 @@ data class Delivery(
 
     constructor(): this(
             null,
+            "",
             "",
             "",
             "",
