@@ -43,6 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:contentDescription="@string/launcher_title"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="@+id/guidelineHorizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

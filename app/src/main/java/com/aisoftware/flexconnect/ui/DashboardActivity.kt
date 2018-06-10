@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.adapter.DeliveryAdapter
@@ -24,9 +23,6 @@ import com.aisoftware.flexconnect.viewmodel.DeliveryViewModelFactory
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import kotlinx.android.synthetic.main.activity_dashboard.*
-
-
-
 
 class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback {
 
@@ -103,9 +99,9 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
     }
 
     private fun initializeToolbar() {
-        val toolbar = findViewById<Toolbar>(R.id.dashboardToolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+//        val toolbar = findViewById<Toolbar>(R.id.dashboardToolbar)
+//        setSupportActionBar(toolbar)
+//        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun initializeRecyclerView() {

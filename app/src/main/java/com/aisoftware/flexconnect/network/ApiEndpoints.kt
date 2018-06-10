@@ -21,10 +21,10 @@ interface ApiEndpoints {
     @POST("/ws/tracking-json.asmx/ReportLocation")
     fun postReportLocation(@HeaderMap headerMap: Map<String, String>, @Body body: RequestBody): Call<ResponseBody>
 
-    @POST("/ws/tracking-json.asmx/Delivered")
+    @POST("/ws/tracking-json.asmx/UpdateStatus")
     fun postDelivered(@HeaderMap headerMap: Map<String, String>, @Body body: RequestBody): Call<ResponseBody>
 
-    @POST("/ws/tracking-json.asmx/EnRoute")
+    @POST("/ws/tracking-json.asmx/UpdateStatus")
     fun postEnRoute(@HeaderMap headerMap: Map<String, String>, @Body body: RequestBody): Call<ResponseBody>
 
     @POST("/ws/tracking-json.asmx/UpdateStatus")

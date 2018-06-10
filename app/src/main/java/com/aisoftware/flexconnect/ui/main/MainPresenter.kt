@@ -54,7 +54,7 @@ class MainPresenterImpl(val view: MainView, private val interactor: MainInteract
                 if (isPhoneValid(phoneEditText)) {
                     phoneNumber = formatPhoneNumber(phoneEditText)
                     interactor.fetchAuthCode(phoneNumber)
-                    interactor.fetchTimerInterval()
+//                    interactor.fetchTimerInterval()
                 } else {
                     view.showErrorDialog()
                 }

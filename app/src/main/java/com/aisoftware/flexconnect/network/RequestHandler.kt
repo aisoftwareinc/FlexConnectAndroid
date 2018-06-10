@@ -33,9 +33,7 @@ class RequestHandler( private val okHttpClient: OkHttpClient): NetworkHandler {
         val call = networkRequest.getRequestEndpoint(getRetrofit(okHttpClient, networkRequest.getBaseUrl()).create(ApiEndpoints::class.java))
 
         if(call == null){
-            Logger.d(TAG, "Request " + networkRequest.getRequestTag())
-            Logger.d(TAG, " Failed: Retrofit call creation error")
-
+            Logger.d(TAG, "Failed Request: " + networkRequest.getRequestTag())
             callback?.onFailure("Unable to build request", requestCode)
             callbackRaw?.onFailure("Unable to build request", requestCode)
             callback?.onComplete(requestCode)
@@ -49,9 +47,7 @@ class RequestHandler( private val okHttpClient: OkHttpClient): NetworkHandler {
                 printCall(call)
                 try {
                     if (response != null) {
-                        Logger.d(TAG, " Response Http Code : " + response.code())
-                        Logger.d(TAG, " Response Http Status Message: " + response.message())
-
+                        Logger.d(TAG, " Response Http Code: ${response.code()} Status Message: ${response.message()}" )
                         if (response.isSuccessful) {
                             val headers = response.headers().toMultimap()
                             callbackRaw?.onSuccess(response.body(), headers, requestCode)

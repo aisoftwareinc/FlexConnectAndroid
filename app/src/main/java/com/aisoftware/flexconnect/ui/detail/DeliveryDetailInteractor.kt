@@ -5,6 +5,7 @@ import com.aisoftware.flexconnect.network.NetworkService
 import com.aisoftware.flexconnect.network.request.DeliveredRequest
 import com.aisoftware.flexconnect.network.request.EnRouteRequest
 import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
+import com.aisoftware.flexconnect.network.request.PendingEnRouteRequest
 import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.Logger
 import com.squareup.moshi.Moshi
@@ -23,6 +24,7 @@ interface EnRouteRequestCallback {
 interface DeliveryDetailInteractor {
     fun sendDeliveredUpdate(request: DeliveredRequest, callback: DeliveryDetailRequestCallback)
     fun sendEnRouteUpdate(request: EnRouteRequest, callback: EnRouteRequestCallback)
+    fun sendPendingEnRouteUpdate(request: PendingEnRouteRequest, callback: EnRouteRequestCallback)
 }
 
 class DeliveryDetailInteractorImpl(private val networkService: NetworkService): DeliveryDetailInteractor {
@@ -73,6 +75,28 @@ class DeliveryDetailInteractorImpl(private val networkService: NetworkService): 
     }
 
     override fun sendEnRouteUpdate(request: EnRouteRequest, callback: EnRouteRequestCallback) {
+        Logger.d(TAG, "Attempting to send enroute request: $request")
+        try {
+            networkService.startRequest(request, object: NetworkRequestCallback {
+                override fun onSuccess(data: String?, headers: Map<String, List<String>>, requestCode: String?) {
+                    callback.onEnRouteSuccess(data)
+                }
+
+                override fun onFailure(data: String?, requestCode: String?) {
+                    CrashLogger.log(1, TAG, "Unable to process enroute update, data $data")
+                    callback.onEnRouteFailure(data)
+                }
+
+                override fun onComplete(requestCode: String?) { }
+            }, ENROUTE_REQUEST_CODE)
+        }
+        catch (e: Exception) {
+            Logger.e(TAG, "Unable to create enroute request", e)
+            CrashLogger.logException(1, TAG, "Unable to create enroute request", e)
+        }
+    }
+
+    override fun sendPendingEnRouteUpdate(request: PendingEnRouteRequest, callback: EnRouteRequestCallback) {
         Logger.d(TAG, "Attempting to send enroute request: $request")
         try {
             networkService.startRequest(request, object: NetworkRequestCallback {
