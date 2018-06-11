@@ -14,7 +14,7 @@ import com.aisoftware.flexconnect.util.Logger
 import com.google.android.gms.location.LocationRequest
 
 interface DeliveryDetailView : ActivityBaseView {
-    fun initializeView(delivery: Delivery, formattedPhone: String)
+    fun initializeView(delivery: Delivery, formattedPhone: String, isEnRoute: Boolean)
     fun showInitializationErrorDialog()
     fun checkShowCamera()
     fun checkLocationUpdate()
@@ -47,6 +47,7 @@ interface DeliveryDetailPresenter {
     fun deliveryCaptureImageClicked(captureImage: Boolean)
     fun onResultCancelled(data: Intent?)
     fun onBackPressed()
+    fun updateEnRouteStatus(isEnRoute: Boolean, delete: Boolean)
 }
 
 class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val interactor: DeliveryDetailInteractor) : DeliveryDetailPresenter {
@@ -57,6 +58,7 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
     private val MAX_WAIT_TIME: Long = DEFAULT_UPDATE_INTERVAL * 10 // 10 minutes
     private lateinit var delivery: Delivery
     private var bitmap: Bitmap? = null
+    private var isEnRoute: Boolean = false
 
     override fun initialize(delivery: Delivery?) {
         if (delivery == null) {
@@ -66,7 +68,8 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
             this.delivery = delivery
             view.getSharedPrefUtil().setIntervalProp(delivery.interval)
             val displayPhoneNumber = formatPhoneForDisplay(this.delivery.customerPhone) ?: ""
-            view.initializeView(delivery, displayPhoneNumber)
+            isEnRoute = view.getSharedPrefUtil().getEnRouteStatus(delivery.guid, false)
+            view.initializeView(delivery, displayPhoneNumber, isEnRoute)
         }
     }
 
@@ -82,17 +85,28 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
             interactor.sendPendingEnRouteUpdate(request, object : EnRouteRequestCallback {
                 override fun onEnRouteSuccess(data: String?) {
                     Logger.d(TAG, "Received success enroute response: $data")
+                    updateEnRouteStatus(false, true)
                     view.stopLocationUpdate()
                 }
 
                 override fun onEnRouteFailure(data: String?) {
                     Logger.d(TAG, "Received failure enroute response: $data")
+                    updateEnRouteStatus(false, true)
                     view.stopLocationUpdate()
                 }
             })
         }
         else {
             view.showNetworkAvailabilityError()
+        }
+    }
+
+    override fun updateEnRouteStatus(isEnRoute: Boolean, delete: Boolean) {
+        view.getSharedPrefUtil().setEnRouteStatus(delivery.guid, isEnRoute)
+
+        if( !isEnRoute && delete )
+        {
+            view.getSharedPrefUtil().getEnRouteStatus(delivery.guid, true)
         }
     }
 
@@ -119,10 +133,13 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
             val request = EnRouteRequest(phoneNumber, guid)
             interactor.sendEnRouteUpdate(request, object : EnRouteRequestCallback {
                 override fun onEnRouteSuccess(data: String?) {
+                    updateEnRouteStatus(true, false)
                     Logger.d(TAG, "Received success enroute response: $data")
                 }
 
                 override fun onEnRouteFailure(data: String?) {
+                    updateEnRouteStatus(false, true)
+                    view.getSharedPrefUtil().setEnRouteStatus(delivery.guid, false)
                     Logger.d(TAG, "Received failure enroute response: $data")
                 }
             })

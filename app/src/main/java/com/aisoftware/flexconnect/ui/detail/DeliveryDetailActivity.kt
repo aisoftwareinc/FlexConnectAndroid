@@ -102,7 +102,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         }
     }
 
-    override fun initializeView(delivery: Delivery, formattedPhone: String) {
+    override fun initializeView(delivery: Delivery, formattedPhone: String, isEnRoute: Boolean) {
         Logger.d(TAG, "Initializing view with delivery: $delivery")
 
         formattedPhone.let {
@@ -114,6 +114,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         detailDistanceTextView.text = delivery.miles
         detailEtaTextView.text = delivery.distance
         detailCommentsTextView.text = delivery.comments
+        detailEnRouteCheckBox.isChecked = isEnRoute
 
         adjustButtonSize(detailDrivingDirectionsButton)
         adjustButtonSize(detailDeliveredButton)
