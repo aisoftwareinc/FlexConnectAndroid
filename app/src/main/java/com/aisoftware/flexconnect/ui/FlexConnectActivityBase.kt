@@ -21,6 +21,7 @@ interface ActivityBaseView {
     fun logout()
     fun navigateToMain()
     fun navigateToDashboard()
+    fun showLogoutDialog()
 }
 
 open class FlexConnectActivityBase: AppCompatActivity(), ActivityBaseView {
@@ -98,11 +99,28 @@ open class FlexConnectActivityBase: AppCompatActivity(), ActivityBaseView {
         }
     }
 
+
+    override fun showLogoutDialog() {
+        if (!isFinishing) {
+            AlertDialog.Builder(this, R.style.alertDialogStyle)
+                    .setTitle(getString(R.string.delivery_logout_title))
+                    .setMessage(getString(R.string.delivery_logout_message))
+                    .setPositiveButton(getString(R.string.delivery_logout_pos_button), { dialog, id ->
+                        logout()
+                    })
+                    .setNegativeButton(getString(R.string.delivery_logout_neg_button), { dialog, id ->
+                        dialog.dismiss()
+                    }).create().show()
+        }
+    }
+
     override fun logout() {
         val sharedPrefUtil = getSharedPrefUtil()
         sharedPrefUtil.getUserPref(true)
         sharedPrefUtil.getIntervalPref(true)
         (application as FlexConnectApplication).getAppDatabase()?.clearAllTables()
         CrashLogger.log(1, TAG, "User logged out")
+        navigateToMain()
+        finish()
     }
 }

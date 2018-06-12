@@ -87,7 +87,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
 
         bottomNavPhoneNumber.setOnClickListener {
             Logger.d(TAG, "Bottom nav phone number clicked")
-            navigateToMain()
+            showLogoutDialog()
         }
 
         bottomNavDeliveries.setOnClickListener {

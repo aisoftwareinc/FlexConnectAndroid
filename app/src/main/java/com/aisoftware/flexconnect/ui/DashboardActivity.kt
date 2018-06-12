@@ -67,7 +67,7 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
 
         bottomNavPhoneNumber.setOnClickListener {
             Logger.d(TAG, "Bottom nav phone number clicked")
-            navigateToMain()
+            showLogoutDialog()
         }
 
         bottomNavDeliveries.setOnClickListener {
@@ -139,12 +139,6 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
         startActivity(intent)
     }
 
-    override fun logout() {
-        super.logout()
-        navigateToMain()
-        finish()
-    }
-
     private fun showNoDeliveriesDialog() {
         showDialog(getString(R.string.delivery_detail_no_deliveries_title),
                 getString(R.string.delivery_detail_no_deliveries_message))
@@ -167,17 +161,4 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
         }
     }
 
-    private fun showLogoutDialog() {
-        if (!isFinishing) {
-            AlertDialog.Builder(this, R.style.alertDialogStyle)
-                    .setTitle(getString(R.string.delivery_logout_title))
-                    .setMessage(getString(R.string.delivery_logout_message))
-                    .setPositiveButton(getString(R.string.delivery_logout_pos_button), { dialog, id ->
-                        logout()
-                    })
-                    .setNegativeButton(getString(R.string.delivery_logout_neg_button), { dialog, id ->
-                        dialog.dismiss()
-                    }).create().show()
-        }
-    }
 }
