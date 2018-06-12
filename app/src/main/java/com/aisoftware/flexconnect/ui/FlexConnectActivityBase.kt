@@ -7,6 +7,7 @@ import com.aisoftware.flexconnect.FlexConnectApplication
 import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.network.NetworkService
 import com.aisoftware.flexconnect.network.NetworkServiceDefault
+import com.aisoftware.flexconnect.ui.main.MainActivity
 import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.SharedPrefUtil
@@ -18,6 +19,8 @@ interface ActivityBaseView {
     fun getSharedPrefUtil(): SharedPrefUtil
     fun showNetworkAvailabilityError()
     fun logout()
+    fun navigateToMain()
+    fun navigateToDashboard()
 }
 
 open class FlexConnectActivityBase: AppCompatActivity(), ActivityBaseView {
@@ -64,6 +67,16 @@ open class FlexConnectActivityBase: AppCompatActivity(), ActivityBaseView {
     override fun onDestroy() {
         super.onDestroy()
         CrashLogger.log(1, TAG, "Activity onDestroy()")
+    }
+
+    override fun navigateToMain() {
+        val intent = MainActivity.getIntent(this)
+        startActivity(intent)
+    }
+
+    override fun navigateToDashboard() {
+        val intent = DashboardActivity.getIntent(this, true)
+        startActivity(intent)
     }
 
     override fun getNetworkService(): NetworkService = NetworkServiceDefault.Builder().build()

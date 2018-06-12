@@ -10,6 +10,7 @@
     <string name="auth_code_hint">Authentication Code</string>
     <string name="submit_dialog_title">Submit Error</string>
     <string name="submit_dialog_error_message">Please enter a valid phone number</string>
+
     <string name="delivery_logout_title">Logout</string>
     <string name="delivery_logout_message">Do you want to log out of the application?</string>
     <string name="delivery_logout_pos_button">Ok</string>
@@ -17,6 +18,9 @@
 
     <string name="network_availability_error_title">No Network Connection</string>
     <string name="network_availability_error_message">A connection to a network or Internet could not be verified.  Please try again.</string>
+
+    <string name="bottom_nav_phone_number">Phone Number</string>
+    <string name="bottom_nav_deliveries">Deliveries</string>
 
     <string name="delivery_status_label">Status:</string>
     <string name="delivery_time_label">Time:</string>

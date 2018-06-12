@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.View
 import com.aisoftware.flexconnect.R
-import com.aisoftware.flexconnect.ui.DashboardActivity
 import com.aisoftware.flexconnect.ui.FlexConnectActivityBase
 import com.aisoftware.flexconnect.util.Constants
 import kotlinx.android.synthetic.main.activity_main.*
@@ -32,11 +31,6 @@ class MainActivity : FlexConnectActivityBase(), MainView {
                     authCodeEditText.text.toString(),
                     phoneEditText.text.toString())
         }
-    }
-
-    override fun navigateToDashboard() {
-        val intent = DashboardActivity.getIntent(this)
-        startActivity(intent)
     }
 
     override fun initializeViewLoading() {

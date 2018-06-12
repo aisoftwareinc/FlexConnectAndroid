@@ -28,7 +28,6 @@ interface DeliveryDetailView : ActivityBaseView {
     fun showDeliveredRequestFailure()
     fun showImageUploadConfirmDialog(bitmap: Bitmap)
     fun toggleEnRouteCheckbox(clicked: Boolean)
-    fun navigateToDashboard()
 }
 
 interface DeliveryDetailPresenter {

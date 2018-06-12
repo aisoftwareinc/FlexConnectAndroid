@@ -26,7 +26,6 @@ import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.location.ACTION_PROCESS_UPDATES
 import com.aisoftware.flexconnect.location.LocationUpdatesBroadcastReceiver
 import com.aisoftware.flexconnect.model.Delivery
-import com.aisoftware.flexconnect.ui.DashboardActivity
 import com.aisoftware.flexconnect.ui.FlexConnectActivityBase
 import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.ConverterUtil
@@ -40,6 +39,7 @@ import com.crashlytics.android.answers.CustomEvent
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import kotlinx.android.synthetic.main.activity_delivery_detail.*
+import kotlinx.android.synthetic.main.bottom_nav_layout.*
 
 
 class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -83,6 +83,16 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
             } else {
                 presenter.stopLocationUpdate()
             }
+        }
+
+        bottomNavPhoneNumber.setOnClickListener {
+            Logger.d(TAG, "Bottom nav phone number clicked")
+            navigateToMain()
+        }
+
+        bottomNavDeliveries.setOnClickListener {
+            Logger.d(TAG, "Bottom nav deliveries clicked")
+            navigateToDashboard()
         }
 
         detailDeliveredButton.setOnClickListener{
@@ -258,11 +268,6 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
                     } )
                     .create().show()
         }
-    }
-
-    override fun navigateToDashboard() {
-        val intent = DashboardActivity.getIntent(this, true)
-        startActivity(intent)
     }
 
     override fun checkLocationUpdate() {

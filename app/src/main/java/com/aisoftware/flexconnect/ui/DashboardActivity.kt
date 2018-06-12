@@ -14,7 +14,6 @@ import com.aisoftware.flexconnect.adapter.DeliveryAdapter
 import com.aisoftware.flexconnect.adapter.DeliveryAdapterItemCallback
 import com.aisoftware.flexconnect.model.Delivery
 import com.aisoftware.flexconnect.ui.detail.DeliveryDetailActivity
-import com.aisoftware.flexconnect.ui.main.MainActivity
 import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.Logger
@@ -23,6 +22,7 @@ import com.aisoftware.flexconnect.viewmodel.DeliveryViewModelFactory
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import kotlinx.android.synthetic.main.activity_dashboard.*
+import kotlinx.android.synthetic.main.bottom_nav_layout.*
 
 class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback {
 
@@ -64,6 +64,16 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
 //                showNoDeliveriesDialog()
             }
         })
+
+        bottomNavPhoneNumber.setOnClickListener {
+            Logger.d(TAG, "Bottom nav phone number clicked")
+            navigateToMain()
+        }
+
+        bottomNavDeliveries.setOnClickListener {
+            // NOOP
+            Logger.d(TAG, "Bottom nav deliveries clicked")
+        }
 
         // Pull down to refresh
         dashboardSwipeLayout.setOnRefreshListener {
@@ -133,11 +143,6 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
         super.logout()
         navigateToMain()
         finish()
-    }
-
-    private fun navigateToMain() {
-        val intent = MainActivity.getIntent(this)
-        startActivity(intent)
     }
 
     private fun showNoDeliveriesDialog() {
