@@ -32,7 +32,7 @@ class DeliveryAdapter(val context: Context, val callback: DeliveryAdapterItemCal
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val vh = DeliveriesViewHolder(LayoutInflater.from(context).inflate(R.layout.delivery_list_item, parent, false))
+        val vh = DeliveriesViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item, parent, false))
         vh.containerLayout.setOnClickListener {
             val pos = vh.adapterPosition
             callback.onItemClicked(items[pos])
