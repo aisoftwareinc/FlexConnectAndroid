@@ -9,6 +9,8 @@ interface SharedPrefUtil {
     fun getUserPref(delete: Boolean): String
     fun setIntervalProp(interval: String)
     fun getIntervalPref(delete: Boolean): String
+    fun setEnRouteStatus(guid: String, isEnRoute: Boolean)
+    fun getEnRouteStatus(guid: String, delete: Boolean): Boolean
 }
 
 class SharedPrefUtilImpl(val context: Context): SharedPrefUtil {
@@ -66,5 +68,27 @@ class SharedPrefUtilImpl(val context: Context): SharedPrefUtil {
             }
         }
         return interval
+    }
+
+    override fun setEnRouteStatus(guid: String, isEnRoute: Boolean) {
+        val sharedPref = context.getSharedPreferences(SHARED_PREF_FILE, Context.MODE_PRIVATE) ?: return
+
+        with (sharedPref.edit()) {
+            putBoolean(guid, isEnRoute)
+            commit()
+        }
+    }
+
+    override fun getEnRouteStatus(guid: String, delete: Boolean): Boolean {
+        val sharedPref = context.getSharedPreferences(SHARED_PREF_FILE, Context.MODE_PRIVATE)
+        val isEnRoute = sharedPref.getBoolean(guid, false)
+
+        if( delete ) {
+            with(sharedPref.edit()) {
+                remove(guid)
+                commit()
+            }
+        }
+        return isEnRoute
     }
 }

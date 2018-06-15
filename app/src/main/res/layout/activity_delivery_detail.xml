@@ -43,13 +43,12 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/detailButtonContainer"
         android:layout_below="@+id/viewDivider1"
+        android:layout_above="@id/bottomNav"
         android:layout_marginStart="8dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
         android:fadeScrollbars="false"
-        >
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
 
         <LinearLayout
             android:id="@+id/detailContainer"
@@ -89,9 +88,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
                 android:layout_marginStart="8dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingTop="8dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -104,16 +103,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:autoLink="phone"
-                    android:textSize="16sp"
                     android:textColor="@color/colorAccent"
+                    android:textSize="16sp"
                     tools:text="(602) 639-1168"/>
             </LinearLayout>
 
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
                 android:columnCount="2"
                 android:rowCount="3"
                 android:rowOrderPreserved="true"
@@ -124,20 +123,20 @@
                     android:id="@+id/detailDistanceLabelTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
                     android:layout_row="0"
                     android:layout_column="0"
                     android:text="@string/delivery_detail_distance_label"
+                    android:textSize="16sp"
                     tools:text="Distance:"/>
 
                 <TextView
                     android:id="@+id/detailDistanceTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
                     android:layout_row="0"
                     android:layout_column="1"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
                     tools:text="28"/>
 
                 <!-- Row 1 -->
@@ -145,40 +144,40 @@
                     android:id="@+id/detailEtaLabelTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
                     android:layout_row="1"
                     android:layout_column="0"
                     android:text="@string/delivery_detail_eta_label"
+                    android:textSize="16sp"
                     tools:text="ETA:"/>
 
                 <TextView
                     android:id="@+id/detailEtaTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
                     android:layout_row="1"
                     android:layout_column="1"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
                     tools:text="32 mins"/>
 
                 <!-- Row 2-->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="16sp"
                     android:layout_row="2"
                     android:layout_column="0"
                     android:text="@string/delivery_detail_report_label"
+                    android:textSize="16sp"
                     tools:text="Last Reported:"/>
 
                 <TextView
                     android:id="@+id/timeValueTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="16sp"
                     android:layout_row="2"
                     android:layout_column="1"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
                     tools:text="6/9 - 2:52:08 PM"/>
             </GridLayout>
 
@@ -211,45 +210,47 @@
                 android:layout_marginTop="24dp"
                 android:background="?android:selectableItemBackground"
                 android:text="@string/delivery_detail_enroute_status_label"
-                android:textSize="16sp" />
+                android:textSize="16sp"/>
+
+            <LinearLayout
+                android:id="@+id/detailButtonContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:elevation="2dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/detailDrivingDirectionsButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="51dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="4dp"
+                    android:background="@drawable/buttonripple"
+                    android:paddingStart="36dp"
+                    android:paddingEnd="36dp"
+                    android:text="@string/delivery_detail_directions_button_label"
+                    android:textAllCaps="false"/>
+
+                <Button
+                    android:id="@+id/detailDeliveredButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="51dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/buttonripple"
+                    android:paddingStart="36dp"
+                    android:paddingEnd="36dp"
+                    android:text="@string/delivery_detail_delivered_status_label"
+                    android:textAllCaps="false"/>
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
-    <LinearLayout
-        android:id="@+id/detailButtonContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:elevation="2dp"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/detailDrivingDirectionsButton"
-            android:layout_width="wrap_content"
-            android:layout_height="51dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="4dp"
-            android:background="@drawable/buttonripple"
-            android:paddingStart="36dp"
-            android:paddingEnd="36dp"
-            android:text="@string/delivery_detail_directions_button_label"
-            android:textAllCaps="false"/>
-
-        <Button
-            android:id="@+id/detailDeliveredButton"
-            android:layout_width="wrap_content"
-            android:layout_height="51dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/buttonripple"
-            android:paddingStart="36dp"
-            android:paddingEnd="36dp"
-            android:text="@string/delivery_detail_delivered_status_label"
-            android:textAllCaps="false"/>
-    </LinearLayout>
+    <include
+        android:id="@+id/bottomNav"
+        layout="@layout/bottom_nav_layout"/>
 </RelativeLayout>

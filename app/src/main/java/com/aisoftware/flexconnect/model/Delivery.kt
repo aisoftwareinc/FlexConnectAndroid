@@ -46,7 +46,9 @@ data class Delivery(
         @Json(name = "Miles")
         var miles: String = "",
         @Json(name = "Comments")
-        var comments: String = ""): Serializable {
+        var comments: String = "",
+        @Json(name = "IsEnRoute")
+        var isenroute: Boolean = false): Serializable {
 
     constructor(): this(
             null,
@@ -67,5 +69,6 @@ data class Delivery(
             "",
             "",
             "",
-            "")
+            "",
+            false)
 }

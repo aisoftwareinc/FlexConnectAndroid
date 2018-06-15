@@ -5,7 +5,6 @@ import com.aisoftware.flexconnect.util.SharedPrefUtil
 
 interface MainView: ActivityBaseView {
     fun initializeViewLoading()
-    fun navigateToDashboard()
     fun initializeViewDefault()
     fun showErrorDialog()
     fun showAuthCodeInput(showField: Boolean)

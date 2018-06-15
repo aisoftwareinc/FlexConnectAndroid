@@ -14,7 +14,6 @@ import com.aisoftware.flexconnect.adapter.DeliveryAdapter
 import com.aisoftware.flexconnect.adapter.DeliveryAdapterItemCallback
 import com.aisoftware.flexconnect.model.Delivery
 import com.aisoftware.flexconnect.ui.detail.DeliveryDetailActivity
-import com.aisoftware.flexconnect.ui.main.MainActivity
 import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.Logger
@@ -23,6 +22,7 @@ import com.aisoftware.flexconnect.viewmodel.DeliveryViewModelFactory
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import kotlinx.android.synthetic.main.activity_dashboard.*
+import kotlinx.android.synthetic.main.bottom_nav_layout.*
 
 class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback {
 
@@ -64,6 +64,16 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
 //                showNoDeliveriesDialog()
             }
         })
+
+        bottomNavPhoneNumber.setOnClickListener {
+            Logger.d(TAG, "Bottom nav phone number clicked")
+            showLogoutDialog()
+        }
+
+        bottomNavDeliveries.setOnClickListener {
+            // NOOP
+            Logger.d(TAG, "Bottom nav deliveries clicked")
+        }
 
         // Pull down to refresh
         dashboardSwipeLayout.setOnRefreshListener {
@@ -129,17 +139,6 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
         startActivity(intent)
     }
 
-    override fun logout() {
-        super.logout()
-        navigateToMain()
-        finish()
-    }
-
-    private fun navigateToMain() {
-        val intent = MainActivity.getIntent(this)
-        startActivity(intent)
-    }
-
     private fun showNoDeliveriesDialog() {
         showDialog(getString(R.string.delivery_detail_no_deliveries_title),
                 getString(R.string.delivery_detail_no_deliveries_message))
@@ -162,17 +161,4 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
         }
     }
 
-    private fun showLogoutDialog() {
-        if (!isFinishing) {
-            AlertDialog.Builder(this, R.style.alertDialogStyle)
-                    .setTitle(getString(R.string.delivery_logout_title))
-                    .setMessage(getString(R.string.delivery_logout_message))
-                    .setPositiveButton(getString(R.string.delivery_logout_pos_button), { dialog, id ->
-                        logout()
-                    })
-                    .setNegativeButton(getString(R.string.delivery_logout_neg_button), { dialog, id ->
-                        dialog.dismiss()
-                    }).create().show()
-        }
-    }
 }
