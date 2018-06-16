@@ -10,11 +10,13 @@ import android.content.Context
 import android.support.annotation.VisibleForTesting
 import com.aisoftware.flexconnect.AppExecutors
 import com.aisoftware.flexconnect.db.dao.DeliveryDao
+import com.aisoftware.flexconnect.db.dao.LastUpdateDao
 import com.aisoftware.flexconnect.model.Delivery
+import com.aisoftware.flexconnect.model.LastUpdate
 import com.aisoftware.flexconnect.util.Logger
 
 
-@Database(entities = arrayOf(Delivery::class), version = 1)
+@Database(entities = arrayOf(Delivery::class, LastUpdate::class), version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     private val TAG = AppDatabase::class.java.simpleName
@@ -24,6 +26,8 @@ abstract class AppDatabase : RoomDatabase() {
         get() = isDatabaseCreated
 
     abstract fun deliveryDao(): DeliveryDao
+
+    abstract fun lastUpdateDao(): LastUpdateDao
 
     private fun updateDatabaseCreated(context: Context) {
         if (context.getDatabasePath(DATABASE_NAME).exists()) {
