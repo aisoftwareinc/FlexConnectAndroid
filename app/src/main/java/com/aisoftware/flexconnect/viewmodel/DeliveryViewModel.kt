@@ -31,7 +31,7 @@ class DeliveryViewModel(val app: Application, val dataRepository: DataRepository
         Logger.d(TAG, "Attempting to get deliveries with dataRepository: $dataRepository")
 
         if( refreshList ) {
-            loadNetowrkDeliveries(phoneNumber)
+            loadNetworkDeliveries(phoneNumber)
         }
         else {
             loadPersistedDeliveries()
@@ -40,7 +40,7 @@ class DeliveryViewModel(val app: Application, val dataRepository: DataRepository
         return deliveries
     }
 
-    private fun loadNetowrkDeliveries(phoneNumber: String) {
+    private fun loadNetworkDeliveries(phoneNumber: String) {
         if ( (app as FlexConnectApplication).isNetworkAvailable() ) {
             val request = DeliveriesRequest(phoneNumber)
             networkService.startRequest(request, object: NetworkRequestCallback {

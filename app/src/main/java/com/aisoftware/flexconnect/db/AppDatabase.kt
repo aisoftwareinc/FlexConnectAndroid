@@ -37,7 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     private fun setDatabaseCreated() {
         isDatabaseCreated.postValue(true)
-        Logger.d(TAG, "Database set to created")
+        Logger.d(TAG, "Database set to created, is open: ${INSTANCE?.isOpen}")
     }
 
     companion object {
@@ -71,6 +71,7 @@ abstract class AppDatabase : RoomDatabase() {
                         }
                     })
                     .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
                     .build()
         }
 

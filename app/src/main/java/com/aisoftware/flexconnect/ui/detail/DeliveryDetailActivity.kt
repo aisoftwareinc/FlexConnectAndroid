@@ -84,7 +84,21 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
 //        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         presenter = DeliveryDetailPresenterImpl(this, DeliveryDetailInteractorImpl(getNetworkService()))
-        fusedLocationProviderClient = FusedLocationProviderClient(this)
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+        val factory = LastUpdateViewModelFactory(application)
+        val lastUpdateViewModel = ViewModelProviders.of(this, factory).get(LastUpdateViewModel::class.java)
+        lastUpdateViewModel.getLastUpdate().observe(this, Observer<LastUpdate> { update ->
+            if( update != null && update.lastUpdate.isNotEmpty() ) {
+                val d = Date(update.lastUpdate.toLong())
+//                val date = DateFormat.getInstance().format(d)
+                val time = dateFormat.format(d)
+                timeValueTextView.text = time
+            }
+            else {
+                timeValueTextView.text = DEFAULT_LAST_UPDATE
+            }
+        })
 
         detailEnRouteCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
             requestingLocationUpdates = isChecked

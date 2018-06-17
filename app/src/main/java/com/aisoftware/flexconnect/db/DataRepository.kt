@@ -16,7 +16,7 @@ interface DataRepository {
     fun fetchLastUpdate(): LiveData<LastUpdate>
 }
 
-class DataRepositoryImpl private constructor(private val appDatabase: AppDatabase): DataRepository {
+class DataRepositoryImpl private constructor(private val appDatabase: AppDatabase) : DataRepository {
 
     private val TAG = DataRepository::class.java.simpleName
     private val observableDeliveries: MediatorLiveData<List<Delivery>> = MediatorLiveData()
@@ -58,11 +58,12 @@ class DataRepositoryImpl private constructor(private val appDatabase: AppDatabas
         val deliveryList = deliveries
         deliveryList?.let {
             Logger.d(TAG, "Attempting to insert deliveries list into database: ${deliveries}")
+
             appDatabase.deliveryDao().deleteAll()
             appDatabase.deliveryDao().insertAll(deliveryList)
 
             Logger.d(TAG, "Loaded update deliveries count: ${fetchDeliveriesCount()}")
-            if( fetchDeliveriesCount() == 0 ) {
+            if (fetchDeliveriesCount() == 0) {
                 observableDeliveries.postValue(ArrayList<Delivery>())
             }
         }

@@ -18,22 +18,35 @@ class LocationUpdatesBroadcastReceiver: BroadcastReceiver() {
 
     private val TAG = LocationUpdatesBroadcastReceiver::class.java.simpleName
 
-    override fun onReceive(context: Context?, intent: Intent?) {
+    override fun onReceive(context: Context, intent: Intent?) {
         if( intent != null ) {
             val action = intent.action
             if( action == ACTION_PROCESS_UPDATES ) {
                 val result = LocationResult.extractResult(intent)
 
                 if( result != null ) {
+                    val time = System.currentTimeMillis().toString()
+
                     val locations = result.locations
                     val location = locations.first()
                     val latitude = location.latitude
                     val longitude = location.longitude
 
-                    Logger.d(TAG, "Location Broadcast Receiver, latitude: $latitude longitude: $longitude")
+                    Logger.d(TAG, "Location Broadcast Receiver, latitude: $latitude longitude: $longitude at time: $time")
                     try
                     {
-                        val locationUpdatesInteractor = LocationUpdatesInteractorImpl(context!!, object: LocationUpdatesCallback {
+                        // last update
+                        val appExecutors = AppExecutors(Executors.newSingleThreadExecutor(),
+                                Executors.newFixedThreadPool(1),
+                                MainThreadExecutor())
+                        val appDatabase = AppDatabase.getInstance(context, appExecutors)
+                        appDatabase?.let {
+                            Logger.d(TAG, "Inserting last updated time of: $time")
+                            it.lastUpdateDao().insert(LastUpdate(lastUpdate = time))
+                        }
+
+                        // location request
+                        val locationUpdatesInteractor = LocationUpdatesInteractorImpl(context, object: LocationUpdatesCallback {
                             override fun onSuccess(data: String?) {
                                 Logger.d(TAG, "Received report location success response: $data")
                             }
