@@ -10,6 +10,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
 import com.aisoftware.flexconnect.R
+import com.aisoftware.flexconnect.R.id.bottomNavDeliveries
+import com.aisoftware.flexconnect.R.id.bottomNavPhoneNumber
+import com.aisoftware.flexconnect.R.id.dashboardSwipeLayout
 import com.aisoftware.flexconnect.adapter.DeliveryAdapter
 import com.aisoftware.flexconnect.adapter.DeliveryAdapterItemCallback
 import com.aisoftware.flexconnect.model.Delivery
@@ -50,8 +53,8 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
         refreshList = intent.getBooleanExtra(Constants.REFRESH_LIST_KEY, true)
         val phoneNumber = getSharedPrefUtil().getUserPref(false)
         val factory = DeliveryViewModelFactory(application, getNetworkService())
-        val model = ViewModelProviders.of(this, factory).get(DeliveryViewModel::class.java)
-        model.getDeliveries(phoneNumber, refreshList).observe(this, Observer<List<Delivery>> { deliveries ->
+        val deliveryViewModel = ViewModelProviders.of(this, factory).get(DeliveryViewModel::class.java)
+        deliveryViewModel.getDeliveries(phoneNumber, refreshList).observe(this, Observer<List<Delivery>> { deliveries ->
             if (dashboardSwipeLayout.isRefreshing) {
                 dashboardSwipeLayout.isRefreshing = false
             }
@@ -77,7 +80,7 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
 
         // Pull down to refresh
         dashboardSwipeLayout.setOnRefreshListener {
-            model.getDeliveries(phoneNumber, true)
+            deliveryViewModel.getDeliveries(phoneNumber, true)
         }
     }
 

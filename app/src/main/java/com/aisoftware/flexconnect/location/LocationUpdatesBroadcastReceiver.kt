@@ -3,9 +3,14 @@ package com.aisoftware.flexconnect.location
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.aisoftware.flexconnect.AppExecutors
+import com.aisoftware.flexconnect.MainThreadExecutor
+import com.aisoftware.flexconnect.db.AppDatabase
+import com.aisoftware.flexconnect.model.LastUpdate
 import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.Logger
 import com.google.android.gms.location.LocationResult
+import java.util.concurrent.Executors
 
 const val ACTION_PROCESS_UPDATES = "com.aisoftware.flexconnect.location.locationupdatespendingintent.action.PROCESS_UPDATES"
 

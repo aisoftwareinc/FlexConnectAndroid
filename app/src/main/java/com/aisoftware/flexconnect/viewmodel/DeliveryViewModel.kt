@@ -101,11 +101,7 @@ class DeliveryViewModelFactory(@param:NonNull
               private val app: Application,
               private val networkService: NetworkService):ViewModelProvider.NewInstanceFactory() {
 
-    private val dataRepo: DataRepository
-
-    init {
-        dataRepo = (app as FlexConnectApplication).getRepository()
-    }
+    private val dataRepo: DataRepository = (app as FlexConnectApplication).getRepository()
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return DeliveryViewModel(app, dataRepo, networkService) as T

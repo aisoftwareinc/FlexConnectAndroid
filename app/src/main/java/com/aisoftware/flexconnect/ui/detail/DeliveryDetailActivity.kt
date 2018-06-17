@@ -5,6 +5,8 @@ import android.app.ActionBar
 import android.app.Activity
 import android.app.Dialog
 import android.app.PendingIntent
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -26,6 +28,7 @@ import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.location.ACTION_PROCESS_UPDATES
 import com.aisoftware.flexconnect.location.LocationUpdatesBroadcastReceiver
 import com.aisoftware.flexconnect.model.Delivery
+import com.aisoftware.flexconnect.model.LastUpdate
 import com.aisoftware.flexconnect.ui.FlexConnectActivityBase
 import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.ConverterUtil
@@ -34,12 +37,17 @@ import com.aisoftware.flexconnect.util.Logger
 import com.aisoftware.flexconnect.util.containsOnly
 import com.aisoftware.flexconnect.util.isPermissionGranted
 import com.aisoftware.flexconnect.util.requestPermission
+import com.aisoftware.flexconnect.viewmodel.LastUpdateViewModel
+import com.aisoftware.flexconnect.viewmodel.LastUpdateViewModelFactory
 import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.CustomEvent
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.activity_delivery_detail.*
 import kotlinx.android.synthetic.main.bottom_nav_layout.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -49,11 +57,13 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     private val CAMERA_REQUEST_CODE = 88
     private val REQUEST_CAMERA_PERMISSION_CODE = 2
     private val REQUEST_LOCATION_PERMISSION_CODE = 3
+    private val DEFAULT_LAST_UPDATE = "Not Available"
 
     private var REQUESTING_LOCATION_UPDATES_KEY = "requestingLocationUpdatesKey"
     private var requestingLocationUpdates = false
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var presenter: DeliveryDetailPresenter
+    private val dateFormat: SimpleDateFormat = SimpleDateFormat("MM/dd - hh:mm:ss a")
 
     companion object {
         @JvmStatic
