@@ -19,6 +19,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.view.MenuItem
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -78,6 +79,9 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_delivery_detail)
         updateValuesFromBundle(savedInstanceState)
+
+        // Keep screen on
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
 //        val toolbar = findViewById<Toolbar>(R.id.detailToolbar)
 //        setSupportActionBar(toolbar)
@@ -312,9 +316,6 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
                 fusedLocationProviderClient.requestLocationUpdates(locationUpdateRequest, getLocationPendingIntent())
             }
         }
-        else {
-            showNetworkAvailabilityError()
-        }
     }
 
     override fun stopLocationUpdate() {
@@ -433,12 +434,12 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
             AlertDialog.Builder(this, R.style.alertDialogStyle)
                     .setTitle(title)
                     .setMessage(message)
-                    .setPositiveButton(getString(R.string.dialog_ok), { dialog, id ->
+                    .setPositiveButton(getString(R.string.dialog_ok)) { dialog, id ->
                         dialog.dismiss()
                         if (isFinish) {
                             finish()
                         }
-                    }).create().show()
+                    }.create().show()
         }
     }
 }
