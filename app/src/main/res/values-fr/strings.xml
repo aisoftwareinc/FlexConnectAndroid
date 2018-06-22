@@ -1,24 +1,69 @@
 <resources>
     <string name="app_name">FlexConnect</string>
     <string name="launcher_title">FlexConnect</string>
+    <string name="title_activity_dashboard">Livraisons</string>
+    <string name="title_activity_detail">Livraison</string>
+
     <string name="button_title">Envoyer</string>
     <string name="phone_hint_mask">(___) ___ - ____</string>
     <string name="auth_code_hint">Code d\'identification</string>
     <string name="submit_dialog_title">Envoyer une erreur</string>
     <string name="submit_dialog_error_message">s\'il vous plaît entrer un numéro de téléphone valide</string>
 
+    <string name="delivery_logout_title">Connectez - Out</string>
+    <string name="delivery_logout_message">Voulez-vous vous déconnecter de l\'application?</string>
+    <string name="delivery_logout_pos_button">Ok</string>
+    <string name="delivery_logout_neg_button">Annuler</string>
+
+    <string name="network_availability_error_title">Pas de connexion réseau</string>
+    <string name="network_availability_error_message">Une connexion à un réseau ou à Internet n\'a pas pu être vérifiée. Veuillez réessayer.</string>
+
+    <string name="bottom_nav_phone_number">Numéro de téléphone</string>
+    <string name="bottom_nav_deliveries">Livraisons</string>
+
     <string name="delivery_status_label">Statut:</string>
     <string name="delivery_time_label">Temps:</string>
     <string name="delivery_eta_label">ETA:</string>
     <string name="delivery_distance_label">Distance:</string>
+    <string name="delivery_detail_no_deliveries_title">Statut de livraison</string>
+    <string name="delivery_detail_no_deliveries_message">Il n\'y a actuellement aucune livraison prévue. Veuillez dérouler pour actualiser la liste des livraisons.</string>
+    <string name="delivery_detail_no_deliveries_error_message">Une erreur s\'est produite lors de la récupération des livraisons. Affichage des livraisons enregistrées récemment, si disponibles.</string>
+
+    <string name="delivery_auth_error_title">Authentication Error</string>
+    <string name="delivery_auth_error_message">The authentication was not successful. Please try again.</string>
 
     <string name="delivery_detail_distance_label">Distance à destination:</string>
     <string name="delivery_detail_eta_label">Heure d\'arrivée estimée:</string>
-    <string name="delivery_detail_comments_label">Comments:</string>
+    <string name="delivery_detail_report_label">Dernier rapport:</string>
+    <string name="delivery_detail_comments_label">Commentaires:</string>
     <string name="delivery_detail_enroute_status_label">En Route</string>
     <string name="delivery_detail_delivered_status_label">Livré</string>
     <string name="delivery_detail_directions_button_label">Directions routières</string>
     <string name="delivery_detail_error_title">Erreur de donnée</string>
     <string name="delivery_detail_error_message">Nous sommes incapables de récupérer les informations de livraison. Veuillez réessayer.</string>
+
+    <string name="delivery_detail_delivered_photo_title">Image de livraison</string>
+    <string name="delivery_detail_delivered_photo_message">Prenez une photo de la livraison?</string>
+    <string name="delivery_detail_delivered_image_success_message">Image téléchargée avec succès</string>
+    <string name="delivery_detail_delivered_image_failure_message">Nous n\'avons pas pu terminer le téléchargement de l\'image. Veuillez réessayer.</string>
+    <string name="delivery_detail_permission_required_title">Permission requise</string>
+    <string name="delivery_detail_permission_required_message">Cette autorisation est requise pour que cette application fonctionne. Veuillez activer la permission.</string>
+    <string name="delivery_detail_permission_pos_button">ALLER AUX PARAMÈTRES</string>
+    <string name="delivery_detail_permission_neg_button">ANNULER</string>
+    <string name="delivery_detail_no_picture_message">PAS D\'IMAGE</string>
+
+    <string name="permision_available_camera">La permission de caméra a été accordée. Aperçu peut maintenant être ouvert.</string>
+    <string name="permision_available_location">La permission de localisation a été accordée.</string>
+    <string name="permissions_not_granted">Les autorisations n\'ont pas été accordées.</string>
+    <string name="permission_camera_rationale">L\'autorisation de l\'appareil photo est nécessaire pour afficher l\'aperçu de la caméra.</string>
+    <string name="permission_location_rationale">La permission de localisation est nécessaire pour envoyer des mises à jour de localisation.</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">ANNULER</string>
+    <string name="dialog_send">ENVOYER</string>
+    <string name="dialog_retake">REPRENDRE</string>
+    <string name="settings">Paramètres</string>
+
+    <string name="phone_shared_pref_key">phone_shared_pref_key</string>
+    <string name="interval_pref_key">interval_pref_key</string>
 
 </resources>

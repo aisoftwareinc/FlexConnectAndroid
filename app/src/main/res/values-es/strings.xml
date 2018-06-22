@@ -1,23 +1,67 @@
 <resources>
     <string name="app_name">FlexConnect</string>
     <string name="launcher_title">FlexConnect</string>
+    <string name="title_activity_dashboard">Entregas</string>
+    <string name="title_activity_detail">Entrega</string>
     <string name="button_title">Enviar</string>
     <string name="phone_hint_mask">(___) ___ - ____</string>
     <string name="auth_code_hint">Código de Autenticación</string>
     <string name="submit_dialog_title">Enviar Error</string>
     <string name="submit_dialog_error_message">Por favor ingrese un número de teléfono válido.</string>
 
+    <string name="delivery_logout_title">Cerrar sesión</string>
+    <string name="delivery_logout_message">¿Desea desconectarse de la aplicación?</string>
+    <string name="delivery_logout_pos_button">Ok</string>
+    <string name="delivery_logout_neg_button">Cancelar</string>
+
+    <string name="network_availability_error_title">No hay conexion de red</string>
+    <string name="network_availability_error_message">No se pudo verificar una conexión a una red o a Internet. Inténtalo de nuevo.</string>
+
+    <string name="bottom_nav_phone_number">Número de teléfono</string>
+    <string name="bottom_nav_deliveries">Entregas</string>
+
     <string name="delivery_status_label">Estado:</string>
     <string name="delivery_time_label">Hora:</string>
     <string name="delivery_eta_label">ETA:</string>
     <string name="delivery_distance_label">Distancia:</string>
+    <string name="delivery_detail_no_deliveries_title">Estado de entrega</string>
+    <string name="delivery_detail_no_deliveries_message">Actualmente no hay entregas programadas. Por favor, desplácese para actualizar la lista de entregas.</string>
+    <string name="delivery_detail_no_deliveries_error_message">Hubo un error al recuperar entregas. Mostrando entregas guardadas recientemente si están disponibles.</string>
+
+    <string name="delivery_auth_error_title">Error de autenticación</string>
+    <string name="delivery_auth_error_message">La autenticación no fue exitosa Inténtalo de nuevo.</string>
 
     <string name="delivery_detail_distance_label">Distancia al Destino:</string>
     <string name="delivery_detail_eta_label">Hora Estimada de Llegada:</string>
+    <string name="delivery_detail_report_label">Último reportado:</string>
     <string name="delivery_detail_comments_label">Ccomentarios:</string>
     <string name="delivery_detail_enroute_status_label">En Route</string>
     <string name="delivery_detail_delivered_status_label">Entregado</string>
     <string name="delivery_detail_directions_button_label">Indicaciones de Viaje</string>
     <string name="delivery_detail_error_title">Error de datos</string>
     <string name="delivery_detail_error_message">No podemos recuperar la información de entrega. Inténtalo de nuevo.</string>
+
+    <string name="delivery_detail_delivered_photo_title">Imagen de entrega</string>
+    <string name="delivery_detail_delivered_photo_message">Tome una foto de la entrega?</string>
+    <string name="delivery_detail_delivered_image_success_message">Imagen cargada con éxito</string>
+    <string name="delivery_detail_delivered_image_failure_message">No pudimos completar la carga de la imagen. Inténtalo de nuevo.</string>
+    <string name="delivery_detail_permission_required_title">Permiso Requerido</string>
+    <string name="delivery_detail_permission_required_message">Este permiso es requerido para que esta aplicación funcione. Por favor habilite el permiso.</string>
+    <string name="delivery_detail_permission_pos_button">IR A LA CONFIGURACIÓN</string>
+    <string name="delivery_detail_permission_neg_button">CANCELAR</string>
+    <string name="delivery_detail_no_picture_message">SIN IMAGEN</string>
+
+    <string name="permision_available_camera">Permiso de cámara ha sido otorgado. La vista previa ahora se puede abrir.</string>
+    <string name="permision_available_location">Ubicación Permiso ha sido otorgado.</string>
+    <string name="permissions_not_granted">Los permisos no fueron otorgados.</string>
+    <string name="permission_camera_rationale">Se necesita permiso de la cámara para mostrar la vista previa de la cámara.</string>
+    <string name="permission_location_rationale">El permiso de ubicación es necesario para enviar actualizaciones de ubicación.</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">CANCELAR</string>
+    <string name="dialog_send">ENVIAR</string>
+    <string name="dialog_retake">VOLVER A TOMAR</string>
+    <string name="settings">Configuraciones</string>
+
+    <string name="phone_shared_pref_key">phone_shared_pref_key</string>
+    <string name="interval_pref_key">interval_pref_key</string>
 </resources>
