@@ -26,6 +26,20 @@ import android.widget.TextView
 import android.widget.Toast
 import com.aisoftware.flexconnect.BuildConfig
 import com.aisoftware.flexconnect.R
+import com.aisoftware.flexconnect.R.id.bottomNavDeliveries
+import com.aisoftware.flexconnect.R.id.bottomNavPhoneNumber
+import com.aisoftware.flexconnect.R.id.detailAddress1TextView
+import com.aisoftware.flexconnect.R.id.detailAddress2TextView
+import com.aisoftware.flexconnect.R.id.detailCommentsTextView
+import com.aisoftware.flexconnect.R.id.detailDeliveredButton
+import com.aisoftware.flexconnect.R.id.detailDeliveryPhoneEditText
+import com.aisoftware.flexconnect.R.id.detailDeliverylNameTextView
+import com.aisoftware.flexconnect.R.id.detailDistanceTextView
+import com.aisoftware.flexconnect.R.id.detailDrivingDirectionsButton
+import com.aisoftware.flexconnect.R.id.detailEnRouteCheckBox
+import com.aisoftware.flexconnect.R.id.detailEtaTextView
+import com.aisoftware.flexconnect.R.id.detailLayout
+import com.aisoftware.flexconnect.R.id.timeValueTextView
 import com.aisoftware.flexconnect.location.ACTION_PROCESS_UPDATES
 import com.aisoftware.flexconnect.location.LocationUpdatesBroadcastReceiver
 import com.aisoftware.flexconnect.model.Delivery
@@ -358,18 +372,18 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
             AlertDialog.Builder(this, R.style.alertDialogStyle)
                     .setTitle(getString(R.string.delivery_detail_delivered_photo_title))
                     .setMessage(getString(R.string.delivery_detail_delivered_photo_message))
-                    .setPositiveButton(getString(R.string.dialog_ok), { dialog, id ->
+                    .setPositiveButton(getString(R.string.dialog_ok)) { dialog, id ->
                         dialog.dismiss()
                         presenter.deliveryCaptureImageClicked(true)
-                    })
-                    .setNeutralButton(getString(R.string.dialog_cancel), { dialog, id ->
+                    }
+                    .setNeutralButton(getString(R.string.dialog_cancel)) { dialog, id ->
                         presenter.imageCancelClicked()
                         dialog.dismiss()
-                    })
-                    .setNegativeButton(getString(R.string.delivery_detail_no_picture_message), { dialog, id ->
+                    }
+                    .setNegativeButton(getString(R.string.delivery_detail_no_picture_message)) { dialog, id ->
                         presenter.deliveryCaptureImageClicked(false)
                         dialog.dismiss()
-                    })
+                    }
                     .create().show()
         }
     }
@@ -386,6 +400,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
                this,
                getString(R.string.delivery_detail_delivered_image_success_message),
                Toast.LENGTH_SHORT).show()
+        navigateToDashboard()
     }
 
     override fun showDeliveredRequestFailure() {
