@@ -9,10 +9,13 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
+import android.view.View
 import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.R.id.bottomNavDeliveries
 import com.aisoftware.flexconnect.R.id.bottomNavPhoneNumber
+import com.aisoftware.flexconnect.R.id.dashboardRecyclerView
 import com.aisoftware.flexconnect.R.id.dashboardSwipeLayout
+import com.aisoftware.flexconnect.R.id.noDeliveriesTextView
 import com.aisoftware.flexconnect.adapter.DeliveryAdapter
 import com.aisoftware.flexconnect.adapter.DeliveryAdapterItemCallback
 import com.aisoftware.flexconnect.model.Delivery
@@ -61,9 +64,13 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
 
             if (deliveries != null && deliveries.isNotEmpty()) {
                 Logger.d(TAG, "Updating deliveries list with items: $deliveries, and refresh flag: $refreshList")
+                dashboardRecyclerView.visibility = View.VISIBLE
+                noDeliveriesTextView.visibility = View.GONE
                 adapter.updateList(deliveries)
             }
             else {
+                dashboardRecyclerView.visibility = View.GONE
+                noDeliveriesTextView.visibility = View.VISIBLE
 //                showNoDeliveriesDialog()
             }
         })

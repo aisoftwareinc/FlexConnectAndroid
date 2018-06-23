@@ -23,22 +23,20 @@
         android:layout_below="@id/logoImageView"
         android:background="@color/colorRuleGrey"/>
 
-    <!--<android.support.design.widget.AppBarLayout-->
-    <!--android:id="@+id/dashboardAppbarlayout"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">-->
-
-    <!--<android.support.v7.widget.Toolbar-->
-    <!--android:id="@+id/dashboardToolbar"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="?attr/actionBarSize"-->
-    <!--android:background="@drawable/dashboard_header"-->
-    <!--android:elevation="4dp"-->
-    <!--android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
-    <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>-->
-    <!--</android.support.design.widget.AppBarLayout>-->
-    <!--android:background="@color/colorPrimary"-->
+    <TextView
+        android:id="@+id/noDeliveriesTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/viewDivider1"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="@string/delivery_detail_no_deliveries_message"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:visibility="invisible"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/dashboardSwipeLayout"
