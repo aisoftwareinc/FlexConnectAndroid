@@ -5,9 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.View
+import com.aisoftware.flexconnect.FlexConnectApplication
 import com.aisoftware.flexconnect.R
+import com.aisoftware.flexconnect.R.id.authCodeEditText
+import com.aisoftware.flexconnect.R.id.phoneEditText
+import com.aisoftware.flexconnect.R.id.progressBar1
+import com.aisoftware.flexconnect.R.id.submitButton
+import com.aisoftware.flexconnect.R.id.titleImageView
+import com.aisoftware.flexconnect.model.PhoneNumber
 import com.aisoftware.flexconnect.ui.FlexConnectActivityBase
 import com.aisoftware.flexconnect.util.Constants
+import com.aisoftware.flexconnect.util.Logger
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : FlexConnectActivityBase(), MainView {
@@ -61,14 +69,19 @@ class MainActivity : FlexConnectActivityBase(), MainView {
         }
     }
 
+    override fun savePhoneNumber(phoneNumber: String) {
+        Logger.d(TAG, "Saving phone number: $phoneNumber")
+        (application as FlexConnectApplication).getAppDatabase()?.phoneNumberDao()?.insert(PhoneNumber(phoneNumber = phoneNumber))
+    }
+
     override fun showErrorDialog() {
         if( !isFinishing) {
             AlertDialog.Builder(this, R.style.alertDialogStyle)
                     .setTitle(getString(R.string.delivery_auth_error_title))
                     .setMessage(getString(R.string.delivery_auth_error_message))
-                    .setPositiveButton(Constants.POS_BUTTON, { dialog, id ->
+                    .setPositiveButton(Constants.POS_BUTTON) { dialog, id ->
                         dialog.dismiss()
-                    }).create().show()
+                    }.create().show()
         }
     }
 }

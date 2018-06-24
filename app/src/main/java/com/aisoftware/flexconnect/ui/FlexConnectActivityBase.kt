@@ -93,24 +93,23 @@ open class FlexConnectActivityBase: AppCompatActivity(), ActivityBaseView {
             AlertDialog.Builder(this, R.style.alertDialogStyle)
                     .setTitle(getString(R.string.network_availability_error_title))
                     .setMessage(getString(R.string.network_availability_error_message))
-                    .setPositiveButton(Constants.POS_BUTTON, { dialog, id ->
+                    .setPositiveButton(Constants.POS_BUTTON) { dialog, id ->
                         dialog.dismiss()
-                    }).create().show()
+                    }.create().show()
         }
     }
-
 
     override fun showLogoutDialog() {
         if (!isFinishing) {
             AlertDialog.Builder(this, R.style.alertDialogStyle)
                     .setTitle(getString(R.string.delivery_logout_title))
                     .setMessage(getString(R.string.delivery_logout_message))
-                    .setPositiveButton(getString(R.string.delivery_logout_pos_button), { dialog, id ->
+                    .setPositiveButton(getString(R.string.delivery_logout_pos_button)) { dialog, id ->
                         logout()
-                    })
-                    .setNegativeButton(getString(R.string.delivery_logout_neg_button), { dialog, id ->
+                    }
+                    .setNegativeButton(getString(R.string.delivery_logout_neg_button)) { dialog, id ->
                         dialog.dismiss()
-                    }).create().show()
+                    }.create().show()
         }
     }
 

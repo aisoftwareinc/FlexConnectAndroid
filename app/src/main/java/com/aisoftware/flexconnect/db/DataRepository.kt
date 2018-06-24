@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import com.aisoftware.flexconnect.model.Delivery
 import com.aisoftware.flexconnect.model.LastUpdate
+import com.aisoftware.flexconnect.model.PhoneNumber
 import com.aisoftware.flexconnect.util.Logger
 
 interface DataRepository {
@@ -14,6 +15,7 @@ interface DataRepository {
     fun getDeliveries(): LiveData<List<Delivery>>
     fun loadLastUpdate(lastUpdate: LastUpdate)
     fun fetchLastUpdate(): LiveData<LastUpdate>
+    fun fetchPhoneNumber(): LiveData<PhoneNumber>
 }
 
 class DataRepositoryImpl private constructor(private val appDatabase: AppDatabase) : DataRepository {
@@ -86,6 +88,10 @@ class DataRepositoryImpl private constructor(private val appDatabase: AppDatabas
 
     override fun fetchLastUpdate(): LiveData<LastUpdate> {
         return appDatabase.lastUpdateDao().loadLastUpdate()
+    }
+
+    override fun fetchPhoneNumber(): LiveData<PhoneNumber> {
+       return appDatabase.phoneNumberDao().fetch()
     }
 
     companion object {

@@ -26,20 +26,6 @@ import android.widget.TextView
 import android.widget.Toast
 import com.aisoftware.flexconnect.BuildConfig
 import com.aisoftware.flexconnect.R
-import com.aisoftware.flexconnect.R.id.bottomNavDeliveries
-import com.aisoftware.flexconnect.R.id.bottomNavPhoneNumber
-import com.aisoftware.flexconnect.R.id.detailAddress1TextView
-import com.aisoftware.flexconnect.R.id.detailAddress2TextView
-import com.aisoftware.flexconnect.R.id.detailCommentsTextView
-import com.aisoftware.flexconnect.R.id.detailDeliveredButton
-import com.aisoftware.flexconnect.R.id.detailDeliveryPhoneEditText
-import com.aisoftware.flexconnect.R.id.detailDeliverylNameTextView
-import com.aisoftware.flexconnect.R.id.detailDistanceTextView
-import com.aisoftware.flexconnect.R.id.detailDrivingDirectionsButton
-import com.aisoftware.flexconnect.R.id.detailEnRouteCheckBox
-import com.aisoftware.flexconnect.R.id.detailEtaTextView
-import com.aisoftware.flexconnect.R.id.detailLayout
-import com.aisoftware.flexconnect.R.id.timeValueTextView
 import com.aisoftware.flexconnect.location.ACTION_PROCESS_UPDATES
 import com.aisoftware.flexconnect.location.LocationUpdatesBroadcastReceiver
 import com.aisoftware.flexconnect.model.Delivery
@@ -97,10 +83,6 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         // Keep screen on
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-//        val toolbar = findViewById<Toolbar>(R.id.detailToolbar)
-//        setSupportActionBar(toolbar)
-//        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
         presenter = DeliveryDetailPresenterImpl(this, DeliveryDetailInteractorImpl(getNetworkService()))
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -109,7 +91,6 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         lastUpdateViewModel.getLastUpdate().observe(this, Observer<LastUpdate> { update ->
             if( update != null && update.lastUpdate.isNotEmpty() ) {
                 val d = Date(update.lastUpdate.toLong())
-//                val date = DateFormat.getInstance().format(d)
                 val time = dateFormat.format(d)
                 timeValueTextView.text = time
             }
@@ -155,7 +136,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     }
 
     override fun initializeView(delivery: Delivery, formattedPhone: String, isEnRoute: Boolean) {
-        Logger.d(TAG, "Initializing view with delivery: $delivery")
+        Logger.d(TAG, "Initializing view with delivery: $delivery and is enroute: $isEnRoute")
 
         formattedPhone.let {
             detailDeliveryPhoneEditText.text = formattedPhone
@@ -295,7 +276,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
             AlertDialog.Builder(this, R.style.alertDialogStyle)
                     .setTitle(getString(R.string.delivery_detail_permission_required_title))
                     .setMessage(getString(R.string.delivery_detail_permission_required_message))
-                    .setPositiveButton(getString(R.string.dialog_ok), { dialog, id ->
+                    .setPositiveButton(getString(R.string.dialog_ok)) { dialog, id ->
                         dialog.dismiss()
                         val intent = Intent()
                         intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
@@ -304,10 +285,10 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         startActivity(intent)
                         finish()
-                    })
-                    .setNegativeButton( getString(R.string.delivery_detail_permission_neg_button), { dialog, id ->
+                    }
+                    .setNegativeButton( getString(R.string.delivery_detail_permission_neg_button)) { dialog, id ->
                         dialog.dismiss()
-                    } )
+                    }
                     .create().show()
         }
     }

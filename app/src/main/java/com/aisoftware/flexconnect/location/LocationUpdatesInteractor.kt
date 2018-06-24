@@ -14,7 +14,7 @@ interface LocationUpdatesCallback {
 }
 
 interface LocationUpdatesInteractor {
-    fun reportLocation(latitude: Double, longitude: Double)
+    fun reportLocation(latitude: Double, longitude: Double, phoneNumber: String)
 }
 
 class LocationUpdatesInteractorImpl(val context: Context, val callback: LocationUpdatesCallback): LocationUpdatesInteractor{
@@ -22,9 +22,10 @@ class LocationUpdatesInteractorImpl(val context: Context, val callback: Location
     val TAG = LocationUpdatesInteractorImpl::class.java.simpleName
     val REPORT_LOCATION_REQUEST_CODE = "reportLocationRequestCode"
 
-    override fun reportLocation(latitude: Double, longitude: Double) {
+    override fun reportLocation(latitude: Double, longitude: Double, phoneNumber: String) {
+        Logger.d(TAG, "Reporting location with latitude: $latitude and longitude: $longitude with phone: $phoneNumber")
         val sharedPreferences = SharedPrefUtilImpl(context)
-        val phoneNumber = sharedPreferences.getUserPref(false)
+//        val phoneNumber = sharedPreferences.getUserPref(false)
         if( phoneNumber.isNullOrBlank() ) {
             callback.onFailure("Unable to determine phone number from preferences")
         }

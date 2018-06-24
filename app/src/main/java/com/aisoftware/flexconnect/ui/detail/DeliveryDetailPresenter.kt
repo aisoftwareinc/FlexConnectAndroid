@@ -124,12 +124,12 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
     }
 
     override fun locationPermissionPassed() {
-        view.startLocationUpdate(getLocationRequest())
-
         if( view.isNetworkAvailable() ) {
             val phoneNumber = view.getSharedPrefUtil().getUserPref(false)
             val guid = delivery.guid
             val request = EnRouteRequest(phoneNumber, guid)
+
+            view.startLocationUpdate(getLocationRequest())
             interactor.sendEnRouteUpdate(request, object : EnRouteRequestCallback {
                 override fun onEnRouteSuccess(data: String?) {
                     updateEnRouteStatus(true, false)
@@ -247,15 +247,19 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
 
     private fun getLocationRequest(): LocationRequest {
         val intervalProp = view.getSharedPrefUtil().getIntervalPref(false)
-        val interval = if (intervalProp.isBlank()) {
+        var interval = if (intervalProp.isBlank()) {
             DEFAULT_UPDATE_INTERVAL
         } else {
             intervalProp.toLong() * 60000
         }
 
+        if( BuildConfig.USE_DEFAULT_INTERVAL ) {
+            interval = DEFAULT_UPDATE_INTERVAL
+        }
+
         Logger.d(TAG, "Computed location update interval: $interval")
         val locationRequest = LocationRequest()
-        locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         locationRequest.interval = interval
         locationRequest.fastestInterval = DEFAULT_FAST_UPDATE_INTERVAL
         locationRequest.maxWaitTime = MAX_WAIT_TIME

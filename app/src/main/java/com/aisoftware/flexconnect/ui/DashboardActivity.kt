@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.R.id.bottomNavDeliveries
 import com.aisoftware.flexconnect.R.id.bottomNavPhoneNumber
@@ -52,6 +53,9 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
         setContentView(R.layout.activity_dashboard)
         initializeToolbar()
         initializeRecyclerView()
+
+        // Keep screen on
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         refreshList = intent.getBooleanExtra(Constants.REFRESH_LIST_KEY, true)
         val phoneNumber = getSharedPrefUtil().getUserPref(false)
