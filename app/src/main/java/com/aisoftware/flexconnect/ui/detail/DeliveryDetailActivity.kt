@@ -70,7 +70,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         @JvmStatic
         fun getInstance(context: Context, delivery: Delivery): Intent {
             val intent = Intent(context, DeliveryDetailActivity::class.java)
-            intent.putExtra(Constants.DELIVERY_DETAIL, delivery)
+            intent.putExtra(Constants.DELIVERY_DETAIL_KEY, delivery)
             return intent
         }
     }
@@ -83,11 +83,11 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         // Keep screen on
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        presenter = DeliveryDetailPresenterImpl(this, DeliveryDetailInteractorImpl(getNetworkService()))
+        presenter = DeliveryDetailPresenterImpl(this, DeliveryDetailInteractorImpl(getNetworkService()) )
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-        val factory = LastUpdateViewModelFactory(application)
-        val lastUpdateViewModel = ViewModelProviders.of(this, factory).get(LastUpdateViewModel::class.java)
+        val lastUpdateFactory = LastUpdateViewModelFactory(application)
+        val lastUpdateViewModel = ViewModelProviders.of(this, lastUpdateFactory).get(LastUpdateViewModel::class.java)
         lastUpdateViewModel.getLastUpdate().observe(this, Observer<LastUpdate> { update ->
             if( update != null && update.lastUpdate.isNotEmpty() ) {
                 val d = Date(update.lastUpdate.toLong())
@@ -126,8 +126,8 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
             presenter.detailDirectionsClicked()
         }
 
-        if (intent.hasExtra(Constants.DELIVERY_DETAIL)) {
-            val delivery = intent.getSerializableExtra(Constants.DELIVERY_DETAIL) as Delivery
+        if (intent.hasExtra(Constants.DELIVERY_DETAIL_KEY)) {
+            val delivery = intent.getSerializableExtra(Constants.DELIVERY_DETAIL_KEY) as Delivery
             presenter.initialize(delivery)
         }
         else {
