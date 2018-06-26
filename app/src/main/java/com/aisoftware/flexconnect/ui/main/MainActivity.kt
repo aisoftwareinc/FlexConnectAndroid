@@ -14,7 +14,6 @@ import com.aisoftware.flexconnect.R.id.submitButton
 import com.aisoftware.flexconnect.R.id.titleImageView
 import com.aisoftware.flexconnect.model.PhoneNumber
 import com.aisoftware.flexconnect.ui.FlexConnectActivityBase
-import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.Logger
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -79,7 +78,7 @@ class MainActivity : FlexConnectActivityBase(), MainView {
             AlertDialog.Builder(this, R.style.alertDialogStyle)
                     .setTitle(getString(R.string.delivery_auth_error_title))
                     .setMessage(getString(R.string.delivery_auth_error_message))
-                    .setPositiveButton(Constants.POS_BUTTON) { dialog, id ->
+                    .setPositiveButton(getString(R.string.delivery_logout_pos_button)) { dialog, id ->
                         dialog.dismiss()
                     }.create().show()
         }

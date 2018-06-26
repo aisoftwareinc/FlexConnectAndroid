@@ -6,7 +6,7 @@ import com.squareup.moshi.Json
 
 @Entity(tableName = "phonenumber")
 class PhoneNumber(
-        @PrimaryKey( autoGenerate = true)
+        @PrimaryKey()
         var id: Long? = 0,
         @Json(name = "phoneNumber")
         var phoneNumber: String = "" )

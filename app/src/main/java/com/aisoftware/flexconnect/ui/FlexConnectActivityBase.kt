@@ -5,10 +5,10 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import com.aisoftware.flexconnect.FlexConnectApplication
 import com.aisoftware.flexconnect.R
+import com.aisoftware.flexconnect.db.DataRepository
 import com.aisoftware.flexconnect.network.NetworkService
 import com.aisoftware.flexconnect.network.NetworkServiceDefault
 import com.aisoftware.flexconnect.ui.main.MainActivity
-import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.SharedPrefUtil
 import com.aisoftware.flexconnect.util.SharedPrefUtilImpl
@@ -93,7 +93,7 @@ open class FlexConnectActivityBase: AppCompatActivity(), ActivityBaseView {
             AlertDialog.Builder(this, R.style.alertDialogStyle)
                     .setTitle(getString(R.string.network_availability_error_title))
                     .setMessage(getString(R.string.network_availability_error_message))
-                    .setPositiveButton(Constants.POS_BUTTON) { dialog, id ->
+                    .setPositiveButton(getString(R.string.delivery_logout_pos_button)) { dialog, id ->
                         dialog.dismiss()
                     }.create().show()
         }
