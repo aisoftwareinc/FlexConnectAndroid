@@ -58,8 +58,8 @@ class MainPresenterImpl(val view: MainView, private val interactor: MainInteract
                 if (isPhoneValid(phoneEditText)) {
                     phoneNumber = formatPhoneNumber(phoneEditText)
                     interactor.fetchAuthCode(phoneNumber)
-//                    interactor.fetchTimerInterval()
-                } else {
+                }
+                else {
                     view.showErrorDialog()
                 }
             }
@@ -88,10 +88,6 @@ class MainPresenterImpl(val view: MainView, private val interactor: MainInteract
             sharedPrefUtil.setUserProp(phoneNumber)
             true
         }
-    }
-
-    override fun onTimerFetchSuccess(interval: String) {
-        sharedPrefUtil.setIntervalProp(interval)
     }
 
     private fun isPhoneValid(phoneNumber: String): Boolean {

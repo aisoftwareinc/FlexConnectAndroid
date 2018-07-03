@@ -7,11 +7,6 @@ import android.support.v7.app.AlertDialog
 import android.view.View
 import com.aisoftware.flexconnect.FlexConnectApplication
 import com.aisoftware.flexconnect.R
-import com.aisoftware.flexconnect.R.id.authCodeEditText
-import com.aisoftware.flexconnect.R.id.phoneEditText
-import com.aisoftware.flexconnect.R.id.progressBar1
-import com.aisoftware.flexconnect.R.id.submitButton
-import com.aisoftware.flexconnect.R.id.titleImageView
 import com.aisoftware.flexconnect.model.PhoneNumber
 import com.aisoftware.flexconnect.ui.FlexConnectActivityBase
 import com.aisoftware.flexconnect.util.Logger

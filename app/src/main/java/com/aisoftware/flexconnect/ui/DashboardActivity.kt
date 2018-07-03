@@ -12,14 +12,10 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import com.aisoftware.flexconnect.R
-import com.aisoftware.flexconnect.R.id.bottomNavDeliveries
-import com.aisoftware.flexconnect.R.id.bottomNavPhoneNumber
-import com.aisoftware.flexconnect.R.id.dashboardRecyclerView
-import com.aisoftware.flexconnect.R.id.dashboardSwipeLayout
-import com.aisoftware.flexconnect.R.id.noDeliveriesTextView
 import com.aisoftware.flexconnect.adapter.DeliveryAdapter
 import com.aisoftware.flexconnect.adapter.DeliveryAdapterItemCallback
 import com.aisoftware.flexconnect.model.Delivery
+import com.aisoftware.flexconnect.model.EnRouteState
 import com.aisoftware.flexconnect.ui.detail.DeliveryDetailActivity
 import com.aisoftware.flexconnect.util.Constants
 import com.aisoftware.flexconnect.util.CrashLogger
@@ -68,6 +64,10 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
 
             if (deliveries != null && deliveries.isNotEmpty()) {
                 Logger.d(TAG, "Updating deliveries list with items: $deliveries, and refresh flag: $refreshList")
+
+                val count = deliveries.filter{ it.status == EnRouteState.ENROUTE.state}.count()
+                setEnRouteCount(count)
+
                 dashboardRecyclerView.visibility = View.VISIBLE
                 noDeliveriesTextView.visibility = View.GONE
                 adapter.updateList(deliveries)
@@ -75,7 +75,6 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
             else {
                 dashboardRecyclerView.visibility = View.GONE
                 noDeliveriesTextView.visibility = View.VISIBLE
-//                showNoDeliveriesDialog()
             }
         })
 

@@ -64,5 +64,6 @@
     <string name="settings">Settings</string>
 
     <string name="phone_shared_pref_key">phone_shared_pref_key</string>
+    <string name="is_running_shared_pref_key">is_running_shared_pref_key</string>
     <string name="interval_pref_key">interval_pref_key</string>
 </resources>

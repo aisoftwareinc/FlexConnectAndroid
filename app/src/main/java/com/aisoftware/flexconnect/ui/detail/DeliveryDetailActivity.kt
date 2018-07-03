@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.ActionBar
 import android.app.Activity
 import android.app.Dialog
-import android.app.PendingIntent
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -13,6 +12,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.os.Looper
 import android.provider.MediaStore
 import android.provider.Settings
 import android.support.design.widget.Snackbar
@@ -26,8 +26,6 @@ import android.widget.TextView
 import android.widget.Toast
 import com.aisoftware.flexconnect.BuildConfig
 import com.aisoftware.flexconnect.R
-import com.aisoftware.flexconnect.location.ACTION_PROCESS_UPDATES
-import com.aisoftware.flexconnect.location.LocationUpdatesBroadcastReceiver
 import com.aisoftware.flexconnect.model.Delivery
 import com.aisoftware.flexconnect.model.LastUpdate
 import com.aisoftware.flexconnect.ui.FlexConnectActivityBase
@@ -40,10 +38,10 @@ import com.aisoftware.flexconnect.util.isPermissionGranted
 import com.aisoftware.flexconnect.util.requestPermission
 import com.aisoftware.flexconnect.viewmodel.LastUpdateViewModel
 import com.aisoftware.flexconnect.viewmodel.LastUpdateViewModelFactory
-import com.crashlytics.android.answers.Answers
-import com.crashlytics.android.answers.CustomEvent
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.activity_delivery_detail.*
 import kotlinx.android.synthetic.main.bottom_nav_layout.*
@@ -60,11 +58,17 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     private val REQUEST_LOCATION_PERMISSION_CODE = 3
     private val DEFAULT_LAST_UPDATE = "Not Available"
 
+    private val DEFAULT_UPDATE_INTERVAL: Long = 60000 // every 60 seconds
+//    private val DEFAULT_FAST_UPDATE_INTERVAL: Long = 30000 // every 30 seconds
+//    private val MAX_WAIT_TIME: Long = DEFAULT_UPDATE_INTERVAL * 10 // 10 minutes
+
     private var REQUESTING_LOCATION_UPDATES_KEY = "requestingLocationUpdatesKey"
     private var requestingLocationUpdates = false
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private lateinit var presenter: DeliveryDetailPresenter
     private val dateFormat: SimpleDateFormat = SimpleDateFormat("MM/dd - hh:mm:ss a")
+    private lateinit var delivery: Delivery
+    private lateinit var locationCallback: LocationCallback
 
     companion object {
         @JvmStatic
@@ -83,18 +87,25 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         // Keep screen on
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        presenter = DeliveryDetailPresenterImpl(this, DeliveryDetailInteractorImpl(getNetworkService()) )
+        presenter = DeliveryDetailPresenterImpl(this, DeliveryDetailInteractorImpl(getNetworkService(), getAppDatabase()))
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        Logger.d(TAG, "Started fused location provider client: $fusedLocationProviderClient")
+        locationCallback = object: LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+                Logger.d(TAG, "Send location request latitude: ${locationResult.lastLocation.latitude}, and longitude: ${locationResult.lastLocation.longitude}")
+                presenter.locationResultReceived(locationResult)
+            }
+        }
 
         val lastUpdateFactory = LastUpdateViewModelFactory(application)
         val lastUpdateViewModel = ViewModelProviders.of(this, lastUpdateFactory).get(LastUpdateViewModel::class.java)
         lastUpdateViewModel.getLastUpdate().observe(this, Observer<LastUpdate> { update ->
-            if( update != null && update.lastUpdate.isNotEmpty() ) {
+            if (update != null && update.lastUpdate.isNotEmpty()) {
                 val d = Date(update.lastUpdate.toLong())
                 val time = dateFormat.format(d)
                 timeValueTextView.text = time
-            }
-            else {
+            } else {
                 timeValueTextView.text = DEFAULT_LAST_UPDATE
             }
         })
@@ -109,16 +120,14 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         }
 
         bottomNavPhoneNumber.setOnClickListener {
-            Logger.d(TAG, "Bottom nav phone number clicked")
             showLogoutDialog()
         }
 
         bottomNavDeliveries.setOnClickListener {
-            Logger.d(TAG, "Bottom nav deliveries clicked")
             navigateToDashboard()
         }
 
-        detailDeliveredButton.setOnClickListener{
+        detailDeliveredButton.setOnClickListener {
             presenter.detailDeliveredChecked()
         }
 
@@ -129,13 +138,13 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         if (intent.hasExtra(Constants.DELIVERY_DETAIL_KEY)) {
             val delivery = intent.getSerializableExtra(Constants.DELIVERY_DETAIL_KEY) as Delivery
             presenter.initialize(delivery)
-        }
-        else {
+        } else {
             presenter.initialize(null)
         }
     }
 
     override fun initializeView(delivery: Delivery, formattedPhone: String, isEnRoute: Boolean) {
+        this.delivery = delivery
         Logger.d(TAG, "Initializing view with delivery: $delivery and is enroute: $isEnRoute")
 
         formattedPhone.let {
@@ -154,19 +163,19 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     }
 
     private fun adjustButtonSize(button: Button) {
-    val displayMetrics = getResources().getDisplayMetrics();
-    val width = displayMetrics.widthPixels;
-    val params = button.getLayoutParams();
-    params.width = width/2
-    button.width = width
-}
+        val displayMetrics = getResources().getDisplayMetrics();
+        val width = displayMetrics.widthPixels;
+        val params = button.getLayoutParams();
+        params.width = width / 2
+        button.width = width
+    }
 
     override fun onBackPressed() {
         presenter.onBackPressed()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        onBackPressed()
+        presenter.onBackPressed()
         return true
     }
 
@@ -193,12 +202,6 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
         if (requestingLocationUpdates) {
             presenter.checkLocationUpdate()
         }
-    }
-
-    fun onKeyMetric() {
-        Answers.getInstance().logCustom(CustomEvent("Driving Directions")
-                .putCustomAttribute("Category", "Clicked")
-                .putCustomAttribute("Length", 350))
     }
 
     override fun navigateToMapView(delivery: Delivery) {
@@ -238,7 +241,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when(requestCode) {
+        when (requestCode) {
             REQUEST_CAMERA_PERMISSION_CODE -> {
                 Logger.i(TAG, "Received response for Camera permission request.")
                 if (grantResults.containsOnly(PackageManager.PERMISSION_GRANTED)) {
@@ -286,7 +289,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
                         startActivity(intent)
                         finish()
                     }
-                    .setNegativeButton( getString(R.string.delivery_detail_permission_neg_button)) { dialog, id ->
+                    .setNegativeButton(getString(R.string.delivery_detail_permission_neg_button)) { dialog, id ->
                         dialog.dismiss()
                     }
                     .create().show()
@@ -305,24 +308,36 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     }
 
     override fun startLocationUpdate(locationUpdateRequest: LocationRequest) {
-        Logger.i(TAG, "Starting location updates with request: $locationUpdateRequest")
-        if( isNetworkAvailable() ) {
+        if (isNetworkAvailable()) {
+            Logger.i(TAG, "Starting location updates for deliver: ${delivery.id} with fusedLocationProviderClient: $fusedLocationProviderClient and enroute count: ${getEnRouteCount()}")
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                fusedLocationProviderClient.requestLocationUpdates(locationUpdateRequest, getLocationPendingIntent())
+
+                // instance of location callback
+//                fusedLocationProviderClient?.requestLocationUpdates(locationUpdateRequest, object : LocationCallback() {
+//                    override fun onLocationResult(locationResult: LocationResult) {
+//                        super.onLocationResult(locationResult)
+//                        Logger.d(TAG, "Send location request latitude: ${locationResult.lastLocation.latitude}, and longitude: ${locationResult.lastLocation.longitude}")
+//                        presenter.locationResultReceived(locationResult)
+//                    }
+//                }, Looper.myLooper())
+
+                fusedLocationProviderClient?.requestLocationUpdates(locationUpdateRequest, locationCallback, Looper.myLooper())
             }
         }
     }
 
     override fun stopLocationUpdate() {
-        Logger.d(TAG, "Stopping location update")
-        fusedLocationProviderClient.removeLocationUpdates(getLocationPendingIntent())
+        Logger.d(TAG, "Stopping location update for delivery: ${delivery.id}, and fusedLocationProviderClient: $fusedLocationProviderClient")
+//        fusedLocationProviderClient?.removeLocationUpdates(getLocationPendingIntent())
+        fusedLocationProviderClient?.removeLocationUpdates(locationCallback)
+        fusedLocationProviderClient = null
     }
 
-    private fun getLocationPendingIntent(): PendingIntent {
-        val intent = Intent(this, LocationUpdatesBroadcastReceiver::class.java)
-        intent.action = ACTION_PROCESS_UPDATES
-        return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-    }
+//    private fun getLocationPendingIntent(): PendingIntent {
+//        val intent = Intent(this, LocationUpdatesBroadcastReceiver::class.java)
+//        intent.action = ACTION_PROCESS_UPDATES
+//        return PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+//    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (resultCode) {
@@ -377,10 +392,10 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     }
 
     override fun showDeliveredRequestSuccess() {
-       Toast.makeText(
-               this,
-               getString(R.string.delivery_detail_delivered_image_success_message),
-               Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+                this,
+                getString(R.string.delivery_detail_delivered_image_success_message),
+                Toast.LENGTH_SHORT).show()
         navigateToDashboard()
     }
 
@@ -392,7 +407,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     }
 
     override fun showImageUploadConfirmDialog(bitmap: Bitmap) {
-        if( !isFinishing ) {
+        if (!isFinishing) {
             Logger.d(TAG, "Attempting to set bitmap: $bitmap")
             val dialog = Dialog(this, R.style.alertDialogStyle)
             dialog.setContentView(R.layout.dialog_image_upload_confirm)
