@@ -30,6 +30,7 @@ class FlexConnectApplication: Application() {
     private lateinit var appVersionName: String
     private var appVersionCode: Int = 0
     private lateinit var appPackage: String
+    var enRouteCount = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -93,7 +94,7 @@ class FlexConnectApplication: Application() {
         CrashLogger.setString("BUILD_PACKAGE", appPackage)
     }
 
-    fun getAppDatabase(): AppDatabase? = appDatabase
+    fun getAppDatabase(): AppDatabase = appDatabase
 
     fun getRepository(): DataRepository = dataRepository
 

@@ -5,9 +5,10 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import com.aisoftware.flexconnect.FlexConnectApplication
 import com.aisoftware.flexconnect.R
-import com.aisoftware.flexconnect.db.DataRepository
+import com.aisoftware.flexconnect.db.AppDatabase
 import com.aisoftware.flexconnect.network.NetworkService
 import com.aisoftware.flexconnect.network.NetworkServiceDefault
+import com.aisoftware.flexconnect.ui.dashboard.DashboardActivity
 import com.aisoftware.flexconnect.ui.main.MainActivity
 import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.SharedPrefUtil
@@ -22,6 +23,8 @@ interface ActivityBaseView {
     fun navigateToMain()
     fun navigateToDashboard()
     fun showLogoutDialog()
+    fun getEnRouteCount(): Int
+    fun incrementEnRouteCount()
 }
 
 open class FlexConnectActivityBase: AppCompatActivity(), ActivityBaseView {
@@ -84,8 +87,24 @@ open class FlexConnectActivityBase: AppCompatActivity(), ActivityBaseView {
 
     override fun getSharedPrefUtil(): SharedPrefUtil = sharedPrefsUtil
 
+    fun getAppDatabase(): AppDatabase {
+        return (application as FlexConnectApplication).getAppDatabase()
+    }
+
+    override fun getEnRouteCount(): Int {
+        return (application as FlexConnectApplication).enRouteCount
+    }
+
+    fun setEnRouteCount(count: Int) {
+        (application as FlexConnectApplication).enRouteCount = count
+    }
+
+    override fun incrementEnRouteCount() {
+        (application as FlexConnectApplication).enRouteCount++
+    }
+
     override fun isNetworkAvailable(): Boolean =
-        ((getApplication() as FlexConnectApplication).isNetworkAvailable())
+        (application as FlexConnectApplication).isNetworkAvailable()
 
     override fun showNetworkAvailabilityError() {
         if( !isFinishing) {
@@ -116,7 +135,6 @@ open class FlexConnectActivityBase: AppCompatActivity(), ActivityBaseView {
     override fun logout() {
         val sharedPrefUtil = getSharedPrefUtil()
         sharedPrefUtil.getUserPref(true)
-        sharedPrefUtil.getIntervalPref(true)
         (application as FlexConnectApplication).getAppDatabase()?.clearAllTables()
         CrashLogger.log(1, TAG, "User logged out")
         navigateToMain()

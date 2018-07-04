@@ -1,28 +1,23 @@
-package com.aisoftware.flexconnect.ui
+package com.aisoftware.flexconnect.ui.dashboard
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import com.aisoftware.flexconnect.R
-import com.aisoftware.flexconnect.R.id.bottomNavDeliveries
-import com.aisoftware.flexconnect.R.id.bottomNavPhoneNumber
-import com.aisoftware.flexconnect.R.id.dashboardRecyclerView
-import com.aisoftware.flexconnect.R.id.dashboardSwipeLayout
-import com.aisoftware.flexconnect.R.id.noDeliveriesTextView
 import com.aisoftware.flexconnect.adapter.DeliveryAdapter
 import com.aisoftware.flexconnect.adapter.DeliveryAdapterItemCallback
 import com.aisoftware.flexconnect.model.Delivery
+import com.aisoftware.flexconnect.model.EnRouteState
+import com.aisoftware.flexconnect.ui.FlexConnectActivityBase
 import com.aisoftware.flexconnect.ui.detail.DeliveryDetailActivity
 import com.aisoftware.flexconnect.util.Constants
-import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.Logger
 import com.aisoftware.flexconnect.viewmodel.DeliveryViewModel
 import com.aisoftware.flexconnect.viewmodel.DeliveryViewModelFactory
@@ -31,13 +26,14 @@ import com.google.android.gms.common.GoogleApiAvailability
 import kotlinx.android.synthetic.main.activity_dashboard.*
 import kotlinx.android.synthetic.main.bottom_nav_layout.*
 
-class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback {
+class DashboardActivity : FlexConnectActivityBase(), DashboardView, DeliveryAdapterItemCallback {
 
     private val TAG = DashboardActivity::class.java.simpleName
     private val GOOGLE_SERVICES_REQUEST_CODE = 9
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: DeliveryAdapter
     private var refreshList = true
+    private lateinit var presenter: DashboardPresenter
 
     companion object {
         @JvmStatic
@@ -51,8 +47,10 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
-        initializeToolbar()
         initializeRecyclerView()
+
+
+        presenter = DashboardPresenterImpl(this)
 
         // Keep screen on
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -65,23 +63,12 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
             if (dashboardSwipeLayout.isRefreshing) {
                 dashboardSwipeLayout.isRefreshing = false
             }
-
-            if (deliveries != null && deliveries.isNotEmpty()) {
-                Logger.d(TAG, "Updating deliveries list with items: $deliveries, and refresh flag: $refreshList")
-                dashboardRecyclerView.visibility = View.VISIBLE
-                noDeliveriesTextView.visibility = View.GONE
-                adapter.updateList(deliveries)
-            }
-            else {
-                dashboardRecyclerView.visibility = View.GONE
-                noDeliveriesTextView.visibility = View.VISIBLE
-//                showNoDeliveriesDialog()
-            }
+            presenter!!.initialize(deliveries)
         })
 
         bottomNavPhoneNumber.setOnClickListener {
             Logger.d(TAG, "Bottom nav phone number clicked")
-            showLogoutDialog()
+            presenter.onBottomNavPhoneClicked()
         }
 
         bottomNavDeliveries.setOnClickListener {
@@ -89,14 +76,33 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
             Logger.d(TAG, "Bottom nav deliveries clicked")
         }
 
-        // Pull down to refresh
         dashboardSwipeLayout.setOnRefreshListener {
             deliveryViewModel.getDeliveries(phoneNumber, true)
         }
     }
 
+    override fun initializeDeliveriesView(deliveries: List<Delivery>) {
+        Logger.d(TAG, "Updating deliveries list with items: $deliveries, and refresh flag: $refreshList")
+
+        val count = deliveries.filter{ it.status == EnRouteState.ENROUTE.state}.count()
+        setEnRouteCount(count)
+
+        dashboardRecyclerView.visibility = View.VISIBLE
+        noDeliveriesTextView.visibility = View.GONE
+        adapter.updateList(deliveries)
+    }
+
+    override fun initializeNoDeliveriesView() {
+        dashboardRecyclerView.visibility = View.GONE
+        noDeliveriesTextView.visibility = View.VISIBLE
+    }
+
     override fun onResume() {
         super.onResume()
+        presenter.onResumeEvent()
+    }
+
+    override fun checkGoogleApiAvailability() {
         val avail = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)
         when (avail) {
             ConnectionResult.SERVICE_MISSING -> showPlayServicesDialog(ConnectionResult.SERVICE_MISSING)
@@ -107,11 +113,11 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
     }
 
     override fun onBackPressed() {
-        showLogoutDialog()
+        presenter.onBackPressedEvent()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        onBackPressed()
+        presenter.onBackPressedEvent()
         return true
     }
 
@@ -122,27 +128,11 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
         }
     }
 
-    private fun initializeToolbar() {
-//        val toolbar = findViewById<Toolbar>(R.id.dashboardToolbar)
-//        setSupportActionBar(toolbar)
-//        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-    }
-
     private fun initializeRecyclerView() {
-//        val drawable = ContextCompat.getDrawable(this, R.drawable.recyclerview_divider)
-
         recyclerView = findViewById(R.id.dashboardRecyclerView)
-//        val decoration = DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL)
-
         adapter = DeliveryAdapter(this, this)
         recyclerView.setHasFixedSize(true)
         recyclerView.layoutManager = LinearLayoutManager(this)
-
-//        drawable?.let {
-//            decoration.setDrawable(drawable)
-//        }
-//        recyclerView.addItemDecoration(decoration)
-
         recyclerView.adapter = adapter
 
     }
@@ -153,26 +143,26 @@ class DashboardActivity : FlexConnectActivityBase(), DeliveryAdapterItemCallback
         startActivity(intent)
     }
 
-    private fun showNoDeliveriesDialog() {
-        showDialog(getString(R.string.delivery_detail_no_deliveries_title),
-                getString(R.string.delivery_detail_no_deliveries_message))
-    }
-
-    private fun showErrorDialog() {
-        CrashLogger.log(1, TAG, "Showing error retrieving deliveries dialog")
-        showDialog(getString(R.string.delivery_detail_no_deliveries_title),
-                getString(R.string.delivery_detail_no_deliveries_error_message))
-    }
-
-    private fun showDialog(title: String, message: String) {
-        if (!isFinishing) {
-            AlertDialog.Builder(this, R.style.alertDialogStyle)
-                    .setTitle(title)
-                    .setMessage(message)
-                    .setPositiveButton(getString(R.string.delivery_logout_pos_button), { dialog, id ->
-                        dialog.dismiss()
-                    }).create().show()
-        }
-    }
+//    private fun showNoDeliveriesDialog() {
+//        showDialog(getString(R.string.delivery_detail_no_deliveries_title),
+//                getString(R.string.delivery_detail_no_deliveries_message))
+//    }
+//
+//    private fun showErrorDialog() {
+//        CrashLogger.log(1, TAG, "Showing error retrieving deliveries dialog")
+//        showDialog(getString(R.string.delivery_detail_no_deliveries_title),
+//                getString(R.string.delivery_detail_no_deliveries_error_message))
+//    }
+//
+//    private fun showDialog(title: String, message: String) {
+//        if (!isFinishing) {
+//            AlertDialog.Builder(this, R.style.alertDialogStyle)
+//                    .setTitle(title)
+//                    .setMessage(message)
+//                    .setPositiveButton(getString(R.string.delivery_logout_pos_button)) { dialog, id ->
+//                        dialog.dismiss()
+//                    }.create().show()
+//        }
+//    }
 
 }

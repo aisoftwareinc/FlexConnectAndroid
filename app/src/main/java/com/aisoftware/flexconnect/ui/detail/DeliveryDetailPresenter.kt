@@ -5,13 +5,16 @@ import android.graphics.Bitmap
 import com.aisoftware.flexconnect.BuildConfig
 import com.aisoftware.flexconnect.model.Delivered
 import com.aisoftware.flexconnect.model.Delivery
+import com.aisoftware.flexconnect.model.EnRouteState
 import com.aisoftware.flexconnect.network.request.DeliveredRequest
 import com.aisoftware.flexconnect.network.request.EnRouteRequest
 import com.aisoftware.flexconnect.network.request.PendingEnRouteRequest
+import com.aisoftware.flexconnect.network.request.ReportLocationRequest
 import com.aisoftware.flexconnect.ui.ActivityBaseView
 import com.aisoftware.flexconnect.util.ConverterUtil
 import com.aisoftware.flexconnect.util.Logger
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 
 interface DeliveryDetailView : ActivityBaseView {
     fun initializeView(delivery: Delivery, formattedPhone: String, isEnRoute: Boolean)
@@ -46,7 +49,7 @@ interface DeliveryDetailPresenter {
     fun deliveryCaptureImageClicked(captureImage: Boolean)
     fun onResultCancelled(data: Intent?)
     fun onBackPressed()
-    fun updateEnRouteStatus(isEnRoute: Boolean, delete: Boolean)
+    fun locationResultReceived(locationResult: LocationResult)
 }
 
 class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val interactor: DeliveryDetailInteractor) : DeliveryDetailPresenter {
@@ -65,32 +68,30 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
         }
         else {
             this.delivery = delivery
-            view.getSharedPrefUtil().setIntervalProp(delivery.interval)
             val displayPhoneNumber = formatPhoneForDisplay(this.delivery.customerPhone) ?: ""
-            isEnRoute = view.getSharedPrefUtil().getEnRouteStatus(delivery.guid, false)
+            isEnRoute = delivery.status == EnRouteState.ENROUTE.state
             view.initializeView(delivery, displayPhoneNumber, isEnRoute)
         }
     }
 
-    override fun checkLocationUpdate() {
-        view.checkLocationUpdate()
-    }
-
     override fun stopLocationUpdate() {
-        if( view.isNetworkAvailable() ) {
+        if (view.isNetworkAvailable()) {
             val phoneNumber = view.getSharedPrefUtil().getUserPref(false)
             val guid = delivery.guid
             val request = PendingEnRouteRequest(phoneNumber, guid)
             interactor.sendPendingEnRouteUpdate(request, object : EnRouteRequestCallback {
                 override fun onEnRouteSuccess(data: String?) {
                     Logger.d(TAG, "Received success enroute response: $data")
-                    updateEnRouteStatus(false, true)
-                    view.stopLocationUpdate()
+                    Logger.d(TAG, "Attempting to stop location update.  Found enroute count of: ${view.getEnRouteCount()}")
+                    if (view.getEnRouteCount() == 1) {
+                        view.getSharedPrefUtil().setLocationClientRunning(false)
+                        view.stopLocationUpdate()
+                    }
                 }
 
                 override fun onEnRouteFailure(data: String?) {
                     Logger.d(TAG, "Received failure enroute response: $data")
-                    updateEnRouteStatus(false, true)
+                    view.getSharedPrefUtil().setLocationClientRunning(false)
                     view.stopLocationUpdate()
                 }
             })
@@ -100,12 +101,37 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
         }
     }
 
-    override fun updateEnRouteStatus(isEnRoute: Boolean, delete: Boolean) {
-        view.getSharedPrefUtil().setEnRouteStatus(delivery.guid, isEnRoute)
+    override fun locationPermissionPassed() {
+        if (view.isNetworkAvailable()) {
+            val phoneNumber = view.getSharedPrefUtil().getUserPref(false)
+            val guid = delivery.guid
+            interactor.sendEnRouteUpdate(EnRouteRequest(phoneNumber, guid), object : EnRouteRequestCallback {
+                override fun onEnRouteSuccess(data: String?) {
+                    val count = view.getEnRouteCount()
+                    val isRunning = view.getSharedPrefUtil().getLocationClientRunning()
 
-        if( !isEnRoute && delete )
-        {
-            view.getSharedPrefUtil().getEnRouteStatus(delivery.guid, true)
+                    Logger.d(TAG, "Attempting to start location update with current enroute count: $count")
+                    // Case: no deliveries are set to enroute
+                    if ( count == 0) {
+                        view.incrementEnRouteCount()
+                        view.getSharedPrefUtil().setLocationClientRunning(true)
+                        view.startLocationUpdate(getLocationRequest())
+                    }
+                    // Case: deliveries set to enroute, but no location client running
+                    else if( count > 0 && !isRunning ) {
+                        view.getSharedPrefUtil().setLocationClientRunning(true)
+                        view.startLocationUpdate(getLocationRequest())
+                    }
+                }
+
+                override fun onEnRouteFailure(data: String?) {
+                    Logger.d(TAG, "Received failure enroute response: $data")
+                    view.showInitializationErrorDialog()
+                }
+            })
+        }
+        else {
+            view.showNetworkAvailabilityError()
         }
     }
 
@@ -123,29 +149,8 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
         view.navigateToCamera()
     }
 
-    override fun locationPermissionPassed() {
-        if( view.isNetworkAvailable() ) {
-            val phoneNumber = view.getSharedPrefUtil().getUserPref(false)
-            val guid = delivery.guid
-            val request = EnRouteRequest(phoneNumber, guid)
-
-            view.startLocationUpdate(getLocationRequest())
-            interactor.sendEnRouteUpdate(request, object : EnRouteRequestCallback {
-                override fun onEnRouteSuccess(data: String?) {
-                    updateEnRouteStatus(true, false)
-                    Logger.d(TAG, "Received success enroute response: $data")
-                }
-
-                override fun onEnRouteFailure(data: String?) {
-                    updateEnRouteStatus(false, true)
-                    view.getSharedPrefUtil().setEnRouteStatus(delivery.guid, false)
-                    Logger.d(TAG, "Received failure enroute response: $data")
-                }
-            })
-        }
-        else {
-            view.showNetworkAvailabilityError()
-        }
+    override fun checkLocationUpdate() {
+        view.checkLocationUpdate()
     }
 
     override fun permissionFailed() {
@@ -153,10 +158,31 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
         view.navigateToSettings()
     }
 
+    override fun locationResultReceived(locationResult: LocationResult) {
+        val location = locationResult.locations.first()
+        val lat = location.latitude
+        val long = location.longitude
+        val phoneNumber = view.getSharedPrefUtil().getUserPref(false)
+
+        // Update service
+        val reportLocationRequest = ReportLocationRequest(phoneNumber, lat.toString(), long.toString())
+        interactor.sendLocationUpdate(reportLocationRequest, object : ReportLocationCallback {
+            override fun onReportLocationSuccess(data: String?) {
+                Logger.d(TAG, "Success report location update: $data")
+            }
+
+            override fun onReportLocationFailure(data: String?) {
+                Logger.d(TAG, "Failed report location update: $data")
+            }
+        })
+        interactor.updateLastUpdateTime(System.currentTimeMillis().toString())
+    }
+
     override fun deliveryCaptureImageClicked(captureImage: Boolean) {
         if (captureImage) {
             view.checkShowCamera()
-        } else {
+        }
+        else {
             bitmap = null
             imageSendClicked()
         }
@@ -172,7 +198,7 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
     }
 
     override fun imageSendClicked() {
-        if( view.isNetworkAvailable() ) {
+        if (view.isNetworkAvailable()) {
             var imageString = ""
             if (bitmap != null) {
                 imageString = ConverterUtil.convertImage(bitmap!!)
@@ -201,7 +227,8 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
                         view.showDeliveredRequestFailure()
                     }
                 })
-            } else {
+            }
+            else {
                 view.showDeliveredRequestSuccess()
             }
         }
@@ -246,14 +273,14 @@ class DeliveryDetailPresenterImpl(val view: DeliveryDetailView, private val inte
     }
 
     private fun getLocationRequest(): LocationRequest {
-        val intervalProp = view.getSharedPrefUtil().getIntervalPref(false)
-        var interval = if (intervalProp.isBlank()) {
+        var interval = if (delivery.interval.isNullOrBlank()) {
             DEFAULT_UPDATE_INTERVAL
-        } else {
-            intervalProp.toLong() * 60000
+        }
+        else {
+            delivery.interval.toLong() * 60000
         }
 
-        if( BuildConfig.USE_DEFAULT_INTERVAL ) {
+        if (BuildConfig.USE_DEFAULT_INTERVAL) {
             interval = DEFAULT_UPDATE_INTERVAL
         }
 
