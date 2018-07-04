@@ -46,7 +46,7 @@ class DeviceInfo(val application: Application) {
         var androidOsVer = ""
 
         try {
-            deviceID = Settings.Secure.getString(application.getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID)
+            deviceID = Settings.Secure.getString(application.applicationContext.contentResolver, Settings.Secure.ANDROID_ID)
 //            if (deviceID == null || deviceID == "9774d56d682e549c") {
 //                val tman = application.getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
 //                deviceID = if (tman != null) {

@@ -37,7 +37,7 @@ interface DeliveryDetailInteractor {
     fun updateLastUpdateTime(timeStamp: String)
 }
 
-class DeliveryDetailInteractorImpl(private val networkService: NetworkService, val appDatabase: AppDatabase): DeliveryDetailInteractor {
+class DeliveryDetailInteractorImpl(private val networkService: NetworkService, private val appDatabase: AppDatabase): DeliveryDetailInteractor {
 
     private val TAG = DeliveryDetailInteractorImpl::class.java.simpleName
     private val DELIVERED_REQUEST_CODE = "deliveredRequestCode"

@@ -58,7 +58,7 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     private val REQUEST_LOCATION_PERMISSION_CODE = 3
     private val DEFAULT_LAST_UPDATE = "Not Available"
 
-    private val DEFAULT_UPDATE_INTERVAL: Long = 60000 // every 60 seconds
+//    private val DEFAULT_UPDATE_INTERVAL: Long = 60000 // every 60 seconds
 //    private val DEFAULT_FAST_UPDATE_INTERVAL: Long = 30000 // every 30 seconds
 //    private val MAX_WAIT_TIME: Long = DEFAULT_UPDATE_INTERVAL * 10 // 10 minutes
 
@@ -163,9 +163,9 @@ class DeliveryDetailActivity : FlexConnectActivityBase(), DeliveryDetailView, Ac
     }
 
     private fun adjustButtonSize(button: Button) {
-        val displayMetrics = getResources().getDisplayMetrics();
+        val displayMetrics = getResources().getDisplayMetrics()
         val width = displayMetrics.widthPixels;
-        val params = button.getLayoutParams();
+        val params = button.getLayoutParams()
         params.width = width / 2
         button.width = width
     }

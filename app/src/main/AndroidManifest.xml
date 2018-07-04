@@ -37,7 +37,7 @@
         </activity>
 
         <activity
-            android:name=".ui.DashboardActivity"
+            android:name=".ui.dashboard.DashboardActivity"
             android:parentActivityName=".ui.main.MainActivity"
             android:label="@string/title_activity_dashboard">
             <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
@@ -46,7 +46,7 @@
         <activity
             android:name="com.aisoftware.flexconnect.ui.detail.DeliveryDetailActivity"
             android:label="@string/title_activity_detail"
-            android:parentActivityName=".ui.DashboardActivity">
+            android:parentActivityName=".ui.dashboard.DashboardActivity">
             <!--android:theme="@style/Theme.AppCompat.NoActionBar">-->
         </activity>
 

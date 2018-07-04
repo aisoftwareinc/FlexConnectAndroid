@@ -8,6 +8,7 @@ import com.aisoftware.flexconnect.R
 import com.aisoftware.flexconnect.db.AppDatabase
 import com.aisoftware.flexconnect.network.NetworkService
 import com.aisoftware.flexconnect.network.NetworkServiceDefault
+import com.aisoftware.flexconnect.ui.dashboard.DashboardActivity
 import com.aisoftware.flexconnect.ui.main.MainActivity
 import com.aisoftware.flexconnect.util.CrashLogger
 import com.aisoftware.flexconnect.util.SharedPrefUtil
@@ -103,7 +104,7 @@ open class FlexConnectActivityBase: AppCompatActivity(), ActivityBaseView {
     }
 
     override fun isNetworkAvailable(): Boolean =
-        ((getApplication() as FlexConnectApplication).isNetworkAvailable())
+        (application as FlexConnectApplication).isNetworkAvailable()
 
     override fun showNetworkAvailabilityError() {
         if( !isFinishing) {
