@@ -23,7 +23,6 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-        android:debuggable="false"
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
