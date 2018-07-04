@@ -6,7 +6,9 @@ import android.support.test.filters.LargeTest
 import android.support.test.runner.AndroidJUnit4
 import com.aisoftware.flexconnect.db.AppDatabase
 import com.aisoftware.flexconnect.db.DataRepository
+import com.aisoftware.flexconnect.db.DataRepositoryImpl
 import com.aisoftware.flexconnect.model.Delivery
+import com.aisoftware.flexconnect.model.LastUpdate
 import junit.framework.Assert
 import junit.framework.Assert.assertEquals
 import junit.framework.Assert.assertNotNull
@@ -40,13 +42,24 @@ class DataRepositoryTest {
         val count = database.deliveryDao().deliveriesCount()
         Assert.assertTrue("Unexpected database count", count == 2)
 
-        dataRepository = DataRepository.getInstance(database)
+        dataRepository = DataRepositoryImpl.getInstance(database)
         assertNotNull(dataRepository)
+
+        val lastUpdate = getLastUpdate()
+        assertNotNull(lastUpdate)
+
+        dataRepository.loadLastUpdate(lastUpdate)
     }
 
     @After
     fun tearDown() {
         database.close()
+    }
+
+    @Test
+    fun testGetDeliveries() {
+        val deliveryLiveData = dataRepository.getDeliveries()
+        assertNotNull(deliveryLiveData)
     }
 
     @Test
@@ -66,6 +79,12 @@ class DataRepositoryTest {
     fun testFetchDeliveriesCount() {
         val count = dataRepository.fetchDeliveriesCount()
         assertEquals("Unexpected count", 2, count)
+    }
+
+    @Test
+    fun testFetchLastUpdate() {
+        val lastUpdateLiveData = dataRepository.fetchLastUpdate()
+        assertNotNull(lastUpdateLiveData)
     }
 
     private fun getDelivery(id: Long): Delivery
@@ -88,4 +107,7 @@ class DataRepositoryTest {
             "30 minutes",
             "12 miles",
             "These dudes are for real.")
+
+    private fun getLastUpdate(): LastUpdate =
+            LastUpdate(1, System.currentTimeMillis().toString())
 }

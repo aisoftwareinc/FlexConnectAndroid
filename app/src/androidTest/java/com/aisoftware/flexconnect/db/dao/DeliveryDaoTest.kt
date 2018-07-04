@@ -80,6 +80,25 @@ class DeliveryDaoTest {
         assertNotNull(liveDataList)
     }
 
+    @Test
+    fun testDeleteAll() {
+        val deliveryList = ArrayList<Delivery>()
+
+        val delivery1 = getDelivery(1L)
+        deliveryList.add(delivery1)
+
+        val delivery2 = getDelivery(2L)
+        deliveryList.add(delivery2)
+
+        database.deliveryDao().insertAll(deliveryList)
+        var count = database.deliveryDao().deliveriesCount()
+        assertTrue("Unexpected database count", count == 2)
+
+        database.deliveryDao().deleteAll()
+        count = database.deliveryDao().deliveriesCount()
+        assertTrue("Unexpected database count", count == 0)
+    }
+
     private fun getDelivery(id: Long): Delivery
             = Delivery(
             id,

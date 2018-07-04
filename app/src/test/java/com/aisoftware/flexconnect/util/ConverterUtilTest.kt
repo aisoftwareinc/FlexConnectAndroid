@@ -52,6 +52,7 @@ class ConverterUtilTest {
         = Delivery(
                 1L,
                 "guid",
+            "5",
                 "Status",
                 "May 1 1985",
                 "12:00 pm",

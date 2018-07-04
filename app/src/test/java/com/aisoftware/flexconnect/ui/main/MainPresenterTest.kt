@@ -53,7 +53,6 @@ class MainPresenterTest {
         presenter.submitClicked("", phoneNumber)
         verify(view).isNetworkAvailable()
         verify(interactor).fetchAuthCode(phoneNumber)
-        verify(interactor).fetchTimerInterval()
     }
 
     @Test

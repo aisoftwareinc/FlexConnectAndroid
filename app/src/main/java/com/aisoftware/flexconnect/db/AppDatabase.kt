@@ -11,7 +11,6 @@ import android.support.annotation.VisibleForTesting
 import com.aisoftware.flexconnect.AppExecutors
 import com.aisoftware.flexconnect.db.dao.DeliveryDao
 import com.aisoftware.flexconnect.db.dao.LastUpdateDao
-import com.aisoftware.flexconnect.db.dao.PhoneNumberDao
 import com.aisoftware.flexconnect.model.Delivery
 import com.aisoftware.flexconnect.model.LastUpdate
 import com.aisoftware.flexconnect.model.PhoneNumber
@@ -29,7 +28,6 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun deliveryDao(): DeliveryDao
     abstract fun lastUpdateDao(): LastUpdateDao
-    abstract fun phoneNumberDao(): PhoneNumberDao
 
     private fun updateDatabaseCreated(context: Context) {
         if (context.getDatabasePath(DATABASE_NAME).exists()) {

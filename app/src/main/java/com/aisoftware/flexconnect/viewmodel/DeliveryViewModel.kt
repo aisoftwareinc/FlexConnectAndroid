@@ -28,8 +28,6 @@ class DeliveryViewModel(val app: Application, val dataRepository: DataRepository
     private var deliveries: LiveData<List<Delivery>> = dataRepository.getDeliveries()
 
     fun getDeliveries(phoneNumber: String, refreshList: Boolean): LiveData<List<Delivery>> {
-        Logger.d(TAG, "Attempting to get deliveries with dataRepository: $dataRepository")
-
         if( refreshList ) {
             loadNetworkDeliveries(phoneNumber)
         }

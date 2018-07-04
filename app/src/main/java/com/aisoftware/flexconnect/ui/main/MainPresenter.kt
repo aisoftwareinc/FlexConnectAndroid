@@ -4,7 +4,6 @@ import com.aisoftware.flexconnect.ui.ActivityBaseView
 import com.aisoftware.flexconnect.util.SharedPrefUtil
 
 interface MainView: ActivityBaseView {
-    fun savePhoneNumber(phoneNumber: String)
     fun initializeViewLoading()
     fun initializeViewDefault()
     fun showErrorDialog()
@@ -40,9 +39,6 @@ class MainPresenterImpl(val view: MainView, private val interactor: MainInteract
         // User has authenticated, forward to dashboard
         if( !authCodeEditText.isBlank()) {
             if ( validAuthCode(authCodeEditText) ) {
-                // Save to database
-                view.savePhoneNumber(formatPhoneNumber(phoneEditText))
-
                 // Send to dashboard
                 view.navigateToDashboard()
             }

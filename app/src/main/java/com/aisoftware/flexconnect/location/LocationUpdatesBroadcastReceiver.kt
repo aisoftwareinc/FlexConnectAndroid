@@ -44,10 +44,10 @@ class LocationUpdatesBroadcastReceiver : BroadcastReceiver() {
                             Logger.d(TAG, "Inserting last updated time of: $time")
                             it.lastUpdateDao().insert(LastUpdate(lastUpdate = time))
 
-                            if (phoneNumber == null) {
-                                phoneNumber = appDatabase.phoneNumberDao().fetch().value?.phoneNumber ?: ""
-                                Logger.d(TAG, "Dao phone number value: $phoneNumber")
-                            }
+//                            if (phoneNumber == null) {
+//                                phoneNumber = appDatabase.phoneNumberDao().fetch().value?.phoneNumber ?: ""
+//                                Logger.d(TAG, "Dao phone number value: $phoneNumber")
+//                            }
                         }
 
                         // location request

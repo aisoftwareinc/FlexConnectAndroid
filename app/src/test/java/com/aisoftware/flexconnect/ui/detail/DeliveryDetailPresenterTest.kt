@@ -1,6 +1,5 @@
 package com.aisoftware.flexconnect.ui.detail
 
-import android.content.Intent
 import android.support.test.filters.SmallTest
 import com.aisoftware.flexconnect.model.Delivery
 import com.aisoftware.flexconnect.util.SharedPrefUtil
@@ -9,7 +8,6 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
@@ -39,7 +37,7 @@ class DeliveryDetailPresenterTest {
     fun testInitialize() {
         val delivery = getDelivery(1)
         presenter.initialize(delivery)
-        verify(view).initializeView(delivery, "( 999 ) 999-9999")
+        verify(view).initializeView(delivery, "( 999 ) 999-9999", false)
     }
 
     @Test
@@ -57,7 +55,7 @@ class DeliveryDetailPresenterTest {
     @Test
     fun testStopLocationUpdate() {
         presenter.stopLocationUpdate()
-        verify(view).stopLocationUpdate()
+        verify(view).showNetworkAvailabilityError()
     }
 
     @Test
@@ -86,7 +84,6 @@ class DeliveryDetailPresenterTest {
     @Test
     fun testPermissionFailed() {
         presenter.permissionFailed()
-        verify(view).toggleDeliveredCheckbox(false)
         verify(view).toggleEnRouteCheckbox(false)
         verify(view).navigateToSettings()
     }
@@ -117,19 +114,6 @@ class DeliveryDetailPresenterTest {
     }
 
     @Test
-    fun testImageCancelClicked() {
-        presenter.imageCancelClicked()
-        verify(view).toggleDeliveredCheckbox(false)
-    }
-
-    @Test
-    fun testOnResultCancelled() {
-        val intent = Mockito.mock(Intent::class.java)
-        presenter.onResultCancelled(intent)
-        verify(view).toggleDeliveredCheckbox(false)
-    }
-
-    @Test
     fun testOnBackPressed() {
         presenter.onBackPressed()
         verify(view).navigateToDashboard()
@@ -139,6 +123,7 @@ class DeliveryDetailPresenterTest {
             = Delivery(
             id,
             "guid",
+            "5",
             "Status",
             "May 1 1985",
             "12:00 pm",

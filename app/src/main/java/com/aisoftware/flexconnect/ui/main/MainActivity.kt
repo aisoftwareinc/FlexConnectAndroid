@@ -63,11 +63,6 @@ class MainActivity : FlexConnectActivityBase(), MainView {
         }
     }
 
-    override fun savePhoneNumber(phoneNumber: String) {
-        Logger.d(TAG, "Saving phone number: $phoneNumber")
-        (application as FlexConnectApplication).getAppDatabase()?.phoneNumberDao()?.insert(PhoneNumber(phoneNumber = phoneNumber))
-    }
-
     override fun showErrorDialog() {
         if( !isFinishing) {
             AlertDialog.Builder(this, R.style.alertDialogStyle)

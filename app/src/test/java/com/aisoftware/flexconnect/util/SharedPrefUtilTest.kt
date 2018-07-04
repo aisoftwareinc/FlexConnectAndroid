@@ -60,13 +60,4 @@ class SharedPrefUtilTest {
         assertNotNull(actual)
         assertEquals("Unexpected phone number value", expected, actual)
     }
-
-    @Test
-    fun testGetIntervalPref() {
-        val expected = "intervalPref"
-        `when`(sharedPreferences.getString(context.getString(R.string.interval_pref_key), "")).thenReturn(expected)
-        val actual = sharedPrefUtil.getIntervalPref(false)
-        assertNotNull(actual)
-        assertEquals("Unexpected interval value", expected, actual)
-    }
 }
