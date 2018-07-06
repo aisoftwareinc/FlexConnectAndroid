@@ -1,111 +1,257 @@
 package com.aisoftware.flexconnect.network
 
-import android.util.Log
 import com.aisoftware.flexconnect.network.request.NetworkRequest
-import com.aisoftware.flexconnect.util.Constants
-import okhttp3.Headers
+import com.aisoftware.flexconnect.network.request.NetworkRequestCallback
+import com.aisoftware.flexconnect.network.request.NetworkRequestRawResponseCallback
+import com.aisoftware.flexconnect.util.Constants.DEFAULT_CONNECTION_TIMEOUT_SEC
+import com.aisoftware.flexconnect.util.Constants.DEFAULT_READ_TIMEOUT_SEC
+import com.aisoftware.flexconnect.util.Logger
 import okhttp3.Interceptor
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 interface NetworkService {
-    fun sendRequest(networkRequest: NetworkRequest, callback: NetworkResponseCallback)
+    @Throws(NetworkRequestException::class)
+    fun startRequest(networkRequest: NetworkRequest)
+
+    @Throws(NetworkRequestException::class)
+    fun startRequest(networkRequest: NetworkRequest, callback: NetworkRequestCallback?, requestCode: String?)
+
+    @Throws(NetworkRequestException::class)
+    fun startRequest(networkRequest: NetworkRequest, callback: NetworkRequestCallback?, requestCode: String?, fetchFromCache: Boolean)
+
+    @Throws(NetworkRequestException::class)
+    fun startRequest(networkRequest: NetworkRequest, callback: NetworkRequestRawResponseCallback, requestCode: String)
 }
 
-class NetworkServiceImpl: NetworkService {
+open class NetworkServiceDefault private constructor(builder: Builder) : NetworkService {
+    private var networkHandler: NetworkHandler? = null
 
     private val TAG = NetworkService::class.java.simpleName
+    var DEFAULT_CONNECTION_TIMEOUT_SEC = 60
+    var DEFAULT_READ_TIMEOUT_SEC = 60
+    var DEFAULT_USE_CACHE = false
+    var DEFAULT_FETCH_INTO_CACHE = true
+    var DEFAULT_USE_LOG_INTERCEPTOR = false
+    var DEFAULT_BUILD_TYPE = true  // true = production, which means don't enable logging
+    var MEDIA_TYPE_JSON_TEXT = "application/json; charset=utf-8"
+    var MEDIA_TYPE_FORM_DATA_TEXT = "multipart/form-data"
+    var MEDIA_TYPE_PDF_NO_BODY_TEXT = "image/pdf"    //have handler send back the response body
+    var MEDIA_TYPE_JSON = MediaType.parse(MEDIA_TYPE_JSON_TEXT)
+    var MEDIA_TYPE_FORM_DATA = MediaType.parse(MEDIA_TYPE_FORM_DATA_TEXT)
+    var DEFAULT_TIME_UNIT = TimeUnit.SECONDS
 
-    private val connectTimeout = Constants.DEFAULT_CONNECTION_TIMEOUT_SEC
-    private val readTimeout = Constants.DEFAULT_READ_TIMEOUT_SEC
-    private val mediaType = MediaType.parse(Constants.MEDIA_TYPE_FORM)
+    var connectTimeout: Int = DEFAULT_CONNECTION_TIMEOUT_SEC
+    var readTimeout: Int = DEFAULT_READ_TIMEOUT_SEC
+    var interceptorList: List<Interceptor> = ArrayList()
+    var timeUnit: TimeUnit = DEFAULT_TIME_UNIT
+//    var networkCache: NetworkCache? = null
 
-    override fun sendRequest(networkRequest: NetworkRequest, callback: NetworkResponseCallback) {
-        var body: RequestBody? = null
 
-        if( !networkRequest.getRequestBody().isNullOrEmpty()) {
-            body = RequestBody.create(mediaType, networkRequest.getRequestBody())
-            networkRequest.addHeader("Content-Length", body.contentLength().toString())
-            Log.d(networkRequest.getRequestTag(), "Request body: " + networkRequest.getRequestBody())
+    private val okhttpClient: OkHttpClient
+        get() {
+            val builder = OkHttpClient.Builder()
+                    .connectTimeout(connectTimeout.toLong(), timeUnit)
+                    .readTimeout(readTimeout.toLong(), timeUnit)
+
+            if ( interceptorList.isNotEmpty() ) {
+                for (interceptor in interceptorList) {
+                    builder.addInterceptor(interceptor)
+                }
+            }
+            return builder.build()
         }
 
-        val client = getOkhttpClient(networkRequest.getHeadersMap(), body)
-        val retrofit = getRetrofit(client, networkRequest.getBaseUrl())
+    init {
+        this.connectTimeout = builder.connectTimeout
+        this.readTimeout = builder.readTimeout
+        this.interceptorList = builder.interceptorList
+        this.timeUnit = builder.timeUnit
+        this.networkHandler = builder.networkHandler
+//        this.networkCache = builder.networkCache
+    }
 
-        val api = retrofit.create(ApiEndpoints::class.java)
-        val call = networkRequest.getRequestEndpoint(api)
+    override fun startRequest(networkRequest: NetworkRequest) {
+        startRequest(networkRequest, null, null, false)
+    }
 
-        Log.d(TAG, "Attempting call with url: " + call.request().toString())
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+    override fun startRequest(networkRequest: NetworkRequest, callback: NetworkRequestCallback?, requestCode: String?) {
+        startRequest(networkRequest, callback, requestCode, false)
+    }
 
-                if (response.body() != null) {
-                    try {
-                        val bodyContent = response.body()!!.string()
-                        callback.onSuccess(bodyContent)
-                    } catch (e: IOException) {
-                        Log.e(TAG, "Unable to retrieve response", e)
-                        onFailure(call, e)
-                    }
+    /**
+     * Start request.
+     *
+     * @param networkRequest the network request
+     * @param callback       the callback
+     * @param requestCode    the request code
+     * @throws NetworkRequestException the network request exception
+     */
+    override fun startRequest(networkRequest: NetworkRequest, callback: NetworkRequestCallback?, requestCode: String?, fetchFromCache: Boolean) {
 
-                }
+        getNetworkHandler().startRequest(networkRequest, object : NetworkRequestCallback {
+
+            override fun onSuccess(data: String?, headers: Map<String, List<String>>, requestCode: String?) {
+//                    networkCache?.let {
+//                        Log.d(networkRequest.requestTag, "Attempting to cache with key: $networkRequest.requestTag and value: $data")
+//                        it.put(networkRequest.requestTag, data)
+//                    }
+                callback?.onSuccess(data, headers, requestCode)
             }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                callback.onFailure(Constants.NETWORK_REQUEST_CALL_FAILURE)
-                Log.e(TAG, Constants.NETWORK_REQUEST_CALL_FAILURE, t)
+            override fun onFailure(data: String?, requestCode: String?) {
+                callback?.onFailure(data, requestCode)
             }
-        })
+
+            override fun onComplete(requestCode: String?) {
+                callback?.onComplete(requestCode)
+            }
+        }, requestCode)
+
+//        var cacheResult: Any? = null
+//        if (networkCache != null && fetchFromCache) {
+//            try {
+//                cacheResult = networkCache?.get(networkRequest.requestTag)
+//            } catch (exception: NetworkCacheException) {
+//                Log.d(networkRequest.requestTag, "Cache Exception:" + exception.message)
+//            } finally {
+//                if (cacheResult != null) {
+//                    callback!!.onSuccess(cacheResult as String?, HashMap(), requestCode)
+//                }else
+//                    makeRequest()
+//            }
+//        }else{
+//            makeRequest()
+//        }
     }
 
-
-    private fun getOkhttpClient(headers: Map<String, String>, body: RequestBody?): OkHttpClient {
-        val builder = OkHttpClient.Builder()
-                .addInterceptor { chain ->
-                    val ongoing = chain.request().newBuilder()
-                    ongoing.headers(Headers.of(headers))
-                    if( body != null )ongoing.post(body)
-                    chain.proceed(ongoing.build())
-                }
-//                .addInterceptor(LoggingInterceptor())
-                .connectTimeout(connectTimeout.toLong(), TimeUnit.SECONDS)
-                .readTimeout(readTimeout.toLong(), TimeUnit.SECONDS)
-        return builder.build()
+    /**
+     * Start request.
+     *
+     * @param networkRequest the network request
+     * @param callback       the callback
+     * @param requestCode    the request code
+     * @throws NetworkRequestException the network request exception
+     */
+    @Throws(NetworkRequestException::class)
+    override fun startRequest(networkRequest: NetworkRequest, callback: NetworkRequestRawResponseCallback, requestCode: String) {
+        getNetworkHandler().startRequest(networkRequest, callback, requestCode)
     }
 
-    private fun getRetrofit(okHttpClient: okhttp3.Call.Factory, baseUrl: String): Retrofit {
-        return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(SimpleXmlConverterFactory.create())
-                .callFactory(okHttpClient)
-                .build()
+    @Throws(NetworkRequestException::class)
+    private fun getNetworkHandler(): NetworkHandler {
+        if (networkHandler == null) {
+            networkHandler = RequestHandler(okhttpClient)
+        }
+        return networkHandler as NetworkHandler
     }
 
+    /**
+     * The type Builder.
+     */
+    class Builder {
+        var connectTimeout = DEFAULT_CONNECTION_TIMEOUT_SEC
+        var readTimeout = DEFAULT_READ_TIMEOUT_SEC
+        var timeUnit = TimeUnit.SECONDS
+        var interceptorList: List<Interceptor> = ArrayList()
+        var networkHandler: NetworkHandler? = null
+//        var networkCache: NetworkCache? = null
+
+        /**
+         * Connect timeout builder.
+         *
+         * @param connectTimeout the connect timeout
+         * @return the builder
+         */
+        fun connectTimeout(connectTimeout: Int): Builder {
+            this.connectTimeout = connectTimeout
+            return this
+        }
+
+        /**
+         * Interceptor list builder.
+         *
+         * @param interceptorList the interceptor list
+         * @return the builder
+         */
+        fun interceptorList(interceptorList: List<Interceptor>): Builder {
+            this.interceptorList = interceptorList
+            return this
+        }
+
+        /**
+         * Read timeout builder.
+         *
+         * @param readTimeout the read timeout
+         * @return the builder
+         */
+        fun readTimeout(readTimeout: Int): Builder {
+            this.readTimeout = readTimeout
+            return this
+        }
+
+        /**
+         * Time unit builder.
+         *
+         * @param timeUnit the time unit
+         * @return the builder
+         */
+        fun timeUnit(timeUnit: TimeUnit): Builder {
+            this.timeUnit = timeUnit
+            return this
+        }
+
+        /**
+         * Network handler builder.
+         *
+         * @param networkHandler the network handler
+         * @return the builder
+         */
+        fun networkHandler(networkHandler: NetworkHandler): Builder {
+            this.networkHandler = networkHandler
+            return this
+        }
+
+//        fun networkCache(cache: NetworkCache): Builder {
+//            networkCache = cache
+//            return this
+//        }
+
+        /**
+         * Build network service.
+         *
+         * @return the network service
+         */
+        fun build(): NetworkService {
+            return NetworkServiceDefault(this)
+        }
+    }
+
+    /**
+     * The type Logging interceptor.
+     */
     internal inner class LoggingInterceptor : Interceptor {
         private val TAG = LoggingInterceptor::class.java.simpleName
 
         @Throws(IOException::class)
         override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
             val request = chain.request()
-
             val t1 = System.nanoTime()
-            if (request.body() != null) {
-                Log.d(TAG, "Intercepting content type: " + request.body()!!.contentType()!!)
-            }
-            Log.d(TAG, String.format("Sending to url: %s with headers: \n%s", request.url(), request.headers()))
+            if (request.body() != null)
+//                Log.d(TAG, "Intercepting content type: " + request.body().contentType().toString())
+            //            MultipartBody multipartBody = (MultipartBody) request.body();
+            //            Log.d(TAG, " intercepting multipartBody.type() "+multipartBody.type());
+            //            Log.d(TAG, " intercepting multipartBody.boundary() "+multipartBody.boundary());
+            //            Log.d(TAG, " intercepting multipartBody.parts() "+multipartBody.parts());
+                Logger.d(TAG, String.format("Sending to url: %s with headers: %s", request.url(), request.headers()))
             val response = chain.proceed(request)
             val t2 = System.nanoTime()
-            Log.d(TAG, String.format("Received response for %s in %.1fms%n%s", response.request().url(), (t2 - t1) / 1e6, response.headers()))
-            Log.d(TAG, "Response code: " + response.code())
+            Logger.d(TAG, String.format("Received response for %s in %.1fms%n%s",
+                    response.request().url(), (t2 - t1) / 1e6, response.headers()))
+            Logger.d(TAG, "Response code: " + response.code())
+            //            Log.d(TAG, "Response body: " + response.body().string());
             return response
         }
     }

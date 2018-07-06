@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/navigationContainer"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_alignParentBottom="true"
+              android:background="@color/colorAccent"
+              android:orientation="horizontal"
+              android:weightSum="2">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/bottomNavPhoneNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/colorAccent"
+            android:drawableStart="@drawable/phoneicon"
+            android:drawablePadding="8dp"
+            android:gravity="center"
+            android:text="@string/bottom_nav_phone_number"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            tools:text="Phone Number"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/bottomNavDeliveries"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/colorAccent"
+            android:drawableStart="@drawable/deliveryicon"
+            android:drawablePadding="8dp"
+            android:gravity="center"
+            android:text="@string/bottom_nav_deliveries"
+            android:textColor="@color/colorWhite"
+            android:textSize="14sp"
+            tools:text="Deliveries"/>
+    </LinearLayout>
+
+</LinearLayout>

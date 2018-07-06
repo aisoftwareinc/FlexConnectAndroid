@@ -8,7 +8,7 @@
     android:background="@android:color/white"
     android:paddingLeft="48dp"
     android:paddingRight="48dp"
-    tools:context=".ui.MainActivity"
+    tools:context=".ui.main.MainActivity"
     tools:ignore="Overdraw">
 
     <ProgressBar
@@ -43,6 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:contentDescription="@string/launcher_title"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="@+id/guidelineHorizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -89,7 +90,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:background="@drawable/border"
+        android:background="@drawable/buttonripple"
         android:text="@string/button_title"
         android:textAllCaps="false"
         android:textColor="@android:color/black"

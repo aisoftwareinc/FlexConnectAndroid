@@ -1,34 +1,46 @@
 package com.aisoftware.flexconnect.util
 
-import android.util.Log
-import com.aisoftware.flexconnect.db.entity.DeliveryEntity
+import android.graphics.Bitmap
+import android.util.Base64
+import com.aisoftware.flexconnect.model.Delivery
+import java.io.ByteArrayOutputStream
+import java.net.URLEncoder
 
 class ConverterUtil {
 
     companion object {
         private val TAG = ConverterUtil::class.java.simpleName
+
         @JvmStatic
-        fun formatExtendedAddress(deliveryEntity: DeliveryEntity): String {
-            with(deliveryEntity) {
-                var buf = StringBuilder()
-
-                if( !address3.isNullOrBlank() ) {
-                    buf.append(address3).append("\n")
-                }
-
+        fun formatExtendedAddress(delivery: Delivery): String {
+            with(delivery) {
+                val buf = StringBuilder()
                 buf.append(city)
                         .append(", ")
-                        .append(deliveryEntity.state)
+                        .append(delivery.state)
                         .append(" ")
-                        .append(deliveryEntity.zip)
-
-                if( !zip4.isNullOrBlank() ) {
-                    buf.append("-").append(zip4)
-                }
-
-                Log.d(TAG, "Formatted extended address: $buf")
+                        .append(delivery.zip)
                 return buf.toString()
             }
+        }
+
+        @JvmStatic
+        fun convertImage(bitmap: Bitmap): String {
+            var baos: ByteArrayOutputStream? = null
+            var encodedStr = ""
+            try {
+                baos = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                val byteArrayImage = baos.toByteArray()
+                encodedStr = URLEncoder.encode(Base64.encodeToString(byteArrayImage, Base64.DEFAULT), "UTF-8")
+            }
+            catch (e: Exception) {
+                Logger.e(TAG, "Unable to encode bitmap", e)
+            }
+            finally {
+                baos?.close()
+            }
+            return encodedStr
         }
     }
 }
