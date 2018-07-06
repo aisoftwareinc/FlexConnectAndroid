@@ -170,8 +170,17 @@ atlassian-ide-plugin.xml
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
 crashlytics.properties
-crashlytics-build.properties
 fabric.properties
 /.idea/misc.xml
 /keystore.properties
-/.idea/caches/build_file_checksums.ser
+.idea/assetWizardSettings.xml
+.idea/shelf/
+Todo.md
+app/debug/debug/output.json
+app/debug/output.json
+app/debug/release/output.json
+app/debug/release/release/output.json
+app/libs/
+
+/keystore_debug.properties
+/keystore_release.properties

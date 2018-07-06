@@ -6,7 +6,32 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
 
+// debug keystore file config
+def debugKeystorePropertiesFile = rootProject.file("keystore_debug.properties")
+def debugKeystoreProperties = new Properties()
+debugKeystoreProperties.load(new FileInputStream(debugKeystorePropertiesFile))
+
+// release keystore file config
+def releaseKeystorePropertiesFile = rootProject.file("keystore_release.properties")
+def releaseKeystoreProperties = new Properties()
+releaseKeystoreProperties.load(new FileInputStream(releaseKeystorePropertiesFile))
+
+
 android {
+    signingConfigs {
+        debug {
+            keyAlias debugKeystoreProperties['keyAlias']
+            keyPassword debugKeystoreProperties['keyPassword']
+            storeFile file(debugKeystoreProperties['storeFile'])
+            storePassword debugKeystoreProperties['storePassword']
+        }
+        release {
+            keyAlias releaseKeystoreProperties['keyAlias']
+            keyPassword releaseKeystoreProperties['keyPassword']
+            storeFile file(releaseKeystoreProperties['storeFile'])
+            storePassword releaseKeystoreProperties['storePassword']
+        }
+    }
     compileSdkVersion 27
     defaultConfig {
         multiDexEnabled true
@@ -25,8 +50,8 @@ android {
             buildConfigField "boolean", "SEND_DELIVERED_UPDATE", "true"
             buildConfigField "boolean", "USE_DEFAULT_INTERVAL", "false"
             buildConfigField "boolean", "ENABLE_CRASHLYTICS", "true"
+            signingConfig signingConfigs.release
         }
-
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -34,14 +59,13 @@ android {
             buildConfigField "boolean", "SEND_DELIVERED_UPDATE", "false"
             buildConfigField "boolean", "USE_DEFAULT_INTERVAL", "true"
             buildConfigField "boolean", "ENABLE_CRASHLYTICS", "true"
+            signingConfig signingConfigs.debug
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
-
     sourceSets {
         main {
             java {
@@ -58,13 +82,14 @@ android {
             quiet true
         }
     }
-
     packagingOptions {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/DEPENDENCIES'
+    }
+    productFlavors {
     }
 }
 
@@ -90,7 +115,6 @@ dependencies {
     def okhttp_version = "3.10.0"
     def crashlytics_version = "2.9.3@aar"
     def answers_version = "1.4.2@aar"
-
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.5'
@@ -141,37 +165,34 @@ dependencies {
     implementation "com.squareup.picasso:picasso:$picasso_version"
 
     /* Fabric - Crashlytics, Answers */
-    implementation ("com.crashlytics.sdk.android:crashlytics:$crashlytics_version") {
+    implementation("com.crashlytics.sdk.android:crashlytics:$crashlytics_version") {
         transitive = true
     }
-
-    implementation ("com.crashlytics.sdk.android:answers:$answers_version") {
+    implementation("com.crashlytics.sdk.android:answers:$answers_version") {
         transitive = true
     }
 
     /* Testing */
     testImplementation 'junit:junit:4.12'
     testImplementation "org.mockito:mockito-core:$mockito_version"
-    testImplementation ('com.android.support.test:runner:1.0.2', {
+    testImplementation('com.android.support.test:runner:1.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    testImplementation ("android.arch.core:core-testing:$lifecycle_version", {
+    testImplementation("android.arch.core:core-testing:$lifecycle_version", {
         exclude group: 'com.android.support', module: 'support-compat'
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'com.android.support', module: 'support-core-utils'
     })
-
     androidTestImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    androidTestImplementation ('com.android.support.test:runner:1.0.2', {
+    androidTestImplementation('com.android.support.test:runner:1.0.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    androidTestImplementation ('com.android.support.test.espresso:espresso-core:3.0.2') {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.2') {
         exclude group: 'com.google.code.findbugs'
         exclude group: 'com.android.support', module: 'support-annotations'
     }
-    androidTestImplementation ('com.android.support.test:rules:1.0.1', {
+    androidTestImplementation('com.android.support.test:rules:1.0.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-
     androidTestImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
 }

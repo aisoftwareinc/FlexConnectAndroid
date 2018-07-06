@@ -13,11 +13,9 @@ import com.aisoftware.flexconnect.util.Logger
 
 class LastUpdateViewModel(val app: Application, val dataRepository: DataRepository): AndroidViewModel(app) {
 
-    private val TAG = LastUpdateViewModel::class.java.simpleName
     private var lastUpdate: LiveData<LastUpdate> = dataRepository.fetchLastUpdate()
 
     fun getLastUpdate(): LiveData<LastUpdate> {
-        Logger.d(TAG, "Attempting to get deliveries with last update value: $lastUpdate")
         return lastUpdate
     }
 }
